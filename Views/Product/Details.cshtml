@@ -1,0 +1,230 @@
+@model Arcade.ViewModels.ProductDetailViewModel
+
+@{
+    ViewData["Title"] = Model.Product.ProductName;
+}
+
+<!-- Breadcrumb -->
+<nav class="cyber-breadcrumb">
+    <a asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i></a>
+    <span class="cyber-breadcrumb-sep">/</span>
+    <a asp-controller="Product" asp-action="Index">Products</a>
+    <span class="cyber-breadcrumb-sep">/</span>
+    <a asp-controller="Product" asp-action="Index"
+        asp-route-category="@Model.Product.Category?.CategoryName">@Model.Product.Category?.CategoryName</a>
+    <span class="cyber-breadcrumb-sep">/</span>
+    <span class="cyber-breadcrumb-current">@Model.Product.ProductName</span>
+</nav>
+
+<div class="cyber-product-detail">
+    <div class="row g-4">
+        <!-- Gallery -->
+        <div class="col-lg-6">
+            <div class="cyber-panel cyber-panel-glow">
+                <div class="cyber-gallery">
+                    <div class="cyber-gallery-main" id="mainImage" data-bs-toggle="modal" data-bs-target="#imageModal">
+                        <img src="@(Model.Product.ImageUrl ?? "/images/placeholder.svg")"
+                            alt="@Model.Product.ProductName" id="currentImage"
+                            onerror="this.onerror=null; this.src='/images/placeholder.svg';">
+                        <div class="cyber-gallery-zoom"><i class="fas fa-search-plus"></i></div>
+                    </div>
+                    @if (Model.Product.ImageUrl != null)
+                    {
+                        <div class="cyber-gallery-thumbs">
+                            <div class="cyber-thumb active" onclick="changeImage(this, '@Model.Product.ImageUrl')">
+                                <img src="@Model.Product.ImageUrl" alt="Thumbnail">
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-lg-6">
+            <div class="cyber-panel cyber-panel-glow">
+                <div class="cyber-product-info">
+                    <span class="cyber-badge cyber-badge-primary">@Model.Product.Category?.CategoryName</span>
+                    <h1 class="cyber-product-title">@Model.Product.ProductName</h1>
+
+                    <div class="cyber-product-price-large">
+                        <span class="cyber-price-current">EGP @Model.Product.Price.ToString("N0")</span>
+                    </div>
+
+                    <div class="cyber-stock-status @(Model.Product.StockQuantity > 0 ? "in-stock" : "out-of-stock")">
+                        <i class="fas @(Model.Product.StockQuantity > 0 ? "fa-check-circle" : "fa-times-circle")"></i>
+                        @if (Model.Product.StockQuantity > 0)
+                        {
+                            <span>In Stock (@Model.Product.StockQuantity available)</span>
+                        }
+                        else
+                        {
+                            <span>Out of Stock</span>
+                        }
+                    </div>
+
+                    <p class="cyber-product-desc">@Model.Product.Description</p>
+
+                    @if (Model.Product.StockQuantity > 0)
+                    {
+                        <form asp-controller="Cart" asp-action="Add" method="post" class="cyber-add-to-cart">
+                            <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+                            <div class="cyber-qty-control">
+                                <button type="button" class="cyber-qty-btn" onclick="decrementQty()">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                    max="@Model.Product.StockQuantity" class="cyber-qty-input" />
+                                <button type="button" class="cyber-qty-btn"
+                                    onclick="incrementQty(@Model.Product.StockQuantity)">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <button type="submit" class="cyber-btn cyber-btn-primary cyber-btn-lg">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </form>
+                    }
+
+                    <div class="cyber-product-meta">
+                        <div class="cyber-meta-item">
+                            <i class="fas fa-truck"></i>
+                            <span>Free shipping on orders over $50</span>
+                        </div>
+                        <div class="cyber-meta-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>2-year warranty included</span>
+                        </div>
+                        <div class="cyber-meta-item">
+                            <i class="fas fa-undo"></i>
+                            <span>30-day return policy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="cyber-tabs-container mt-4">
+        <div class="cyber-panel">
+            <ul class="cyber-tabs" role="tablist">
+                <li class="cyber-tab active" data-tab="description">Description</li>
+                <li class="cyber-tab" data-tab="specifications">Specifications</li>
+            </ul>
+            <div class="cyber-tab-content">
+                <div class="cyber-tab-pane active" id="description">
+                    <p>@Model.Product.Description</p>
+                </div>
+                <div class="cyber-tab-pane" id="specifications">
+                    <div class="cyber-table-wrapper">
+                        <table class="cyber-table">
+                            <tbody>
+                                <tr>
+                                    <td>Category</td>
+                                    <td>@Model.Product.Category?.CategoryName</td>
+                                </tr>
+                                <tr>
+                                    <td>Brand</td>
+                                    <td>@(Model.Product.Brand ?? "N/A")</td>
+                                </tr>
+                                <tr>
+                                    <td>SKU</td>
+                                    <td>@(Model.Product.SKU ?? $"ARC-{Model.Product.ProductId:D6}")</td>
+                                </tr>
+                                <tr>
+                                    <td>Stock</td>
+                                    <td>@Model.Product.StockQuantity units</td>
+                                </tr>
+                                <tr>
+                                    <td>Price</td>
+                                    <td>EGP @Model.Product.Price.ToString("N0")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+    {
+        <section class="cyber-section mt-5">
+            <h2 class="cyber-section-title">
+                <span class="cyber-title-icon"><i class="fas fa-th-large"></i></span>
+                Related Products
+            </h2>
+            <div class="cyber-product-grid">
+                @foreach (var product in Model.RelatedProducts.Take(4))
+                {
+                    <div class="cyber-product-card fade-in">
+                        <div class="cyber-product-image">
+                            <img src="@(product.ImageUrl ?? "/images/placeholder.svg")" alt="@product.ProductName"
+                                onerror="this.onerror=null; this.src='/images/placeholder.svg';">
+                            <div class="cyber-product-overlay">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductId"
+                                    class="cyber-btn cyber-btn-primary">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </div>
+                        </div>
+                        <div class="cyber-product-body">
+                            <span class="cyber-product-category">@product.Category?.CategoryName</span>
+                            <h3 class="cyber-product-name">@product.ProductName</h3>
+                            <div class="cyber-product-price">EGP @product.Price.ToString("N0")</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content cyber-modal">
+            <button type="button" class="cyber-modal-close" data-bs-dismiss="modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="cyber-modal-body">
+                <img src="@(Model.Product.ImageUrl ?? "/images/placeholder.svg")" alt="@Model.Product.ProductName"
+                    id="modalImage" onerror="this.onerror=null; this.src='/images/placeholder.svg';">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeImage(thumb, src) {
+            document.getElementById('currentImage').src = src;
+            document.getElementById('modalImage').src = src;
+            document.querySelectorAll('.cyber-thumb').forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+        }
+
+        function incrementQty(max) {
+            const input = document.getElementById('quantity');
+            if (parseInt(input.value) < max) input.value = parseInt(input.value) + 1;
+        }
+
+        function decrementQty() {
+            const input = document.getElementById('quantity');
+            if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
+        }
+
+        // Tab switching
+        document.querySelectorAll('.cyber-tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                const target = this.dataset.tab;
+                document.querySelectorAll('.cyber-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.cyber-tab-pane').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(target).classList.add('active');
+            });
+        });
+    </script>
+}

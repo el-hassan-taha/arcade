@@ -1,0 +1,427 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Arcade.Services;
+using Arcade.ViewModels;
+using Arcade.Models;
+using Arcade.Data.Repositories;
+using Arcade.Data;
+
+namespace Arcade.Controllers
+{
+    /// <summary>
+    /// Admin controller for dashboard and management
+    /// </summary>
+    [Authorize(Roles = "Admin")]
+    [Route("Admin/[action]")]
+    public class AdminController : Controller
+    {
+        private readonly IProductService _productService;
+        private readonly IOrderService _orderService;
+        private readonly IUserRepository _userRepository;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<AdminController> _logger;
+
+        public AdminController(
+            IProductService productService,
+            IOrderService orderService,
+            IUserRepository userRepository,
+            ApplicationDbContext context,
+            ILogger<AdminController> logger)
+        {
+            _productService = productService;
+            _orderService = orderService;
+            _userRepository = userRepository;
+            _context = context;
+            _logger = logger;
+        }
+
+        /// <summary>
+        /// Admin dashboard
+        /// </summary>
+        [HttpGet]
+        [Route("~/Admin")]
+        [Route("~/Admin/Dashboard")]
+        public async Task<IActionResult> Dashboard()
+        {
+            var allProducts = await _productService.GetAllAsync();
+            var productsList = allProducts.ToList();
+            var lowStockProducts = await _productService.GetLowStockAsync(10);
+            var recentOrders = await _orderService.GetRecentOrdersAsync(5);
+
+            var model = new AdminDashboardViewModel
+            {
+                TotalProducts = productsList.Count,
+                TotalOrders = (await _orderService.GetPagedAsync(1, 1)).TotalCount,
+                TotalRevenue = await _orderService.GetTotalRevenueAsync(),
+                TotalCustomers = await _userRepository.GetCustomerCountAsync(),
+                TodayOrders = await _orderService.GetTodayOrderCountAsync(),
+                TodayRevenue = await _orderService.GetTodayRevenueAsync(),
+                PendingOrders = await _orderService.GetPendingOrderCountAsync(),
+                ProcessingOrders = await _orderService.GetOrderCountByStatusAsync("Processing"),
+                ShippedOrders = await _orderService.GetOrderCountByStatusAsync("Shipped"),
+                DeliveredOrders = await _orderService.GetOrderCountByStatusAsync("Delivered"),
+                LowStockItems = productsList.Count(p => p.StockQuantity > 0 && p.StockQuantity < 10),
+                OutOfStockItems = productsList.Count(p => p.StockQuantity == 0),
+                RecentOrders = recentOrders.Select(o => new AdminRecentOrderViewModel
+                {
+                    OrderId = o.OrderId,
+                    OrderNumber = o.OrderNumber,
+                    CustomerName = o.User?.FullName ?? "Unknown",
+                    OrderDate = o.OrderDate,
+                    Total = o.TotalAmount,
+                    Status = o.Status
+                }),
+                LowStockProducts = lowStockProducts.Take(5)
+            };
+
+            return View(model);
+        }
+
+        #region Product Management
+
+        /// <summary>
+        /// List all products
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Products(
+            int? categoryId = null,
+            string? searchTerm = null,
+            string? sortBy = null,
+            bool sortDesc = false,
+            int page = 1)
+        {
+            const int pageSize = 20;
+
+            var (products, totalCount, totalPages) = await _productService.GetPagedAsync(
+                page, pageSize, categoryId, null, null, null, searchTerm, sortBy, sortDesc);
+
+            var categories = await _productService.GetCategoriesAsync();
+
+            var model = new AdminProductListViewModel
+            {
+                Products = products,
+                Categories = categories,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                TotalCount = totalCount,
+                TotalItems = totalCount,
+                PageSize = pageSize,
+                CategoryId = categoryId,
+                SearchTerm = searchTerm,
+                SortBy = sortBy,
+                SortDescending = sortDesc
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Create product form
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> CreateProduct()
+        {
+            var categories = await _productService.GetCategoriesAsync();
+
+            var model = new ProductFormViewModel
+            {
+                Categories = categories.Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.CategoryName
+                }),
+                IsActive = true
+            };
+
+            return View("ProductForm", model);
+        }
+
+        /// <summary>
+        /// Create product
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateProduct(ProductFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var categories = await _productService.GetCategoriesAsync();
+                model.Categories = categories.Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.CategoryName
+                });
+                return View("ProductForm", model);
+            }
+
+            var product = new Product
+            {
+                ProductName = model.ProductName,
+                CategoryId = model.CategoryId,
+                Price = model.Price,
+                StockQuantity = model.StockQuantity,
+                Description = model.Description,
+                ImageUrl = model.ImageUrl,
+                Brand = model.Brand,
+                SKU = model.SKU,
+                IsFeatured = model.IsFeatured,
+                IsActive = model.IsActive
+            };
+
+            await _productService.CreateAsync(product);
+
+            TempData["SuccessMessage"] = "Product created successfully!";
+            return RedirectToAction("Products");
+        }
+
+        /// <summary>
+        /// Edit product form
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> EditProduct(int id)
+        {
+            var product = await _productService.GetByIdAsync(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var categories = await _productService.GetCategoriesAsync();
+
+            var model = new ProductFormViewModel
+            {
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                CategoryId = product.CategoryId,
+                Price = product.Price,
+                StockQuantity = product.StockQuantity,
+                Description = product.Description,
+                ImageUrl = product.ImageUrl,
+                Brand = product.Brand,
+                SKU = product.SKU,
+                IsFeatured = product.IsFeatured,
+                IsActive = product.IsActive,
+                Categories = categories.Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.CategoryName
+                })
+            };
+
+            return View("ProductForm", model);
+        }
+
+        /// <summary>
+        /// Update product
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProduct(ProductFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var categories = await _productService.GetCategoriesAsync();
+                model.Categories = categories.Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.CategoryName
+                });
+                return View("ProductForm", model);
+            }
+
+            var product = new Product
+            {
+                ProductId = model.ProductId,
+                ProductName = model.ProductName,
+                CategoryId = model.CategoryId,
+                Price = model.Price,
+                StockQuantity = model.StockQuantity,
+                Description = model.Description,
+                ImageUrl = model.ImageUrl,
+                Brand = model.Brand,
+                SKU = model.SKU,
+                IsFeatured = model.IsFeatured,
+                IsActive = model.IsActive
+            };
+
+            var success = await _productService.UpdateAsync(product);
+
+            if (success)
+            {
+                TempData["SuccessMessage"] = "Product updated successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to update product.";
+            }
+
+            return RedirectToAction("Products");
+        }
+
+        /// <summary>
+        /// Delete product
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var (success, message) = await _productService.DeleteAsync(id);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success, message });
+            }
+
+            TempData[success ? "SuccessMessage" : "ErrorMessage"] = message;
+            return RedirectToAction("Products");
+        }
+
+        /// <summary>
+        /// Quick update stock
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStock(int id, int quantity)
+        {
+            var success = await _productService.UpdateStockAsync(id, quantity);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success, message = success ? "Stock updated" : "Failed to update stock" });
+            }
+
+            TempData[success ? "SuccessMessage" : "ErrorMessage"] =
+                success ? "Stock updated successfully!" : "Failed to update stock.";
+
+            return RedirectToAction("Products");
+        }
+
+        #endregion
+
+        #region Order Management
+
+        /// <summary>
+        /// List all orders
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Orders(
+            string? status = null,
+            DateTime? fromDate = null,
+            DateTime? toDate = null,
+            int page = 1)
+        {
+            const int pageSize = 20;
+
+            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status);
+
+            var model = new AdminOrderListViewModel
+            {
+                Orders = orders,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                TotalCount = totalCount,
+                PageSize = pageSize,
+                Status = status,
+                FromDate = fromDate,
+                ToDate = toDate
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// View order details
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> OrderDetails(int id)
+        {
+            var order = await _orderService.GetWithDetailsAsync(id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var model = new AdminOrderDetailsViewModel
+            {
+                Order = order
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Update order status
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateOrderStatus(int id, string status)
+        {
+            var success = await _orderService.UpdateStatusAsync(id, status);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success, message = success ? "Status updated" : "Failed to update status" });
+            }
+
+            TempData[success ? "SuccessMessage" : "ErrorMessage"] =
+                success ? "Order status updated!" : "Failed to update order status.";
+
+            return RedirectToAction("OrderDetails", new { id });
+        }
+
+        #endregion
+
+        #region Inventory
+
+        /// <summary>
+        /// Inventory management view
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Inventory()
+        {
+            var allProducts = await _productService.GetAllAsync();
+            var productsList = allProducts.ToList();
+
+            var model = new AdminInventoryViewModel
+            {
+                Products = productsList.OrderBy(p => p.StockQuantity),
+                TotalProducts = productsList.Count,
+                InStockCount = productsList.Count(p => p.StockQuantity >= 10),
+                LowStockCount = productsList.Count(p => p.StockQuantity > 0 && p.StockQuantity < 10),
+                OutOfStockCount = productsList.Count(p => p.StockQuantity == 0)
+            };
+
+            return View(model);
+        }
+
+        #endregion
+
+        #region Data Seeding
+
+        /// <summary>
+        /// Seed real products (development only)
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SeedRealProducts()
+        {
+            try
+            {
+                await ProductSeeder.SeedRealProductsAsync(_context);
+                TempData["SuccessMessage"] = "Real products seeded successfully!";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to seed products");
+                TempData["ErrorMessage"] = $"Failed to seed products: {ex.Message}";
+            }
+
+            return RedirectToAction("Products");
+        }
+
+        #endregion
+    }
+}

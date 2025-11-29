@@ -1,0 +1,101 @@
+@model Arcade.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="cyber-auth-page">
+    <div class="cyber-auth-container">
+        <div class="cyber-auth-card">
+            <div class="cyber-auth-header">
+                <div class="cyber-auth-logo">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h1 class="cyber-auth-title">Welcome Back</h1>
+                <p class="cyber-auth-subtitle">Sign in to your account to continue</p>
+            </div>
+
+            <form asp-action="Login" method="post" class="cyber-auth-form">
+                <div asp-validation-summary="ModelOnly" class="cyber-alert cyber-alert-danger"></div>
+
+                @if (ViewBag.ReturnUrl != null)
+                {
+                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                }
+
+                <div class="cyber-form-group">
+                    <label asp-for="Email" class="cyber-label">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </label>
+                    <input asp-for="Email" class="cyber-input" placeholder="Enter your email" autocomplete="email" />
+                    <span asp-validation-for="Email" class="cyber-validation-error"></span>
+                </div>
+
+                <div class="cyber-form-group">
+                    <label asp-for="Password" class="cyber-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <div class="cyber-input-group">
+                        <input asp-for="Password" class="cyber-input" placeholder="Enter your password"
+                            autocomplete="current-password" />
+                        <button type="button" class="cyber-input-addon toggle-password" tabindex="-1">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="cyber-validation-error"></span>
+                </div>
+
+                <div class="cyber-form-row">
+                    <div class="cyber-checkbox-wrapper">
+                        <input asp-for="RememberMe" class="cyber-checkbox" />
+                        <label asp-for="RememberMe" class="cyber-checkbox-label">Remember me</label>
+                    </div>
+                    <a href="#" class="cyber-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="cyber-btn cyber-btn-primary cyber-btn-block cyber-btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <div class="cyber-auth-divider">
+                <span>OR</span>
+            </div>
+
+            <div class="cyber-auth-footer">
+                <p>Don't have an account?</p>
+                <a asp-action="Register" class="cyber-btn cyber-btn-outline cyber-btn-block">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </a>
+            </div>
+        </div>
+
+        <div class="cyber-auth-visual">
+            <div class="cyber-auth-shapes">
+                <div class="cyber-shape cyber-shape-1"></div>
+                <div class="cyber-shape cyber-shape-2"></div>
+                <div class="cyber-shape cyber-shape-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function () {
+                const input = this.previousElementSibling;
+                const icon = this.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
+}
