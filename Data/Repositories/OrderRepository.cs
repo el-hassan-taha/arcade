@@ -138,11 +138,20 @@ namespace Arcade.Data.Repositories
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                var term = searchTerm.ToLower().Trim();
-                query = query.Where(o =>
-                    o.OrderId.ToString().Contains(term) ||
-                    (o.User != null && o.User.FullName != null && o.User.FullName.ToLower().Contains(term)) ||
-                    (o.User != null && o.User.Email != null && o.User.Email.ToLower().Contains(term)));
+                var term = searchTerm.Trim();
+                // Try to parse as order ID for exact match
+                if (int.TryParse(term, out int orderId))
+                {
+                    query = query.Where(o => o.OrderId == orderId);
+                }
+                else
+                {
+                    // Use EF.Functions.Like for case-insensitive pattern matching
+                    var pattern = $"%{term}%";
+                    query = query.Where(o =>
+                        (o.User != null && o.User.FullName != null && EF.Functions.Like(o.User.FullName, pattern)) ||
+                        (o.User != null && o.User.Email != null && EF.Functions.Like(o.User.Email, pattern)));
+                }
             }
 
             var totalCount = await query.CountAsync();
