@@ -22,7 +22,8 @@ namespace Arcade.Data.Repositories
             int? userId = null,
             string? status = null,
             DateTime? fromDate = null,
-            DateTime? toDate = null);
+            DateTime? toDate = null,
+            string? searchTerm = null);
     }
 
     /// <summary>
@@ -106,7 +107,8 @@ namespace Arcade.Data.Repositories
             int? userId = null,
             string? status = null,
             DateTime? fromDate = null,
-            DateTime? toDate = null)
+            DateTime? toDate = null,
+            string? searchTerm = null)
         {
             var query = _dbSet
                 .Include(o => o.User)
@@ -132,6 +134,15 @@ namespace Arcade.Data.Repositories
             if (toDate.HasValue)
             {
                 query = query.Where(o => o.OrderDate <= toDate.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.ToLower().Trim();
+                query = query.Where(o =>
+                    o.OrderId.ToString().Contains(term) ||
+                    (o.User != null && o.User.FullName != null && o.User.FullName.ToLower().Contains(term)) ||
+                    (o.User != null && o.User.Email != null && o.User.Email.ToLower().Contains(term)));
             }
 
             var totalCount = await query.CountAsync();

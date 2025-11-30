@@ -308,13 +308,14 @@ namespace Arcade.Controllers
         [HttpGet]
         public async Task<IActionResult> Orders(
             string? status = null,
+            string? searchTerm = null,
             DateTime? fromDate = null,
             DateTime? toDate = null,
             int page = 1)
         {
             const int pageSize = 20;
 
-            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status);
+            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status, searchTerm);
 
             var model = new AdminOrderListViewModel
             {
@@ -324,6 +325,7 @@ namespace Arcade.Controllers
                 TotalCount = totalCount,
                 PageSize = pageSize,
                 Status = status,
+                SearchTerm = searchTerm,
                 FromDate = fromDate,
                 ToDate = toDate
             };

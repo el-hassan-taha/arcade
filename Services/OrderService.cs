@@ -12,7 +12,7 @@ namespace Arcade.Services
         Task<Order?> GetWithDetailsAsync(int orderId);
         Task<IEnumerable<Order>> GetUserOrdersAsync(int userId);
         Task<(IEnumerable<Order> Orders, int TotalCount, int TotalPages)> GetPagedAsync(
-            int page, int pageSize, int? userId = null, string? status = null);
+            int page, int pageSize, int? userId = null, string? status = null, string? searchTerm = null);
         Task<(bool Success, string Message, Order? Order)> CreateOrderAsync(int userId, string street, string city, string? notes = null);
         Task<bool> UpdateStatusAsync(int orderId, string status);
         Task<int> GetPendingOrderCountAsync();
@@ -58,9 +58,9 @@ namespace Arcade.Services
         }
 
         public async Task<(IEnumerable<Order> Orders, int TotalCount, int TotalPages)> GetPagedAsync(
-            int page, int pageSize, int? userId = null, string? status = null)
+            int page, int pageSize, int? userId = null, string? status = null, string? searchTerm = null)
         {
-            var (orders, totalCount) = await _orderRepository.GetPagedAsync(page, pageSize, userId, status);
+            var (orders, totalCount) = await _orderRepository.GetPagedAsync(page, pageSize, userId, status, null, null, searchTerm);
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             return (orders, totalCount, totalPages);
         }
