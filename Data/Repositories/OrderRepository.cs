@@ -22,7 +22,8 @@ namespace Arcade.Data.Repositories
             int? userId = null,
             string? status = null,
             DateTime? fromDate = null,
-            DateTime? toDate = null);
+            DateTime? toDate = null,
+            string? searchTerm = null);
     }
 
     /// <summary>
@@ -106,7 +107,8 @@ namespace Arcade.Data.Repositories
             int? userId = null,
             string? status = null,
             DateTime? fromDate = null,
-            DateTime? toDate = null)
+            DateTime? toDate = null,
+            string? searchTerm = null)
         {
             var query = _dbSet
                 .Include(o => o.User)
@@ -132,6 +134,24 @@ namespace Arcade.Data.Repositories
             if (toDate.HasValue)
             {
                 query = query.Where(o => o.OrderDate <= toDate.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.Trim();
+                // Try to parse as order ID for exact match
+                if (int.TryParse(term, out int orderId))
+                {
+                    query = query.Where(o => o.OrderId == orderId);
+                }
+                else
+                {
+                    // Use EF.Functions.Like for case-insensitive pattern matching
+                    var pattern = $"%{term}%";
+                    query = query.Where(o =>
+                        (o.User != null && o.User.FullName != null && EF.Functions.Like(o.User.FullName, pattern)) ||
+                        (o.User != null && o.User.Email != null && EF.Functions.Like(o.User.Email, pattern)));
+                }
             }
 
             var totalCount = await query.CountAsync();
