@@ -54,8 +54,8 @@ namespace Arcade.Controllers
 
             model.Subtotal = model.Items.Sum(i => i.Subtotal);
             model.Shipping = model.Subtotal >= 2500 ? 0 : 100; // Free shipping over 2500 EGP
-            model.Tax = model.Subtotal * 0.14m; // 14% VAT (Egypt)
-            model.Total = model.Subtotal + model.Shipping + model.Tax;
+            model.Tax = 0; // No tax
+            model.Total = model.Subtotal + model.Shipping;
 
             return View(model);
         }
@@ -85,7 +85,8 @@ namespace Arcade.Controllers
             }
 
             TempData[success ? "SuccessMessage" : "ErrorMessage"] = message;
-            return RedirectToAction("Index");
+            // Return to the previous page (product details or listing) instead of cart
+            return Redirect(Request.Headers["Referer"].ToString());
         }
 
         /// <summary>
@@ -103,8 +104,8 @@ namespace Arcade.Controllers
                 var cartItems = await _cartService.GetCartAsync(userId);
                 var subtotal = cartItems.Sum(ci => ci.Subtotal);
                 var shipping = subtotal >= 2500 ? 0 : 100m;
-                var tax = subtotal * 0.14m;
-                var total = subtotal + shipping + tax;
+                var tax = 0m;
+                var total = subtotal + shipping;
                 var itemCount = cartItems.Sum(ci => ci.Quantity);
 
                 var item = cartItems.FirstOrDefault(ci => ci.ProductId == productId);
@@ -142,8 +143,8 @@ namespace Arcade.Controllers
                 var cartItems = await _cartService.GetCartAsync(userId);
                 var subtotal = cartItems.Sum(ci => ci.Subtotal);
                 var shipping = subtotal >= 2500 ? 0 : 100m;
-                var tax = subtotal * 0.14m;
-                var total = subtotal + shipping + tax;
+                var tax = 0m;
+                var total = subtotal + shipping;
                 var itemCount = cartItems.Sum(ci => ci.Quantity);
 
                 return Json(new
