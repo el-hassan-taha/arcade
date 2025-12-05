@@ -547,6 +547,108 @@ a:hover { color: var(--arcade-primary); }
     box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
 }
 
+/* Search Container & Dropdown */
+.cyber-search-container {
+    position: relative;
+    flex: 1;
+    max-width: 600px;
+    margin: 0 2rem;
+}
+
+.cyber-search-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: var(--arcade-surface);
+    border: 1px solid var(--arcade-border);
+    border-radius: var(--arcade-radius-lg);
+    box-shadow: var(--arcade-shadow-lg), 0 10px 40px rgba(0,0,0,0.5);
+    z-index: 9999;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+}
+
+.cyber-search-dropdown.active {
+    display: block;
+    animation: dropdownSlide 0.2s ease;
+}
+
+@keyframes dropdownSlide {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cyber-search-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--arcade-text);
+    border-bottom: 1px solid var(--arcade-border);
+    transition: background 0.2s;
+}
+
+.cyber-search-dropdown-item:last-child { border-bottom: none; }
+
+.cyber-search-dropdown-item:hover,
+.cyber-search-dropdown-item.selected {
+    background: var(--arcade-primary-light);
+}
+
+.cyber-search-dropdown-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.cyber-search-dropdown-info { flex: 1; }
+
+.cyber-search-dropdown-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: block;
+}
+
+.cyber-search-dropdown-desc {
+    font-size: 0.8rem;
+    color: var(--arcade-text-muted);
+}
+
+.cyber-search-dropdown-price {
+    font-weight: 700;
+    color: var(--arcade-accent);
+}
+
+.cyber-search-dropdown-footer {
+    padding: 0.75rem;
+    text-align: center;
+    background: var(--arcade-bg-alt);
+    border-radius: 0 0 12px 12px;
+}
+
+.cyber-search-dropdown-footer a {
+    color: var(--arcade-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.cyber-search-dropdown-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--arcade-text-muted);
+}
+
+.search-highlight {
+    background: rgba(6, 182, 212, 0.3);
+    color: var(--arcade-accent);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
 /* Nav Links */
 .cyber-nav-links {
     display: flex;

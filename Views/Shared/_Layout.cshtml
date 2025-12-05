@@ -50,11 +50,14 @@
             </a>
 
             <!-- Search -->
-            <form class="cyber-search" asp-controller="Product" asp-action="Index" method="get">
-                <input type="text" name="searchTerm" class="cyber-search-input" placeholder="Search products..."
-                    autocomplete="off">
-                <button class="cyber-search-btn" type="submit"><i class="fas fa-search"></i></button>
-            </form>
+            <div class="cyber-search-container">
+                <form class="cyber-search" asp-controller="Product" asp-action="Index" method="get" id="searchForm">
+                    <input type="text" name="searchTerm" class="cyber-search-input" id="searchInput" placeholder="Search products..."
+                        autocomplete="off">
+                    <button class="cyber-search-btn" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="cyber-search-dropdown" id="searchDropdown"></div>
+            </div>
 
             <!-- Nav Icons -->
             <ul class="cyber-nav-links">

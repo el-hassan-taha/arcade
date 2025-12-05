@@ -286,6 +286,109 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // =========================================================================
+    // SEARCH AUTOCOMPLETE DROPDOWN
+    // =========================================================================
+    const searchInputEl = document.getElementById('searchInput');
+    const searchDropdown = document.getElementById('searchDropdown');
+    let selectedIndex = -1;
+    let searchTimeout = null;
+
+    console.log('🔍 Search elements:', { searchInputEl, searchDropdown });
+
+    function highlightMatch(text, term) {
+        if (!text || !term) return text || '';
+        const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
+    function renderDropdown(products, term) {
+        if (!products || products.length === 0) {
+            searchDropdown.innerHTML = '<div class="cyber-search-dropdown-empty"><i class="fas fa-search"></i> No products found</div>';
+            searchDropdown.classList.add('active');
+            return;
+        }
+
+        let html = '';
+        products.forEach((p, index) => {
+            html += `
+                <a href="/Product/Details/${p.id}" class="cyber-search-dropdown-item" data-index="${index}">
+                    <img src="${p.imageUrl || '/images/placeholder.svg'}" alt="${p.name}" class="cyber-search-dropdown-img" onerror="this.src='/images/placeholder.svg'">
+                    <div class="cyber-search-dropdown-info">
+                        <span class="cyber-search-dropdown-name">${highlightMatch(p.name, term)}</span>
+                        <span class="cyber-search-dropdown-desc">${p.category || ''}</span>
+                    </div>
+                    <span class="cyber-search-dropdown-price">EGP ${p.price.toLocaleString()}</span>
+                </a>
+            `;
+        });
+
+        html += `<div class="cyber-search-dropdown-footer"><a href="/Product?searchTerm=${encodeURIComponent(term)}">View all results <i class="fas fa-arrow-right"></i></a></div>`;
+
+        searchDropdown.innerHTML = html;
+        searchDropdown.classList.add('active');
+        selectedIndex = -1;
+    }
+
+    function closeDropdown() {
+        if (searchDropdown) {
+            searchDropdown.classList.remove('active');
+            selectedIndex = -1;
+        }
+    }
+
+    if (searchInputEl && searchDropdown) {
+        console.log('✅ Search autocomplete initialized');
+        searchInputEl.addEventListener('input', function () {
+            const term = this.value.trim();
+            console.log('🔎 Searching for:', term);
+            if (searchTimeout) clearTimeout(searchTimeout);
+            
+            if (term.length < 2) {
+                closeDropdown();
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                console.log('📡 Fetching:', `/Product/QuickSearch?term=${encodeURIComponent(term)}`);
+                fetch(`/Product/QuickSearch?term=${encodeURIComponent(term)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('📦 Results:', data);
+                        renderDropdown(data, term);
+                    })
+                    .catch(err => {
+                        console.error('❌ Fetch error:', err);
+                        closeDropdown();
+                    });
+            }, 200);
+        });
+
+        searchInputEl.addEventListener('keydown', function (e) {
+            const items = searchDropdown.querySelectorAll('.cyber-search-dropdown-item');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (selectedIndex < items.length - 1) selectedIndex++;
+                items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (selectedIndex > 0) selectedIndex--;
+                items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
+            } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                e.preventDefault();
+                items[selectedIndex]?.click();
+            } else if (e.key === 'Escape') {
+                closeDropdown();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!searchInputEl.contains(e.target) && !searchDropdown.contains(e.target)) {
+                closeDropdown();
+            }
+        });
+    }
+
+    // =========================================================================
     // CATEGORIES DROPDOWN
     // =========================================================================
     const catDropdownBtn = document.querySelector('.cyber-cat-dropdown-btn');
