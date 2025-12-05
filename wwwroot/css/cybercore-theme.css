@@ -2651,9 +2651,372 @@ a:hover { color: var(--arcade-primary); }
     .cyber-hero-title { font-size: 2rem; }
     .cyber-hero-stats { gap: 1.5rem; flex-wrap: wrap; }
     .cyber-stat-value { font-size: 2rem; }
-    
+
     .cyber-cart-item { flex-direction: column; text-align: center; }
     .cyber-cart-img { width: 100%; height: 150px; }
     .cyber-cart-actions { flex-direction: row; justify-content: space-between; width: 100%; margin-top: 1rem; }
     .cyber-product-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+}
+
+/* ==================== LIGHT MODE THEME ==================== */
+/* Light Mode Variables */
+[data-theme="light"] {
+    --arcade-bg: #f8fafc;
+    --arcade-bg-alt: #ffffff;
+    --arcade-surface: #ffffff;
+    --arcade-bg-card: #ffffff;
+    --arcade-text: #1e293b;
+    --arcade-text-muted: #64748b;
+    --arcade-border: #e2e8f0;
+    --arcade-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --arcade-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Header & Navigation */
+[data-theme="light"] .cyber-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .cyber-logo-text {
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-search-input {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-search-input:focus {
+    background: #ffffff;
+    border-color: #7c3aed;
+}
+
+[data-theme="light"] .cyber-search-input::placeholder {
+    color: #94a3b8;
+}
+
+[data-theme="light"] .cyber-nav-link {
+    color: #64748b;
+}
+
+[data-theme="light"] .cyber-nav-link:hover {
+    color: #7c3aed;
+}
+
+[data-theme="light"] .cyber-cart-badge {
+    background: #7c3aed;
+}
+
+/* Category Bar */
+[data-theme="light"] .cyber-category-bar {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .cyber-category-link {
+    color: #64748b;
+}
+
+[data-theme="light"] .cyber-category-link:hover,
+[data-theme="light"] .cyber-category-link.active {
+    color: #7c3aed;
+    background: rgba(124, 58, 237, 0.08);
+}
+
+/* Cards & Panels */
+[data-theme="light"] .cyber-panel,
+[data-theme="light"] .cyber-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .cyber-panel-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-panel-body {
+    color: #475569;
+}
+
+/* Buttons */
+[data-theme="light"] .cyber-btn-primary {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    color: #ffffff;
+}
+
+[data-theme="light"] .cyber-btn-primary:hover {
+    background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+}
+
+[data-theme="light"] .cyber-btn-outline {
+    border-color: #7c3aed;
+    color: #7c3aed;
+}
+
+[data-theme="light"] .cyber-btn-outline:hover {
+    background: #7c3aed;
+    color: #ffffff;
+}
+
+/* Product Cards */
+[data-theme="light"] .cyber-product-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .cyber-product-card:hover {
+    border-color: #7c3aed;
+    box-shadow: 0 8px 30px rgba(124, 58, 237, 0.15);
+}
+
+[data-theme="light"] .cyber-product-name {
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-product-price {
+    color: #7c3aed;
+}
+
+[data-theme="light"] .cyber-product-brand {
+    color: #64748b;
+}
+
+/* Forms & Inputs */
+[data-theme="light"] .cyber-input,
+[data-theme="light"] .cyber-select {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-input:focus,
+[data-theme="light"] .cyber-select:focus {
+    background: #ffffff;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+[data-theme="light"] .cyber-input::placeholder {
+    color: #94a3b8;
+}
+
+[data-theme="light"] .cyber-label {
+    color: #334155;
+}
+
+/* Tables */
+[data-theme="light"] .cyber-table {
+    background: #ffffff;
+}
+
+[data-theme="light"] .cyber-table th {
+    background: #f8fafc;
+    color: #1e293b;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+[data-theme="light"] .cyber-table td {
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+[data-theme="light"] .cyber-table tr:hover {
+    background: #f8fafc;
+}
+
+/* Alerts */
+[data-theme="light"] .cyber-alert {
+    border: 1px solid;
+}
+
+[data-theme="light"] .cyber-alert-success {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #166534;
+}
+
+[data-theme="light"] .cyber-alert-danger {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+[data-theme="light"] .cyber-alert-warning {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+}
+
+[data-theme="light"] .cyber-alert-info {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1e40af;
+}
+
+/* Dropdown */
+[data-theme="light"] .cyber-dropdown-menu {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .cyber-dropdown-item {
+    color: #475569;
+}
+
+[data-theme="light"] .cyber-dropdown-item:hover {
+    background: #f8fafc;
+    color: #7c3aed;
+}
+
+[data-theme="light"] .cyber-dropdown-item i {
+    color: #94a3b8;
+}
+
+[data-theme="light"] .cyber-dropdown-item:hover i {
+    color: #7c3aed;
+}
+
+/* Footer */
+[data-theme="light"] .cyber-footer {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .cyber-footer-title {
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-footer-link {
+    color: #64748b;
+}
+
+[data-theme="light"] .cyber-footer-link:hover {
+    color: #7c3aed;
+}
+
+[data-theme="light"] .cyber-footer-bottom {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+/* Hero Section */
+[data-theme="light"] .cyber-hero {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%);
+}
+
+[data-theme="light"] .cyber-hero-title {
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-hero-subtitle {
+    color: #475569;
+}
+
+/* Stats */
+[data-theme="light"] .cyber-stat-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .cyber-stat-value {
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-stat-label {
+    color: #64748b;
+}
+
+/* Empty State */
+[data-theme="light"] .cyber-empty-state h3 {
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-empty-state p {
+    color: #64748b;
+}
+
+/* Text Colors */
+[data-theme="light"] .cyber-text-muted {
+    color: #64748b;
+}
+
+[data-theme="light"] .cyber-text-success {
+    color: #16a34a;
+}
+
+[data-theme="light"] .cyber-text-danger {
+    color: #dc2626;
+}
+
+[data-theme="light"] .cyber-text-warning {
+    color: #d97706;
+}
+
+/* Summary and Checkout */
+[data-theme="light"] .cyber-summary {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .cyber-summary-row {
+    color: #475569;
+}
+
+[data-theme="light"] .cyber-summary-total {
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-summary-divider {
+    background: #e2e8f0;
+}
+
+/* Badges */
+[data-theme="light"] .cyber-free-shipping {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #166534;
+}
+
+[data-theme="light"] .cyber-shipping-progress {
+    color: #64748b;
+}
+
+[data-theme="light"] .cyber-progress-bar {
+    background: #e2e8f0;
+}
+
+/* Secure Badge */
+[data-theme="light"] .cyber-secure-badge {
+    color: #64748b;
+}
+
+/* Page Headers */
+[data-theme="light"] .cyber-page-header {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%);
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .cyber-page-title {
+    color: #1e293b;
+}
+
+[data-theme="light"] .cyber-page-subtitle {
+    color: #64748b;
+}
+
+/* Links in content */
+[data-theme="light"] a:not(.cyber-btn):not(.cyber-nav-link):not(.cyber-category-link) {
+    color: #7c3aed;
+}
+
+[data-theme="light"] a:not(.cyber-btn):not(.cyber-nav-link):not(.cyber-category-link):hover {
+    color: #6d28d9;
 }
