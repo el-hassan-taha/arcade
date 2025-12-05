@@ -1,0 +1,484 @@
+@model Arcade.ViewModels.OrderDetailsViewModel
+@{
+    ViewData["Title"] = $"Order #{Model.OrderNumber}";
+}
+
+<style>
+    .order-details-header {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(34, 211, 238, 0.05));
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    
+    .order-details-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .order-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #e2e8f0;
+        margin: 0;
+    }
+    
+    .order-title i {
+        background: linear-gradient(135deg, #6366f1, #22d3ee);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-right: 0.75rem;
+    }
+    
+    .order-title span { color: #22d3ee; }
+    
+    .order-date { color: #94a3b8; margin-top: 0.5rem; }
+    .order-date i { margin-right: 0.5rem; }
+    
+    .order-status-large {
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .order-status-large.pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .order-status-large.processing { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .order-status-large.shipped { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .order-status-large.delivered { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .order-status-large.cancelled { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    
+    .order-timeline {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin: 2rem 0;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
+        border-radius: 16px;
+        border: 1px solid rgba(99, 102, 241, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .timeline-track {
+        position: absolute;
+        top: 50%;
+        left: 5%;
+        right: 5%;
+        height: 4px;
+        background: rgba(99, 102, 241, 0.2);
+        transform: translateY(-50%);
+        border-radius: 2px;
+    }
+    
+    .timeline-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #6366f1, #22d3ee);
+        border-radius: 2px;
+        transition: width 0.5s ease;
+    }
+    
+    .timeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+        flex: 1;
+    }
+    
+    .timeline-step-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        background: rgba(30, 41, 59, 1);
+        border: 3px solid rgba(99, 102, 241, 0.3);
+        color: #64748b;
+        margin-bottom: 0.75rem;
+        transition: all 0.3s ease;
+    }
+    
+    .timeline-step.completed .timeline-step-icon {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        border-color: #6366f1;
+        color: white;
+    }
+    
+    .timeline-step.active .timeline-step-icon {
+        background: linear-gradient(135deg, #22d3ee, #06b6d4);
+        border-color: #22d3ee;
+        color: white;
+        box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+        animation: pulse 2s infinite;
+    }
+    
+    @@keyframes pulse {
+        0%, 100% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.4); }
+        50% { box-shadow: 0 0 30px rgba(34, 211, 238, 0.6); }
+    }
+    
+    .timeline-step-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+        text-align: center;
+    }
+    
+    .timeline-step.completed .timeline-step-label,
+    .timeline-step.active .timeline-step-label { color: #e2e8f0; }
+    
+    .order-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+        border: 1px solid rgba(99, 102, 241, 0.15);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .order-card-header {
+        padding: 1.25rem 1.5rem;
+        background: rgba(99, 102, 241, 0.05);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    }
+    
+    .order-card-header h3 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .order-card-header h3 i { color: #818cf8; }
+    
+    .order-item {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        transition: background 0.3s ease;
+    }
+    
+    .order-item:last-child { border-bottom: none; }
+    .order-item:hover { background: rgba(99, 102, 241, 0.05); }
+    
+    .order-item-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(99, 102, 241, 0.1);
+        flex-shrink: 0;
+    }
+    
+    .order-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .order-item-info { flex: 1; }
+    
+    .order-item-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 0.25rem;
+    }
+    
+    .order-item-name a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .order-item-name a:hover { color: #22d3ee; }
+    
+    .order-item-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: #94a3b8;
+    }
+    
+    .order-item-total {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #22d3ee;
+    }
+    
+    .order-summary-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+        border: 1px solid rgba(99, 102, 241, 0.15);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        font-size: 0.95rem;
+        color: #94a3b8;
+    }
+    
+    .summary-row.total {
+        border-top: 2px solid rgba(99, 102, 241, 0.2);
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #e2e8f0;
+    }
+    
+    .summary-row.total span:last-child {
+        font-size: 1.25rem;
+        color: #22d3ee;
+    }
+    
+    .summary-row .free { color: #10b981; }
+    
+    .address-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+        border: 1px solid rgba(99, 102, 241, 0.15);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .address-card h4 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #818cf8;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .address-text { color: #cbd5e1; line-height: 1.6; }
+    
+    .action-buttons { display: flex; flex-direction: column; gap: 0.75rem; }
+    
+    .help-card {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(34, 211, 238, 0.05));
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .help-card-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(34, 211, 238, 0.1));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+    }
+    
+    .help-card-icon i {
+        font-size: 1.5rem;
+        color: #818cf8;
+    }
+    
+    .help-card h4 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .help-card p {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .breadcrumb-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .breadcrumb-nav a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .breadcrumb-nav a:hover { color: #22d3ee; }
+    .breadcrumb-nav span { color: #64748b; }
+    .breadcrumb-nav .current { color: #e2e8f0; }
+</style>
+
+<div class="container py-4">
+    <nav class="breadcrumb-nav">
+        <a asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i></a>
+        <span>/</span>
+        <a asp-action="History">Order History</a>
+        <span>/</span>
+        <span class="current">Order #@Model.OrderNumber</span>
+    </nav>
+
+    <div class="order-details-header">
+        <div class="order-details-header-top">
+            <div>
+                <h1 class="order-title"><i class="fas fa-receipt"></i>Order <span>#@Model.OrderNumber</span></h1>
+                <p class="order-date"><i class="fas fa-calendar-alt"></i> Placed on @Model.OrderDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
+            </div>
+            <span class="order-status-large @Model.Status.ToLower()">
+                <i class="fas @GetStatusIcon(Model.Status)"></i> @Model.Status
+            </span>
+        </div>
+    </div>
+
+    @{
+        var progressWidth = Model.Status switch {
+            "Pending" => "12.5%",
+            "Processing" => "37.5%",
+            "Shipped" => "62.5%",
+            "Delivered" => "100%",
+            _ => "0%"
+        };
+    }
+    
+    <div class="order-timeline">
+        <div class="timeline-track">
+            <div class="timeline-progress" style="width: @progressWidth"></div>
+        </div>
+        <div class="timeline-step @(IsStepComplete("Pending", Model.Status) ? "completed" : IsStepActive("Pending", Model.Status) ? "active" : "")">
+            <div class="timeline-step-icon"><i class="fas fa-clipboard-check"></i></div>
+            <span class="timeline-step-label">Order Placed</span>
+        </div>
+        <div class="timeline-step @(IsStepComplete("Processing", Model.Status) ? "completed" : IsStepActive("Processing", Model.Status) ? "active" : "")">
+            <div class="timeline-step-icon"><i class="fas fa-cog"></i></div>
+            <span class="timeline-step-label">Processing</span>
+        </div>
+        <div class="timeline-step @(IsStepComplete("Shipped", Model.Status) ? "completed" : IsStepActive("Shipped", Model.Status) ? "active" : "")">
+            <div class="timeline-step-icon"><i class="fas fa-truck"></i></div>
+            <span class="timeline-step-label">Shipped</span>
+        </div>
+        <div class="timeline-step @(IsStepComplete("Delivered", Model.Status) ? "completed" : IsStepActive("Delivered", Model.Status) ? "active" : "")">
+            <div class="timeline-step-icon"><i class="fas fa-check-circle"></i></div>
+            <span class="timeline-step-label">Delivered</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="order-card">
+                <div class="order-card-header">
+                    <h3><i class="fas fa-box"></i> Order Items (@Model.Items?.Count() items)</h3>
+                </div>
+                <div class="order-items">
+                    @if (Model.Items != null)
+                    {
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="order-item">
+                                <div class="order-item-image">
+                                    <img src="@(item.ImageUrl ?? "/images/placeholder.svg")" alt="@item.ProductName" onerror="this.src='/images/placeholder.svg'">
+                                </div>
+                                <div class="order-item-info">
+                                    <h4 class="order-item-name">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId">@item.ProductName</a>
+                                    </h4>
+                                    <div class="order-item-meta">
+                                        <span><i class="fas fa-tag"></i> @item.UnitPrice.ToString("N0") EGP</span>
+                                        <span><i class="fas fa-times"></i> @item.Quantity</span>
+                                    </div>
+                                </div>
+                                <div class="order-item-total">@item.Total.ToString("N0") EGP</div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <h3><i class="fas fa-sticky-note"></i> Order Notes</h3>
+                    </div>
+                    <div class="p-4">
+                        <p class="mb-0" style="color: #cbd5e1;">@Model.Notes</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="order-summary-card">
+                <h4 style="color: #818cf8; margin-bottom: 1rem; font-size: 0.9rem;"><i class="fas fa-calculator"></i> Order Summary</h4>
+                <div class="summary-row"><span>Subtotal</span><span>@Model.Subtotal.ToString("N0") EGP</span></div>
+                <div class="summary-row"><span>Shipping</span><span class="@(Model.Shipping == 0 ? "free" : "")">@(Model.Shipping == 0 ? "FREE" : Model.Shipping.ToString("N0") + " EGP")</span></div>
+                <div class="summary-row"><span>Tax</span><span>@Model.Tax.ToString("N0") EGP</span></div>
+                <div class="summary-row total"><span>Total</span><span>@Model.Total.ToString("N0") EGP</span></div>
+            </div>
+
+            <div class="address-card">
+                <h4><i class="fas fa-map-marker-alt"></i> Shipping Address</h4>
+                <p class="address-text mb-0">@Model.ShippingAddress</p>
+            </div>
+
+            <div class="action-buttons">
+                @if (Model.Status == "Delivered")
+                {
+                    <button type="button" class="cyber-btn cyber-btn-primary w-100"><i class="fas fa-redo"></i> Reorder Items</button>
+                }
+                <button type="button" class="cyber-btn cyber-btn-outline w-100"><i class="fas fa-print"></i> Print Invoice</button>
+                <a asp-action="History" class="cyber-btn cyber-btn-ghost w-100"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+            </div>
+
+            <div class="help-card mt-4">
+                <div class="help-card-icon"><i class="fas fa-headset"></i></div>
+                <h4>Need Help?</h4>
+                <p>Questions about your order? Our support team is here to help.</p>
+                <a href="mailto:support@arcade.com" class="cyber-btn cyber-btn-outline cyber-btn-sm"><i class="fas fa-envelope"></i> Contact Support</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusIcon(string status) => status switch {
+        "Pending" => "fa-clock",
+        "Processing" => "fa-cog fa-spin",
+        "Shipped" => "fa-truck",
+        "Delivered" => "fa-check-circle",
+        "Cancelled" => "fa-times-circle",
+        _ => "fa-info-circle"
+    };
+
+    bool IsStepComplete(string step, string currentStatus) {
+        var steps = new[] { "Pending", "Processing", "Shipped", "Delivered" };
+        return Array.IndexOf(steps, currentStatus) > Array.IndexOf(steps, step);
+    }
+
+    bool IsStepActive(string step, string currentStatus) => step == currentStatus;
+}

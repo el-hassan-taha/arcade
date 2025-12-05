@@ -1,0 +1,204 @@
+@model Arcade.ViewModels.CartViewModel
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="cyber-page-header">
+    <h1 class="cyber-page-title">
+        <i class="fas fa-shopping-cart"></i> Shopping Cart
+    </h1>
+    <p class="cyber-page-subtitle">@Model.TotalItems item(s) in your cart</p>
+</div>
+
+@if (Model.Items != null && Model.Items.Any())
+{
+    <div class="row g-4">
+        <!-- Cart Items -->
+        <div class="col-lg-8">
+            <div class="cyber-panel cyber-panel-glow">
+                <div class="cyber-panel-header">
+                    <h3 class="cyber-panel-title">
+                        <i class="fas fa-box"></i> Cart Items
+                    </h3>
+                    <form asp-action="Clear" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="cyber-btn cyber-btn-secondary cyber-btn-sm"
+                            onclick="return confirm('Are you sure you want to clear your cart?')">
+                            <i class="fas fa-trash"></i> Clear Cart
+                        </button>
+                    </form>
+                </div>
+                <div class="cyber-cart-items">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="cyber-cart-item">
+                            <div class="cyber-cart-item-image">
+                                <img src="@(item.ImageUrl ?? "/images/placeholder.svg")" alt="@item.ProductName"
+                                    onerror="this.onerror=null; this.src='/images/placeholder.svg';">
+                            </div>
+                            <div class="cyber-cart-item-info">
+                                <h4 class="cyber-cart-item-name">
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId">
+                                        @item.ProductName
+                                    </a>
+                                </h4>
+                                <span class="cyber-cart-item-unit">@item.UnitPrice.ToString("N0") EGP each</span>
+                            </div>
+                            <div class="cyber-cart-item-quantity">
+                                <form asp-action="UpdateQuantity" method="post" class="cyber-qty-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <div class="cyber-qty-control">
+                                        <button type="button" class="cyber-qty-btn cyber-qty-minus">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" name="quantity" value="@item.Quantity" min="1"
+                                            max="@item.MaxQuantity" class="cyber-qty-input">
+                                        <button type="button" class="cyber-qty-btn cyber-qty-plus">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <button type="submit" class="cyber-btn cyber-btn-secondary cyber-btn-sm">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="cyber-cart-item-total">
+                                <span class="cyber-cart-item-price">@item.Total.ToString("N0") EGP</span>
+                            </div>
+                            <div class="cyber-cart-item-remove">
+                                <form asp-action="Remove" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <button type="submit" class="cyber-btn cyber-btn-danger cyber-btn-sm">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="cyber-cart-actions mt-4">
+                <a asp-controller="Product" asp-action="Index" class="cyber-btn cyber-btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="col-lg-4">
+            <div class="cyber-panel cyber-panel-glow cyber-summary">
+                <div class="cyber-panel-header">
+                    <h3 class="cyber-panel-title">
+                        <i class="fas fa-receipt"></i> Order Summary
+                    </h3>
+                </div>
+                <div class="cyber-summary-body">
+                    <div class="cyber-summary-row">
+                        <span>Subtotal (@Model.TotalItems items)</span>
+                        <span>@Model.Subtotal.ToString("N0") EGP</span>
+                    </div>
+                    <div class="cyber-summary-row">
+                        <span>Shipping</span>
+                        <span class="@(Model.Shipping == 0 ? "cyber-text-success" : "")">
+                            @(Model.Shipping == 0 ? "FREE" : Model.Shipping.ToString("N0") + " EGP")
+                        </span>
+                    </div>
+                    <div class="cyber-summary-row">
+                        <span>Tax (Estimated)</span>
+                        <span>@Model.Tax.ToString("N0") EGP</span>
+                    </div>
+                    <div class="cyber-summary-divider"></div>
+                    <div class="cyber-summary-row cyber-summary-total">
+                        <span>Total</span>
+                        <span>@Model.Total.ToString("N0") EGP</span>
+                    </div>
+
+                    @if (Model.Subtotal >= 2500)
+                    {
+                        <div class="cyber-free-shipping">
+                            <i class="fas fa-truck"></i>
+                            You've qualified for FREE shipping!
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="cyber-shipping-progress">
+                            <div class="cyber-shipping-text">
+                                Add @((2500 - Model.Subtotal).ToString("N0")) EGP more for FREE shipping
+                            </div>
+                            <div class="cyber-progress-bar">
+                                <div class="cyber-progress-fill"
+                                    style="width: @((Model.Subtotal / 2500 * 100).ToString("N0"))%"></div>
+                            </div>
+                        </div>
+                    }
+
+                    <a asp-controller="Order" asp-action="Checkout"
+                        class="cyber-btn cyber-btn-primary cyber-btn-lg w-100 mt-4">
+                        <i class="fas fa-lock"></i> Proceed to Checkout
+                    </a>
+
+                    <div class="cyber-secure-badge mt-3">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Secure Checkout - 256-bit SSL Encryption</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promo Code -->
+            <div class="cyber-panel mt-4">
+                <div class="cyber-panel-body">
+                    <h4 class="cyber-panel-subtitle">
+                        <i class="fas fa-tag"></i> Promo Code
+                    </h4>
+                    <div class="cyber-promo-form">
+                        <input type="text" class="cyber-input" placeholder="Enter code">
+                        <button type="button" class="cyber-btn cyber-btn-secondary">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="cyber-empty-state cyber-empty-lg">
+        <div class="cyber-empty-icon">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        <h3 class="cyber-empty-title">Your Cart is Empty</h3>
+        <p class="cyber-empty-text">Looks like you haven't added any items yet. Start shopping to fill your cart with
+            awesome tech!</p>
+        <a asp-controller="Product" asp-action="Index" class="cyber-btn cyber-btn-primary cyber-btn-lg">
+            <i class="fas fa-shopping-bag"></i> Start Shopping
+        </a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.cyber-qty-form').forEach(form => {
+            const input = form.querySelector('.cyber-qty-input');
+            const maxQty = parseInt(input.max);
+
+            form.querySelector('.cyber-qty-minus').addEventListener('click', function () {
+                const currentVal = parseInt(input.value);
+                if (currentVal > 1) {
+                    input.value = currentVal - 1;
+                    form.submit();
+                }
+            });
+
+            form.querySelector('.cyber-qty-plus').addEventListener('click', function () {
+                const currentVal = parseInt(input.value);
+                if (currentVal < maxQty) {
+                    input.value = currentVal + 1;
+                    form.submit();
+                }
+            });
+        });
+    </script>
+}

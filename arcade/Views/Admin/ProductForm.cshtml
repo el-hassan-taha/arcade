@@ -1,0 +1,200 @@
+@model Arcade.ViewModels.ProductFormViewModel
+@{
+    ViewData["Title"] = Model.ProductId == 0 ? "Add Product" : "Edit Product";
+    Layout = "_AdminLayout";
+}
+
+<div class="cyber-admin-header">
+    <div class="cyber-admin-header-content">
+        <h1 class="cyber-admin-title">
+            <i class="fas @(Model.ProductId == 0 ? "fa-plus-circle" : "fa-edit")"></i>
+            @(Model.ProductId == 0 ? "Add New Product" : "Edit Product")
+        </h1>
+    </div>
+    <div class="cyber-admin-actions">
+        <a asp-action="Products" class="cyber-btn cyber-btn-ghost">
+            <i class="fas fa-arrow-left"></i> Back to Products
+        </a>
+    </div>
+</div>
+
+<form asp-action="@(Model.ProductId == 0 ? "CreateProduct" : "EditProduct")" method="post" enctype="multipart/form-data"
+    class="cyber-form">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ProductId" />
+    <div asp-validation-summary="ModelOnly" class="cyber-alert cyber-alert-danger"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Basic Info -->
+            <div class="cyber-card">
+                <div class="cyber-card-header">
+                    <h3 class="cyber-card-title">
+                        <i class="fas fa-info-circle"></i> Basic Information
+                    </h3>
+                </div>
+                <div class="cyber-card-body">
+                    <div class="cyber-form-group">
+                        <label asp-for="ProductName" class="cyber-label">Product Name *</label>
+                        <input asp-for="ProductName" class="cyber-input" placeholder="Enter product name" />
+                        <span asp-validation-for="ProductName" class="cyber-validation-error"></span>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <label asp-for="ShortDescription" class="cyber-label">Short Description</label>
+                        <input asp-for="ShortDescription" class="cyber-input"
+                            placeholder="Brief description (max 200 chars)" />
+                        <span asp-validation-for="ShortDescription" class="cyber-validation-error"></span>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <label asp-for="Description" class="cyber-label">Full Description *</label>
+                        <textarea asp-for="Description" class="cyber-input cyber-textarea" rows="5"
+                            placeholder="Detailed product description"></textarea>
+                        <span asp-validation-for="Description" class="cyber-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing & Inventory -->
+            <div class="cyber-card mt-4">
+                <div class="cyber-card-header">
+                    <h3 class="cyber-card-title">
+                        <i class="fas fa-dollar-sign"></i> Pricing & Inventory
+                    </h3>
+                </div>
+                <div class="cyber-card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="cyber-form-group">
+                                <label asp-for="Price" class="cyber-label">Price *</label>
+                                <div class="cyber-input-group">
+                                    <span class="cyber-input-addon">$</span>
+                                    <input asp-for="Price" class="cyber-input" type="number" step="0.01" min="0" />
+                                </div>
+                                <span asp-validation-for="Price" class="cyber-validation-error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cyber-form-group">
+                                <label asp-for="StockQuantity" class="cyber-label">Stock Quantity *</label>
+                                <input asp-for="StockQuantity" class="cyber-input" type="number" min="0" />
+                                <span asp-validation-for="StockQuantity" class="cyber-validation-error"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media -->
+            <div class="cyber-card mt-4">
+                <div class="cyber-card-header">
+                    <h3 class="cyber-card-title">
+                        <i class="fas fa-image"></i> Product Image
+                    </h3>
+                </div>
+                <div class="cyber-card-body">
+                    <div class="cyber-form-group">
+                        <label asp-for="ImageUrl" class="cyber-label">Image URL</label>
+                        <input asp-for="ImageUrl" class="cyber-input" placeholder="https://example.com/image.jpg" />
+                        <span asp-validation-for="ImageUrl" class="cyber-validation-error"></span>
+                        <small class="cyber-form-hint">Enter a direct link to the product image</small>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="cyber-image-preview mt-3">
+                            <img src="@Model.ImageUrl" alt="Product preview" id="imagePreview"
+                                onerror="this.style.display='none'">
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Category & Status -->
+            <div class="cyber-card">
+                <div class="cyber-card-header">
+                    <h3 class="cyber-card-title">
+                        <i class="fas fa-cog"></i> Organization
+                    </h3>
+                </div>
+                <div class="cyber-card-body">
+                    <div class="cyber-form-group">
+                        <label asp-for="CategoryId" class="cyber-label">Category *</label>
+                        <select asp-for="CategoryId" asp-items="Model.Categories" class="cyber-select">
+                            <option value="">Select a category</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="cyber-validation-error"></span>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <div class="cyber-checkbox-wrapper">
+                            <input asp-for="IsActive" class="cyber-checkbox" />
+                            <label asp-for="IsActive" class="cyber-checkbox-label">Active (visible to customers)</label>
+                        </div>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <div class="cyber-checkbox-wrapper">
+                            <input asp-for="IsFeatured" class="cyber-checkbox" />
+                            <label asp-for="IsFeatured" class="cyber-checkbox-label">Featured Product</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="cyber-card mt-4">
+                <div class="cyber-card-body">
+                    <button type="submit" class="cyber-btn cyber-btn-primary cyber-btn-lg cyber-btn-block">
+                        <i class="fas fa-save"></i> @(Model.ProductId == 0 ? "Create Product" : "Update Product")
+                    </button>
+                    @if (Model.ProductId != 0)
+                    {
+                        <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ProductId"
+                            class="cyber-btn cyber-btn-outline cyber-btn-block mt-2">
+                            <i class="fas fa-eye"></i> View Product
+                        </a>
+                    }
+                    <a asp-action="Products" class="cyber-btn cyber-btn-ghost cyber-btn-block mt-2">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="cyber-card mt-4 cyber-tips-card">
+                <div class="cyber-card-header">
+                    <h3 class="cyber-card-title">
+                        <i class="fas fa-lightbulb"></i> Tips
+                    </h3>
+                </div>
+                <div class="cyber-card-body">
+                    <ul class="cyber-tips-list">
+                        <li>Use high-quality images (800x800 recommended)</li>
+                        <li>Write clear, descriptive product names</li>
+                        <li>Include all key features in the description</li>
+                        <li>Set competitive pricing</li>
+                        <li>Keep stock quantities updated</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Image preview
+        document.getElementById('ImageUrl')?.addEventListener('input', function () {
+            const preview = document.getElementById('imagePreview');
+            if (preview) {
+                preview.src = this.value;
+                preview.style.display = this.value ? 'block' : 'none';
+            }
+        });
+    </script>
+}
