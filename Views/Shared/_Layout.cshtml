@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Arcade Electronics</title>
+    <link rel="icon" type="image/svg+xml" href="~/images/logo.svg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Arcade Theme -->
+    <link rel="stylesheet" href="~/css/cybercore-theme.css" asp-append-version="true" />
+</head>
+
+<body class="cyber-body">
+    <!-- Navigation: Logo | Search | Profile | Cart | Dark Mode -->
+    <nav class="cyber-navbar" id="cyberNav">
+        <div class="container">
+            <!-- Logo -->
+            <a class="cyber-brand" asp-controller="Home" asp-action="Index">
+                <div class="cyber-logo">
+                    <svg viewBox="0 0 60 60" width="40" height="40">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#6366f1" />
+                                <stop offset="100%" stop-color="#22d3ee" />
+                            </linearGradient>
+                        </defs>
+                        <polygon points="30,2 55,16 55,44 30,58 5,44 5,16" fill="none" stroke="url(#logoGrad)"
+                            stroke-width="2" />
+                        <polygon points="30,10 48,20 48,40 30,50 12,40 12,20" fill="none" stroke="url(#logoGrad)"
+                            stroke-width="1.5" />
+                        <path d="M30,14 L42,42 L38,42 L35,35 L25,35 L22,42 L18,42 Z M30,22 L26,32 L34,32 Z"
+                            fill="url(#logoGrad)" />
+                    </svg>
+                    <span class="cyber-brand-text">ARCADE</span>
+                </div>
+            </a>
+
+            <!-- Search -->
+            <form class="cyber-search" asp-controller="Product" asp-action="Index" method="get">
+                <input type="text" name="searchTerm" class="cyber-search-input" placeholder="Search products..."
+                    autocomplete="off">
+                <button class="cyber-search-btn" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+
+            <!-- Nav Icons -->
+            <ul class="cyber-nav-links">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <!-- Profile Dropdown -->
+                    <li class="cyber-dropdown">
+                        <a class="cyber-dropdown-toggle cyber-user-toggle" href="#" data-bs-toggle="dropdown" title="@User.Identity.Name">
+                            <i class="fas fa-user"></i>
+                            <span class="cyber-username">@User.Identity.Name</span>
+                        </a>
+                        <ul class="cyber-dropdown-menu">
+                            <li><a class="cyber-dropdown-item" asp-controller="Account" asp-action="Profile"><i
+                                        class="fas fa-id-card"></i> Profile</a></li>
+                            <li><a class="cyber-dropdown-item" asp-controller="Order" asp-action="History"><i
+                                        class="fas fa-history"></i> Orders</a></li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="cyber-dropdown-divider"></li>
+                                <li><a class="cyber-dropdown-item cyber-admin-link" asp-controller="Admin"
+                                        asp-action="Dashboard"><i class="fas fa-cog"></i> Admin Panel</a></li>
+                            }
+                            <li class="cyber-dropdown-divider"></li>
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="cyber-dropdown-item cyber-logout"><i
+                                            class="fas fa-sign-out-alt"></i> Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Cart -->
+                    <li>
+                        <a class="cyber-nav-link cyber-cart-link" asp-controller="Cart" asp-action="Index" title="Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cyber-cart-badge" id="cartBadge">0</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <!-- Login/Register -->
+                    <li>
+                        <a class="cyber-nav-link" asp-controller="Account" asp-action="Login" title="Login">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="cyber-nav-link cyber-cart-link" asp-controller="Cart" asp-action="Index" title="Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>
+                    </li>
+                }
+
+                <!-- Dark Mode Toggle -->
+                <li>
+                    <button class="dark-mode-toggle" id="darkModeToggle" type="button" title="Toggle theme">
+                        <i class="fas fa-moon" id="darkModeIcon"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Categories Navigation Bar -->
+    <nav class="cyber-categories-bar">
+        <div class="container">
+            <div class="cyber-categories-wrapper">
+                <!-- All Categories Dropdown -->
+                <div class="cyber-cat-dropdown">
+                    <button class="cyber-cat-dropdown-btn" type="button">
+                        <i class="fas fa-th-large"></i>
+                        <span>Categories</span>
+                        <i class="fas fa-chevron-down cyber-cat-arrow"></i>
+                    </button>
+                    <div class="cyber-cat-dropdown-menu" id="categoriesDropdown">
+                        <a href="/Product" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-border-all"></i>
+                            <span>All Products</span>
+                        </a>
+                        <div class="cyber-cat-divider"></div>
+                        <a href="/Product?categoryId=1" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-laptop"></i>
+                            <span>Laptops</span>
+                        </a>
+                        <a href="/Product?categoryId=2" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-desktop"></i>
+                            <span>Monitors</span>
+                        </a>
+                        <a href="/Product?categoryId=3" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-memory"></i>
+                            <span>RAM</span>
+                        </a>
+                        <a href="/Product?categoryId=4" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-hdd"></i>
+                            <span>Storage (SSD)</span>
+                        </a>
+                        <a href="/Product?categoryId=5" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-mouse"></i>
+                            <span>Mouse</span>
+                        </a>
+                        <a href="/Product?categoryId=6" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-keyboard"></i>
+                            <span>Keyboards</span>
+                        </a>
+                        <a href="/Product?categoryId=7" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-microchip"></i>
+                            <span>Processors (CPU)</span>
+                        </a>
+                        <a href="/Product?categoryId=8" class="cyber-cat-dropdown-item">
+                            <i class="fas fa-bolt"></i>
+                            <span>Graphics Cards (GPU)</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Category Links -->
+                <div class="cyber-quick-categories">
+                    <a href="/Product?categoryId=1" class="cyber-quick-cat">
+                        <i class="fas fa-laptop"></i> Laptops
+                    </a>
+                    <a href="/Product?categoryId=7" class="cyber-quick-cat">
+                        <i class="fas fa-microchip"></i> CPUs
+                    </a>
+                    <a href="/Product?categoryId=8" class="cyber-quick-cat">
+                        <i class="fas fa-bolt"></i> GPUs
+                    </a>
+                    <a href="/Product?categoryId=3" class="cyber-quick-cat">
+                        <i class="fas fa-memory"></i> RAM
+                    </a>
+                    <a href="/Product?categoryId=6" class="cyber-quick-cat">
+                        <i class="fas fa-keyboard"></i> Keyboards
+                    </a>
+                    <a href="/Product?categoryId=5" class="cyber-quick-cat">
+                        <i class="fas fa-mouse"></i> Mouse
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notifications -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="cyber-alert cyber-alert-success" role="alert">
+            <i class="fas fa-check-circle"></i>
+            <span>@TempData["SuccessMessage"]</span>
+            <button type="button" class="cyber-alert-close" onclick="this.parentElement.remove()"><i
+                    class="fas fa-times"></i></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="cyber-alert cyber-alert-error" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>@TempData["ErrorMessage"]</span>
+            <button type="button" class="cyber-alert-close" onclick="this.parentElement.remove()"><i
+                    class="fas fa-times"></i></button>
+        </div>
+    }
+
+    <!-- Main Content -->
+    <main class="cyber-main">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="cyber-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <a asp-controller="Home" asp-action="Index" class="cyber-footer-brand">
+                        <svg viewBox="0 0 60 60" width="36" height="36">
+                            <defs>
+                                <linearGradient id="footerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#6366f1" />
+                                    <stop offset="100%" stop-color="#22d3ee" />
+                                </linearGradient>
+                            </defs>
+                            <polygon points="30,2 55,16 55,44 30,58 5,44 5,16" fill="none" stroke="url(#footerGrad)"
+                                stroke-width="2" />
+                            <path d="M30,14 L42,42 L38,42 L35,35 L25,35 L22,42 L18,42 Z M30,22 L26,32 L34,32 Z"
+                                fill="url(#footerGrad)" />
+                        </svg>
+                        <span>ARCADE</span>
+                    </a>
+                    <p class="cyber-footer-desc">Your gateway to premium tech. Experience the future today.</p>
+                    <div class="cyber-social">
+                        <a href="https://www.facebook.com" class="cyber-social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.twitter.com" class="cyber-social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com" class="cyber-social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.discord.com" class="cyber-social-link"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="cyber-footer-heading">Contact</h5>
+                    <ul class="cyber-footer-links">
+                        <li><a href="mailto:contact@arcade.com"><i class="fas fa-envelope"></i> contact@arcade.com</a>
+                        </li>
+                        <li><a href="tel:+201234567890"><i class="fas fa-phone"></i> +20 123 456 7890</a></li>
+                        <li><span><i class="fas fa-map-marker-alt"></i> Cairo, Egypt</span></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="cyber-footer-heading">Support</h5>
+                    <ul class="cyber-footer-links">
+                        <li><a asp-controller="Home" asp-action="Privacy"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+                        <li><a asp-controller="Home" asp-action="Returns"><i class="fas fa-undo"></i> Returns</a></li>
+                        <li><a asp-controller="Home" asp-action="Shipping"><i class="fas fa-truck"></i> Shipping</a></li>
+                        <li><a asp-controller="Home" asp-action="FAQ"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="cyber-footer-heading">Categories</h5>
+                    <ul class="cyber-footer-links">
+                        <li><a asp-controller="Product" asp-action="Index" asp-route-categoryId="1">Laptops</a></li>
+                        <li><a asp-controller="Product" asp-action="Index" asp-route-categoryId="2">Monitors</a></li>
+                        <li><a asp-controller="Product" asp-action="Index" asp-route-categoryId="8">Graphics Cards</a>
+                        </li>
+                        <li><a asp-controller="Product" asp-action="Index" asp-route-categoryId="7">Processors</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="cyber-footer-bottom">
+                <span>&copy; @DateTime.Now.Year Arcade Electronics. All rights reserved.</span>
+                <span class="cyber-footer-tagline">Premium Tech Store</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top -->
+    <button type="button" class="cyber-scroll-top" id="scrollTopBtn"><i class="fas fa-chevron-up"></i></button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/cybercore-animations.js" asp-append-version="true"></script>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            // Load cart count on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('/Cart/GetCartCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        const badge = document.getElementById('cartBadge');
+                        if (badge) {
+                            badge.textContent = data.count || 0;
+                            badge.style.display = data.count > 0 ? 'flex' : 'none';
+                        }
+                    })
+                    .catch(err => console.log('Cart count error:', err));
+            });
+        </script>
+    }
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
