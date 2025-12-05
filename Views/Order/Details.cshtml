@@ -437,7 +437,6 @@
                 <h4 style="color: #818cf8; margin-bottom: 1rem; font-size: 0.9rem;"><i class="fas fa-calculator"></i> Order Summary</h4>
                 <div class="summary-row"><span>Subtotal</span><span>@Model.Subtotal.ToString("N0") EGP</span></div>
                 <div class="summary-row"><span>Shipping</span><span class="@(Model.Shipping == 0 ? "free" : "")">@(Model.Shipping == 0 ? "FREE" : Model.Shipping.ToString("N0") + " EGP")</span></div>
-                <div class="summary-row"><span>Tax</span><span>@Model.Tax.ToString("N0") EGP</span></div>
                 <div class="summary-row total"><span>Total</span><span>@Model.Total.ToString("N0") EGP</span></div>
             </div>
 
@@ -451,7 +450,6 @@
                 {
                     <button type="button" class="cyber-btn cyber-btn-primary w-100"><i class="fas fa-redo"></i> Reorder Items</button>
                 }
-                <button type="button" class="cyber-btn cyber-btn-outline w-100"><i class="fas fa-print"></i> Print Invoice</button>
                 <a asp-action="History" class="cyber-btn cyber-btn-ghost w-100"><i class="fas fa-arrow-left"></i> Back to Orders</a>
             </div>
 

@@ -568,69 +568,6 @@
         text-decoration: underline;
     }
     
-    /* Promo Code */
-    .promo-section {
-        margin-bottom: 1rem;
-    }
-    
-    .promo-input-group {
-        display: flex;
-        gap: 0.5rem;
-    }
-    
-    .promo-input-group input {
-        flex: 1;
-    }
-    
-    .promo-input-group button {
-        padding: 0.5rem 1rem;
-        white-space: nowrap;
-    }
-    
-    /* Express Checkout */
-    .express-checkout {
-        background: rgba(0, 212, 255, 0.05);
-        border: 1px dashed var(--arcade-border);
-        border-radius: 12px;
-        padding: 1.25rem;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-    
-    .express-checkout-label {
-        font-size: 0.85rem;
-        color: var(--arcade-text-muted);
-        margin-bottom: 1rem;
-    }
-    
-    .express-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .express-btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        border: 1px solid var(--arcade-border);
-        background: var(--arcade-bg);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .express-btn:hover {
-        border-color: var(--arcade-primary);
-        transform: translateY(-2px);
-    }
-    
-    .express-btn i {
-        font-size: 1.25rem;
-    }
-    
     /* Delivery Estimate */
     .delivery-estimate {
         background: rgba(0, 212, 255, 0.05);
@@ -725,22 +662,6 @@
                 <span class="step-label">Confirm</span>
                 <span class="step-sublabel">Review Order</span>
             </div>
-        </div>
-    </div>
-
-    <!-- Express Checkout -->
-    <div class="express-checkout">
-        <div class="express-checkout-label">Express Checkout</div>
-        <div class="express-buttons">
-            <button type="button" class="express-btn">
-                <i class="fab fa-apple"></i> Pay
-            </button>
-            <button type="button" class="express-btn">
-                <i class="fab fa-google"></i> Pay
-            </button>
-            <button type="button" class="express-btn">
-                <i class="fab fa-paypal" style="color: #003087;"></i> PayPal
-            </button>
         </div>
     </div>
 
@@ -884,10 +805,10 @@
                                 </div>
                             </label>
                             <label class="payment-method">
-                                <input type="radio" name="paymentMethod" value="debit">
+                                <input type="radio" name="paymentMethod" value="paypal">
                                 <div class="payment-method-card">
-                                    <i class="fas fa-money-check-alt"></i>
-                                    <span>Debit Card</span>
+                                    <i class="fab fa-paypal"></i>
+                                    <span>PayPal</span>
                                 </div>
                                 <div class="payment-check">
                                     <i class="fas fa-check"></i>
@@ -1024,14 +945,6 @@
                                 }
                             </div>
 
-                            <!-- Promo Code -->
-                            <div class="promo-section">
-                                <div class="promo-input-group">
-                                    <input type="text" class="cyber-input" placeholder="Promo code">
-                                    <button type="button" class="cyber-btn cyber-btn-outline">Apply</button>
-                                </div>
-                            </div>
-
                             <div class="summary-divider"></div>
 
                             <div class="summary-row">
@@ -1043,10 +956,6 @@
                                 <span class="@(Model.Shipping == 0 ? "free-shipping" : "")">
                                     @(Model.Shipping == 0 ? "FREE" : Model.Shipping.ToString("N0") + " EGP")
                                 </span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Tax (14%)</span>
-                                <span>@Model.Tax.ToString("N0") EGP</span>
                             </div>
 
                             <div class="summary-row total">
