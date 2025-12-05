@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <link rel="icon" type="image/svg+xml" href="~/images/logo.svg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Arcade Theme -->
+    <link rel="stylesheet" href="~/css/cybercore-theme.css" asp-append-version="true" />
+
+    <style>
+        /* Admin Layout Styles */
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
+            border-right: 1px solid rgba(99, 102, 241, 0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .admin-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.3);
+            border-radius: 2px;
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+            text-decoration: none;
+        }
+
+        .sidebar-brand svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .sidebar-brand-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #6366f1, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-brand-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 4px;
+            color: #a5b4fc;
+            margin-left: auto;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .sidebar-menu-title {
+            padding: 0.75rem 1.5rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(148, 163, 184, 0.6);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-nav-item {
+            margin: 0.25rem 0.75rem;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-nav-link:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: #e2e8f0;
+        }
+
+        .sidebar-nav-link.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(34, 211, 238, 0.1));
+            color: #22d3ee;
+            border-left: 3px solid #22d3ee;
+            margin-left: -3px;
+        }
+
+        .sidebar-nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .sidebar-nav-badge {
+            margin-left: auto;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-nav-badge.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fcd34d;
+        }
+
+        .sidebar-nav-badge.info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(99, 102, 241, 0.15);
+            margin: 1rem 1.5rem;
+        }
+
+        /* Main Content Area */
+        .admin-main {
+            flex: 1;
+            margin-left: 260px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Admin Header */
+        .admin-header {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #94a3b8;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: #e2e8f0;
+        }
+
+        .admin-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .admin-breadcrumb a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .admin-breadcrumb a:hover {
+            color: #22d3ee;
+        }
+
+        .admin-breadcrumb-sep {
+            color: #475569;
+        }
+
+        .admin-breadcrumb-current {
+            color: #e2e8f0;
+        }
+
+        .admin-header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-header-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #94a3b8;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .admin-header-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: #e2e8f0;
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .admin-header-btn.primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border-color: transparent;
+            color: white;
+        }
+
+        .admin-header-btn.primary:hover {
+            background: linear-gradient(135deg, #7c3aed, #6366f1);
+        }
+
+        .admin-user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .admin-user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #6366f1, #22d3ee);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .admin-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-user-name {
+            font-size: 0.875rem;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .admin-user-role {
+            font-size: 0.7rem;
+            color: #22d3ee;
+        }
+
+        /* Admin Content */
+        .admin-content {
+            flex: 1;
+            padding: 1.5rem;
+            background: #0f172a;
+        }
+
+        /* Notifications */
+        .admin-notifications {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 400px;
+        }
+
+        /* Responsive */
+        @@media (max-width: 992px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .admin-main {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+
+        /* Page Headers */
+        .cyber-admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .cyber-admin-header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cyber-admin-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin: 0;
+        }
+
+        .cyber-admin-title i {
+            background: linear-gradient(135deg, #6366f1, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-right: 0.5rem;
+        }
+
+        .cyber-admin-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Page Title for inner pages */
+        .cyber-page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .cyber-page-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body class="cyber-body">
+    <div class="admin-wrapper">
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <a href="@Url.Action("Dashboard", "Admin")" class="sidebar-brand">
+                <svg viewBox="0 0 60 60">
+                    <defs>
+                        <linearGradient id="sidebarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#6366f1" />
+                            <stop offset="100%" stop-color="#22d3ee" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="30,2 55,16 55,44 30,58 5,44 5,16" fill="none" stroke="url(#sidebarGrad)"
+                        stroke-width="2" />
+                    <path d="M30,14 L42,42 L38,42 L35,35 L25,35 L22,42 L18,42 Z M30,22 L26,32 L34,32 Z"
+                        fill="url(#sidebarGrad)" />
+                </svg>
+                <span class="sidebar-brand-text">ARCADE</span>
+                <span class="sidebar-brand-badge">ADMIN</span>
+            </a>
+
+            <div class="sidebar-menu">
+                <div class="sidebar-menu-title">Main</div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Dashboard"
+                            class="sidebar-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-menu-title">Products</div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Products"
+                            class="sidebar-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Products" ? "active" : "")">
+                            <i class="fas fa-box"></i>
+                            <span>All Products</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="CreateProduct"
+                            class="sidebar-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "CreateProduct" ? "active" : "")">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Product</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Inventory"
+                            class="sidebar-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Inventory" ? "active" : "")">
+                            <i class="fas fa-warehouse"></i>
+                            <span>Inventory</span>
+                            @if (ViewBag.LowStockCount > 0)
+                            {
+                                <span class="sidebar-nav-badge warning">@ViewBag.LowStockCount</span>
+                            }
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-menu-title">Orders</div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Orders"
+                            class="sidebar-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Orders" ? "active" : "")">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>All Orders</span>
+                            @if (ViewBag.PendingOrdersCount > 0)
+                            {
+                                <span class="sidebar-nav-badge">@ViewBag.PendingOrdersCount</span>
+                            }
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-divider"></div>
+
+                <div class="sidebar-menu-title">Customer View</div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Home" asp-action="Index" class="sidebar-nav-link">
+                            <i class="fas fa-store"></i>
+                            <span>View Store</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Product" asp-action="Index" class="sidebar-nav-link">
+                            <i class="fas fa-th-large"></i>
+                            <span>Browse Products</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Cart" asp-action="Index" class="sidebar-nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>View Cart</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-divider"></div>
+
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Account" asp-action="Profile" class="sidebar-nav-link">
+                            <i class="fas fa-user-cog"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="sidebar-nav-link"
+                                style="width: 100%; border: none; background: none; cursor: pointer; text-align: left;">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <nav class="admin-breadcrumb">
+                        <a asp-controller="Admin" asp-action="Dashboard">
+                            <i class="fas fa-home"></i>
+                        </a>
+                        <span class="admin-breadcrumb-sep">/</span>
+                        <span class="admin-breadcrumb-current">@ViewData["Title"]</span>
+                    </nav>
+                </div>
+                <div class="admin-header-right">
+                    <a asp-controller="Admin" asp-action="CreateProduct" class="admin-header-btn primary">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Product</span>
+                    </a>
+                    <div class="admin-user-menu dropdown">
+                        <div data-bs-toggle="dropdown">
+                            <div class="admin-user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="admin-user-info">
+                                <span class="admin-user-name">@User.Identity?.Name</span>
+                                <span class="admin-user-role">Administrator</span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="color: #64748b; font-size: 0.7rem;"></i>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end cyber-dropdown-menu">
+                            <li><a class="dropdown-item cyber-dropdown-item" asp-controller="Account"
+                                    asp-action="Profile"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item cyber-dropdown-item" asp-controller="Home" asp-action="Index"><i
+                                        class="fas fa-store"></i> View Store</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item cyber-dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Notifications -->
+            <div class="admin-notifications">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="cyber-alert cyber-alert-success" role="alert">
+                        <i class="fas fa-check-circle"></i>
+                        <span>@TempData["SuccessMessage"]</span>
+                        <button type="button" class="cyber-alert-close" onclick="this.parentElement.remove()"><i
+                                class="fas fa-times"></i></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="cyber-alert cyber-alert-error" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>@TempData["ErrorMessage"]</span>
+                        <button type="button" class="cyber-alert-close" onclick="this.parentElement.remove()"><i
+                                class="fas fa-times"></i></button>
+                    </div>
+                }
+            </div>
+
+            <!-- Content -->
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        // Sidebar Toggle
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const toggle = document.getElementById('sidebarToggle');
+
+        toggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+
+        // Auto-hide alerts
+        setTimeout(() => {
+            document.querySelectorAll('.cyber-alert').forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
