@@ -402,6 +402,75 @@
     .breadcrumb-nav .current {
         color: #e2e8f0;
     }
+
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #cbd5e1;
+        font-size: 0.95rem;
+    }
+
+    .contact-item i {
+        color: #818cf8;
+        width: 20px;
+        text-align: center;
+    }
+
+    .payment-method-display {
+        color: #cbd5e1;
+    }
+
+    .payment-card-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .payment-icon {
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .payment-card-type {
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 0.25rem;
+    }
+
+    .payment-card-number {
+        font-family: 'Courier New', monospace;
+        font-size: 1rem;
+        color: #cbd5e1;
+        letter-spacing: 1px;
+        margin-bottom: 0.25rem;
+    }
+
+    .payment-card-holder {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+    }
+
+    .payment-method-simple {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .payment-method-simple i {
+        font-size: 1.5rem;
+        color: #818cf8;
+    }
 </style>
 
 <div class="container py-4">
@@ -513,6 +582,68 @@
                 <p class="address-text mb-0">@Model.ShippingAddress</p>
             </div>
 
+            <div class="address-card">
+                <h4><i class="fas fa-user-circle"></i> Contact Information</h4>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>@Model.EmailAddress</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>@Model.PhoneNumber</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="address-card">
+                <h4><i class="fas fa-credit-card"></i> Payment Method</h4>
+                <div class="payment-info">
+                    <div class="payment-method-display">
+                        @if (Model.PaymentMethod == "Credit Card" && !string.IsNullOrEmpty(Model.CardType))
+                        {
+                            <div class="payment-card-info">
+                                <div class="payment-icon">
+                                    @switch (Model.CardType)
+                                    {
+                                        case "Visa":
+                                            <i class="fab fa-cc-visa" style="color: #1434CB;"></i>
+                                            break;
+                                        case "Mastercard":
+                                            <i class="fab fa-cc-mastercard" style="color: #EB001B;"></i>
+                                            break;
+                                        case "American Express":
+                                            <i class="fab fa-cc-amex" style="color: #006FCF;"></i>
+                                            break;
+                                        case "Discover":
+                                            <i class="fab fa-cc-discover" style="color: #FF6000;"></i>
+                                            break;
+                                        default:
+                                            <i class="fas fa-credit-card"></i>
+                                            break;
+                                    }
+                                </div>
+                                <div>
+                                    <div class="payment-card-type">@Model.CardType</div>
+                                    <div class="payment-card-number">•••• •••• •••• @Model.CardLast4Digits</div>
+                                    @if (!string.IsNullOrEmpty(Model.CardholderName))
+                                    {
+                                        <div class="payment-card-holder">@Model.CardholderName</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="payment-method-simple">
+                                <i class="fas @GetPaymentIcon(Model.PaymentMethod)"></i>
+                                <span>@Model.PaymentMethod</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
             <div class="action-buttons">
                 @if (Model.Status == "Delivered")
                 {
@@ -552,4 +683,13 @@
     }
 
     bool IsStepActive(string step, string currentStatus) => step == currentStatus;
+
+    string GetPaymentIcon(string paymentMethod) => paymentMethod switch
+    {
+        "Credit Card" => "fa-credit-card",
+        "PayPal" => "fa-paypal",
+        "Cash on Delivery" => "fa-money-bill-wave",
+        "InstaPay" => "fa-mobile-alt",
+        _ => "fa-wallet"
+    };
 }

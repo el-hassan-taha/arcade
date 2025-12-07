@@ -90,12 +90,12 @@ namespace Arcade.Services
             // Extract card details if Credit Card payment
             string? cardLast4 = null;
             string? cardType = null;
-            
+
             if (paymentMethod == "Credit Card" && !string.IsNullOrEmpty(cardNumber))
             {
                 // Extract last 4 digits
                 cardLast4 = cardNumber.Replace(" ", "").Substring(Math.Max(0, cardNumber.Replace(" ", "").Length - 4));
-                
+
                 // Detect card type based on first digit
                 var firstDigit = cardNumber.Replace(" ", "")[0];
                 cardType = firstDigit switch

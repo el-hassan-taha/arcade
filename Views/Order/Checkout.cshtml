@@ -837,7 +837,7 @@
                             </label>
                         </div>
 
-                        <div id="cardPaymentForm">
+                        <div id="cardPaymentForm" style="display: none;">
                             <!-- Card Visual -->
                             <div class="card-visual">
                                 <div class="card-chip"></div>
@@ -983,13 +983,22 @@
         document.querySelectorAll('.payment-method input').forEach(radio => {
             radio.addEventListener('change', function () {
                 const cardForm = document.getElementById('cardPaymentForm');
-                if (this.value === 'card' || this.value === 'debit') {
+                if (this.value === 'Credit Card') {
                     cardForm.style.display = 'block';
                 } else {
                     cardForm.style.display = 'none';
                 }
             });
         });
+        
+        // Initialize card form visibility on page load
+        const selectedPayment = document.querySelector('.payment-method input:checked');
+        const cardForm = document.getElementById('cardPaymentForm');
+        if (selectedPayment && selectedPayment.value === 'Credit Card') {
+            cardForm.style.display = 'block';
+        } else {
+            cardForm.style.display = 'none';
+        }
 
         // Format card number and update display
         document.getElementById('cardNumber')?.addEventListener('input', function (e) {

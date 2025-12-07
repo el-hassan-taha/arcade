@@ -137,6 +137,9 @@ namespace Arcade.ViewModels
         public string EmailAddress { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string PaymentMethod { get; set; } = string.Empty;
+        public string? CardLast4Digits { get; set; }
+        public string? CardholderName { get; set; }
+        public string? CardType { get; set; }
         public DateTime? ShippedDate { get; set; }
         public DateTime? DeliveredDate { get; set; }
         public string StatusBadgeClass { get; set; } = string.Empty;
@@ -193,7 +196,7 @@ namespace Arcade.ViewModels
 
         // Payment
         public string PaymentMethod { get; set; } = "Credit Card";
-        
+
         // Credit Card Details (only used when PaymentMethod is "Credit Card")
         public string? CardNumber { get; set; }
         public string? CardholderName { get; set; }
