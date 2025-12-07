@@ -16,13 +16,13 @@
         gap: 1.5rem;
         margin-bottom: 2rem;
     }
-    
+
     .order-header-left {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
     }
-    
+
     .back-link {
         display: inline-flex;
         align-items: center;
@@ -32,18 +32,18 @@
         font-size: 0.9rem;
         transition: color 0.3s ease;
     }
-    
+
     .back-link:hover {
         color: var(--arcade-primary);
     }
-    
+
     .order-title-row {
         display: flex;
         align-items: center;
         gap: 1rem;
         flex-wrap: wrap;
     }
-    
+
     .order-title {
         font-size: 1.75rem;
         font-weight: 700;
@@ -52,11 +52,11 @@
         align-items: center;
         gap: 0.5rem;
     }
-    
+
     .order-number {
         color: var(--arcade-primary);
     }
-    
+
     .status-badge {
         padding: 0.5rem 1rem;
         border-radius: 25px;
@@ -66,31 +66,51 @@
         align-items: center;
         gap: 0.5rem;
     }
-    
-    .status-badge.pending { background: rgba(255, 193, 7, 0.15); color: var(--arcade-warning); }
-    .status-badge.processing { background: rgba(0, 212, 255, 0.15); color: var(--arcade-primary); }
-    .status-badge.shipped { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
-    .status-badge.delivered, .status-badge.completed { background: rgba(0, 255, 136, 0.15); color: var(--arcade-success); }
-    .status-badge.cancelled { background: rgba(255, 68, 68, 0.15); color: var(--arcade-danger); }
-    
+
+    .status-badge.pending {
+        background: rgba(255, 193, 7, 0.15);
+        color: var(--arcade-warning);
+    }
+
+    .status-badge.processing {
+        background: rgba(0, 212, 255, 0.15);
+        color: var(--arcade-primary);
+    }
+
+    .status-badge.shipped {
+        background: rgba(139, 92, 246, 0.15);
+        color: #8b5cf6;
+    }
+
+    .status-badge.delivered,
+    .status-badge.completed {
+        background: rgba(0, 255, 136, 0.15);
+        color: var(--arcade-success);
+    }
+
+    .status-badge.cancelled {
+        background: rgba(255, 68, 68, 0.15);
+        color: var(--arcade-danger);
+    }
+
     .order-meta {
         display: flex;
         gap: 2rem;
         color: var(--arcade-text-muted);
         font-size: 0.9rem;
     }
-    
+
     .order-meta-item {
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
-    
+
     .order-header-actions {
         display: flex;
         gap: 0.75rem;
     }
-    
+
     /* Quick Stats Row */
     .order-stats-row {
         display: grid;
@@ -98,13 +118,13 @@
         gap: 1rem;
         margin-bottom: 2rem;
     }
-    
+
     @@media (max-width: 992px) {
         .order-stats-row {
             grid-template-columns: repeat(2, 1fr);
         }
     }
-    
+
     .order-stat-card {
         background: var(--arcade-bg-card);
         border: 1px solid var(--arcade-border);
@@ -114,7 +134,7 @@
         align-items: center;
         gap: 1rem;
     }
-    
+
     .order-stat-icon {
         width: 48px;
         height: 48px;
@@ -124,36 +144,51 @@
         justify-content: center;
         font-size: 1.25rem;
     }
-    
-    .order-stat-icon.items { background: rgba(0, 212, 255, 0.15); color: var(--arcade-primary); }
-    .order-stat-icon.value { background: rgba(0, 255, 136, 0.15); color: var(--arcade-success); }
-    .order-stat-icon.age { background: rgba(255, 193, 7, 0.15); color: var(--arcade-warning); }
-    .order-stat-icon.priority { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
-    
+
+    .order-stat-icon.items {
+        background: rgba(0, 212, 255, 0.15);
+        color: var(--arcade-primary);
+    }
+
+    .order-stat-icon.value {
+        background: rgba(0, 255, 136, 0.15);
+        color: var(--arcade-success);
+    }
+
+    .order-stat-icon.age {
+        background: rgba(255, 193, 7, 0.15);
+        color: var(--arcade-warning);
+    }
+
+    .order-stat-icon.priority {
+        background: rgba(139, 92, 246, 0.15);
+        color: #8b5cf6;
+    }
+
     .order-stat-value {
         font-size: 1.5rem;
         font-weight: 700;
         line-height: 1;
     }
-    
+
     .order-stat-label {
         font-size: 0.85rem;
         color: var(--arcade-text-muted);
     }
-    
+
     /* Main Content Grid */
     .order-content-grid {
         display: grid;
         grid-template-columns: 1fr 380px;
         gap: 1.5rem;
     }
-    
+
     @@media (max-width: 1200px) {
         .order-content-grid {
             grid-template-columns: 1fr;
         }
     }
-    
+
     /* Card Styles */
     .detail-card {
         background: var(--arcade-bg-card);
@@ -162,7 +197,7 @@
         overflow: hidden;
         margin-bottom: 1.5rem;
     }
-    
+
     .detail-card-header {
         background: rgba(0, 0, 0, 0.2);
         padding: 1rem 1.25rem;
@@ -171,7 +206,7 @@
         align-items: center;
         justify-content: space-between;
     }
-    
+
     .detail-card-title {
         font-size: 1rem;
         font-weight: 600;
@@ -180,21 +215,21 @@
         align-items: center;
         gap: 0.75rem;
     }
-    
+
     .detail-card-title i {
         color: var(--arcade-primary);
     }
-    
+
     .detail-card-body {
         padding: 1.25rem;
     }
-    
+
     /* Items Table */
     .items-table {
         width: 100%;
         border-collapse: collapse;
     }
-    
+
     .items-table th {
         padding: 1rem 1.25rem;
         text-align: left;
@@ -206,33 +241,33 @@
         background: rgba(0, 0, 0, 0.2);
         border-bottom: 1px solid var(--arcade-border);
     }
-    
+
     .items-table td {
         padding: 1rem 1.25rem;
         border-bottom: 1px solid var(--arcade-border);
         vertical-align: middle;
     }
-    
+
     .items-table tbody tr:last-child td {
         border-bottom: none;
     }
-    
+
     .items-table tfoot td {
         padding: 1rem 1.25rem;
         background: rgba(0, 0, 0, 0.1);
     }
-    
+
     .items-table tfoot tr:first-child td {
         border-top: 2px solid var(--arcade-border);
     }
-    
+
     /* Product Cell */
     .product-cell {
         display: flex;
         align-items: center;
         gap: 1rem;
     }
-    
+
     .product-thumb {
         width: 60px;
         height: 60px;
@@ -240,23 +275,23 @@
         object-fit: cover;
         border: 1px solid var(--arcade-border);
     }
-    
+
     .product-info {
         flex: 1;
         min-width: 0;
     }
-    
+
     .product-name {
         font-weight: 600;
         margin-bottom: 0.25rem;
     }
-    
+
     .product-sku {
         font-size: 0.8rem;
         color: var(--arcade-text-muted);
         font-family: 'Courier New', monospace;
     }
-    
+
     .qty-badge {
         display: inline-flex;
         align-items: center;
@@ -268,37 +303,37 @@
         color: #a78bfa;
         font-weight: 600;
     }
-    
+
     .price {
         font-weight: 600;
     }
-    
+
     .price-total {
         color: var(--arcade-primary);
         font-weight: 700;
     }
-    
+
     .total-row {
         font-size: 1.1rem;
     }
-    
+
     .grand-total {
         font-size: 1.25rem;
         font-weight: 700;
         color: var(--arcade-primary);
     }
-    
+
     /* Status Update Card */
     .status-update-card {
         background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(139, 92, 246, 0.05));
     }
-    
+
     .status-options {
         display: grid;
         gap: 0.75rem;
         margin-bottom: 1rem;
     }
-    
+
     .status-option {
         display: flex;
         align-items: center;
@@ -310,36 +345,50 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .status-option:hover {
         border-color: var(--arcade-primary);
     }
-    
+
     .status-option.selected {
         border-color: var(--arcade-primary);
         background: rgba(0, 212, 255, 0.1);
     }
-    
+
     .status-option input {
         display: none;
     }
-    
+
     .status-option-dot {
         width: 12px;
         height: 12px;
         border-radius: 50%;
     }
-    
-    .status-option-dot.pending { background: var(--arcade-warning); }
-    .status-option-dot.processing { background: var(--arcade-primary); }
-    .status-option-dot.shipped { background: #8b5cf6; }
-    .status-option-dot.delivered { background: var(--arcade-success); }
-    .status-option-dot.cancelled { background: var(--arcade-danger); }
-    
+
+    .status-option-dot.pending {
+        background: var(--arcade-warning);
+    }
+
+    .status-option-dot.processing {
+        background: var(--arcade-primary);
+    }
+
+    .status-option-dot.shipped {
+        background: #8b5cf6;
+    }
+
+    .status-option-dot.delivered {
+        background: var(--arcade-success);
+    }
+
+    .status-option-dot.cancelled {
+        background: var(--arcade-danger);
+    }
+
     .status-option-text {
         font-weight: 500;
     }
-    
+
     /* Customer Info */
     .customer-header {
         display: flex;
@@ -349,7 +398,7 @@
         padding-bottom: 1rem;
         border-bottom: 1px solid var(--arcade-border);
     }
-    
+
     .customer-avatar {
         width: 50px;
         height: 50px;
@@ -362,50 +411,50 @@
         font-size: 1.1rem;
         color: #000;
     }
-    
+
     .customer-name {
         font-weight: 600;
         margin-bottom: 0.25rem;
     }
-    
+
     .customer-email {
         font-size: 0.9rem;
         color: var(--arcade-text-muted);
     }
-    
+
     .customer-email a {
         color: var(--arcade-primary);
         text-decoration: none;
     }
-    
+
     .customer-email a:hover {
         text-decoration: underline;
     }
-    
+
     .customer-stats {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
     }
-    
+
     .customer-stat {
         background: var(--arcade-bg);
         padding: 0.75rem;
         border-radius: 8px;
         text-align: center;
     }
-    
+
     .customer-stat-value {
         font-weight: 700;
         font-size: 1.1rem;
         color: var(--arcade-primary);
     }
-    
+
     .customer-stat-label {
         font-size: 0.8rem;
         color: var(--arcade-text-muted);
     }
-    
+
     /* Shipping Info */
     .shipping-address {
         background: var(--arcade-bg);
@@ -413,12 +462,12 @@
         border-radius: 10px;
         border-left: 3px solid var(--arcade-primary);
     }
-    
+
     .shipping-address p {
         margin: 0;
         line-height: 1.6;
     }
-    
+
     .shipping-map-placeholder {
         margin-top: 1rem;
         height: 120px;
@@ -430,13 +479,13 @@
         color: var(--arcade-text-muted);
         gap: 0.5rem;
     }
-    
+
     /* Enhanced Timeline */
     .timeline {
         position: relative;
         padding-left: 2rem;
     }
-    
+
     .timeline::before {
         content: '';
         position: absolute;
@@ -446,16 +495,16 @@
         width: 2px;
         background: linear-gradient(180deg, var(--arcade-success), var(--arcade-border));
     }
-    
+
     .timeline-item {
         position: relative;
         padding-bottom: 1.5rem;
     }
-    
+
     .timeline-item:last-child {
         padding-bottom: 0;
     }
-    
+
     .timeline-dot {
         position: absolute;
         left: -1.6rem;
@@ -466,48 +515,55 @@
         background: var(--arcade-border);
         border: 2px solid var(--arcade-bg-card);
     }
-    
+
     .timeline-item.completed .timeline-dot {
         background: var(--arcade-success);
         box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
     }
-    
+
     .timeline-item.current .timeline-dot {
         background: var(--arcade-primary);
         box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
         animation: pulse 2s infinite;
     }
-    
+
     .timeline-item.cancelled .timeline-dot {
         background: var(--arcade-danger);
         box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
     }
-    
+
     @@keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.2); }
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.2);
+        }
     }
-    
+
     .timeline-content {
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
     }
-    
+
     .timeline-title {
         font-weight: 600;
     }
-    
+
     .timeline-date {
         font-size: 0.8rem;
         color: var(--arcade-text-muted);
     }
-    
+
     /* Notes Card */
     .notes-card {
         background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), transparent);
     }
-    
+
     .notes-content {
         background: var(--arcade-bg);
         padding: 1rem;
@@ -515,14 +571,14 @@
         border-left: 3px solid var(--arcade-warning);
         line-height: 1.6;
     }
-    
+
     /* Quick Actions */
     .quick-actions {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
     }
-    
+
     .quick-action-btn {
         display: flex;
         flex-direction: column;
@@ -537,18 +593,18 @@
         transition: all 0.3s ease;
         cursor: pointer;
     }
-    
+
     .quick-action-btn:hover {
         border-color: var(--arcade-primary);
         background: rgba(0, 212, 255, 0.05);
         transform: translateY(-2px);
     }
-    
+
     .quick-action-btn i {
         font-size: 1.25rem;
         color: var(--arcade-primary);
     }
-    
+
     .quick-action-btn span {
         font-size: 0.85rem;
     }
@@ -751,7 +807,8 @@
                         @foreach (var status in Model.AvailableStatuses)
                         {
                             var isSelected = Model.Order.Status == status;
-                            <label class="status-option @(isSelected ? "selected" : "")" onclick="selectStatus(this, '@status')">
+                            <label class="status-option @(isSelected ? "selected" : "")"
+                                onclick="selectStatus(this, '@status')">
                                 <input type="radio" name="status" value="@status" @(isSelected ? "checked" : "")>
                                 <span class="status-option-dot @status.ToLower()"></span>
                                 <span class="status-option-text">@status</span>
@@ -833,7 +890,7 @@
                             <span class="timeline-date">@Model.Order.OrderDate.ToString("MMM dd, yyyy h:mm tt")</span>
                         </div>
                     </div>
-                    
+
                     @if (Model.Order.Status != "Pending" && Model.Order.Status != "Cancelled")
                     {
                         <div class="timeline-item @(Model.Order.Status == "Processing" ? "current" : "completed")">
@@ -844,14 +901,14 @@
                             </div>
                         </div>
                     }
-                    
+
                     @if (Model.Order.ShippedDate.HasValue)
                     {
                         <div class="timeline-item @(Model.Order.Status == "Shipped" ? "current" : "completed")">
                             <div class="timeline-dot"></div>
                             <div class="timeline-content">
                                 <span class="timeline-title">Shipped</span>
-                                <span class="timeline-date">@Model.Order.ShippedDate?.ToString("MMM dd, yyyy h:mm tt")</span>
+                                <span class="timeline-date">@Model.Order.ShippedDate?.ToString("MMM dd, yyyy h:mm                                tt")</span>
                             </div>
                         </div>
                     }
@@ -865,7 +922,7 @@
                             </div>
                         </div>
                     }
-                    
+
                     @if (Model.Order.DeliveredDate.HasValue)
                     {
                         <div class="timeline-item completed">
@@ -886,7 +943,7 @@
                             </div>
                         </div>
                     }
-                    
+
                     @if (Model.Order.Status == "Cancelled")
                     {
                         <div class="timeline-item cancelled">
@@ -925,19 +982,19 @@
             element.classList.add('selected');
             element.querySelector('input').checked = true;
         }
-        
+
         function downloadInvoice() {
             alert('Invoice download feature coming soon!');
         }
-        
+
         function sendSMS() {
             alert('SMS notification feature coming soon!');
         }
-        
+
         function generateShippingLabel() {
             alert('Shipping label generation feature coming soon!');
         }
-        
+
         function duplicateOrder() {
             if (confirm('Create a new order with the same items?')) {
                 alert('Order duplication feature coming soon!');

@@ -51,6 +51,19 @@ namespace Arcade.Models
         [Display(Name = "Payment Method")]
         public string PaymentMethod { get; set; } = "Credit Card"; // "Credit Card", "PayPal", "Cash on Delivery", "InstaPay"
 
+        // Credit Card Details (only stored when PaymentMethod is "Credit Card")
+        [StringLength(4)]
+        [Display(Name = "Card Last 4 Digits")]
+        public string? CardLast4Digits { get; set; }
+
+        [StringLength(100)]
+        [Display(Name = "Cardholder Name")]
+        public string? CardholderName { get; set; }
+
+        [StringLength(20)]
+        [Display(Name = "Card Type")]
+        public string? CardType { get; set; } // "Visa", "Mastercard", etc.
+
         public DateTime? ShippedDate { get; set; }
 
         public DateTime? DeliveredDate { get; set; }

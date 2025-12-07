@@ -15,7 +15,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .checkout-hero::before {
         content: '';
         position: absolute;
@@ -26,12 +26,19 @@
         background: linear-gradient(90deg, var(--arcade-primary), var(--arcade-accent), var(--arcade-primary));
         animation: gradientFlow 3s ease infinite;
     }
-    
+
     @@keyframes gradientFlow {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
+
+        0%,
+        100% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
     }
-    
+
     .checkout-hero h1 {
         font-size: 2rem;
         margin: 0;
@@ -39,19 +46,19 @@
         align-items: center;
         gap: 1rem;
     }
-    
+
     .checkout-hero h1 i {
         color: var(--arcade-primary);
         font-size: 1.5rem;
     }
-    
+
     .checkout-trust-badges {
         display: flex;
         gap: 1.5rem;
         margin-top: 1rem;
         flex-wrap: wrap;
     }
-    
+
     .trust-badge {
         display: flex;
         align-items: center;
@@ -59,11 +66,11 @@
         font-size: 0.85rem;
         color: var(--arcade-text-muted);
     }
-    
+
     .trust-badge i {
         color: var(--arcade-success);
     }
-    
+
     /* Enhanced Steps */
     .checkout-steps-container {
         background: var(--arcade-bg-card);
@@ -72,14 +79,14 @@
         padding: 1.5rem 2rem;
         margin-bottom: 2rem;
     }
-    
+
     .checkout-steps {
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: relative;
     }
-    
+
     .checkout-steps::before {
         content: '';
         position: absolute;
@@ -90,7 +97,7 @@
         background: var(--arcade-border);
         z-index: 0;
     }
-    
+
     .checkout-step {
         display: flex;
         flex-direction: column;
@@ -99,7 +106,7 @@
         z-index: 1;
         flex: 1;
     }
-    
+
     .step-circle {
         width: 50px;
         height: 50px;
@@ -114,11 +121,11 @@
         transition: all 0.3s ease;
         position: relative;
     }
-    
+
     .step-circle i {
         font-size: 1.2rem;
     }
-    
+
     .checkout-step.active .step-circle {
         background: linear-gradient(135deg, var(--arcade-primary), var(--arcade-accent));
         border-color: var(--arcade-primary);
@@ -126,18 +133,25 @@
         box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
         animation: stepPulse 2s ease-in-out infinite;
     }
-    
+
     @@keyframes stepPulse {
-        0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
-        50% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.6); }
+
+        0%,
+        100% {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+        }
     }
-    
+
     .checkout-step.completed .step-circle {
         background: var(--arcade-success);
         border-color: var(--arcade-success);
         color: #fff;
     }
-    
+
     .step-label {
         margin-top: 0.75rem;
         font-size: 0.9rem;
@@ -145,18 +159,18 @@
         color: var(--arcade-text-muted);
         transition: color 0.3s ease;
     }
-    
+
     .checkout-step.active .step-label,
     .checkout-step.completed .step-label {
         color: var(--arcade-primary);
     }
-    
+
     .step-sublabel {
         font-size: 0.75rem;
         color: var(--arcade-text-muted);
         margin-top: 0.25rem;
     }
-    
+
     /* Enhanced Cards */
     .checkout-section {
         background: var(--arcade-bg-card);
@@ -166,12 +180,12 @@
         overflow: hidden;
         transition: all 0.3s ease;
     }
-    
+
     .checkout-section:hover {
         border-color: var(--arcade-primary);
         box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
     }
-    
+
     .section-header {
         background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(139, 0, 255, 0.05) 100%);
         padding: 1rem 1.5rem;
@@ -180,7 +194,7 @@
         align-items: center;
         gap: 1rem;
     }
-    
+
     .section-icon {
         width: 40px;
         height: 40px;
@@ -192,29 +206,29 @@
         color: #000;
         font-size: 1rem;
     }
-    
+
     .section-title {
         font-size: 1.1rem;
         font-weight: 600;
         margin: 0;
     }
-    
+
     .section-body {
         padding: 1.5rem;
     }
-    
+
     /* Enhanced Form Inputs */
     .form-floating-group {
         position: relative;
         margin-bottom: 1.25rem;
     }
-    
+
     .form-floating-group .cyber-input {
         padding: 1rem;
         height: auto;
         font-size: 1rem;
     }
-    
+
     .form-floating-group .cyber-label {
         margin-bottom: 0.5rem;
         font-weight: 500;
@@ -222,19 +236,19 @@
         align-items: center;
         gap: 0.5rem;
     }
-    
+
     .form-floating-group .cyber-label .required {
         color: var(--arcade-accent);
     }
-    
+
     .input-with-icon {
         position: relative;
     }
-    
+
     .input-with-icon .cyber-input {
         padding-left: 2.75rem;
     }
-    
+
     .input-icon {
         position: absolute;
         left: 1rem;
@@ -242,7 +256,7 @@
         transform: translateY(-50%);
         color: var(--arcade-text-muted);
     }
-    
+
     /* Payment Options Enhanced */
     .payment-methods {
         display: grid;
@@ -250,17 +264,17 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
     }
-    
+
     .payment-method {
         position: relative;
         cursor: pointer;
     }
-    
+
     .payment-method input {
         position: absolute;
         opacity: 0;
     }
-    
+
     .payment-method-card {
         background: var(--arcade-bg);
         border: 2px solid var(--arcade-border);
@@ -272,27 +286,27 @@
         gap: 0.75rem;
         transition: all 0.3s ease;
     }
-    
+
     .payment-method:hover .payment-method-card {
         border-color: var(--arcade-primary);
     }
-    
-    .payment-method input:checked + .payment-method-card {
+
+    .payment-method input:checked+.payment-method-card {
         border-color: var(--arcade-primary);
         background: rgba(0, 212, 255, 0.05);
         box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
     }
-    
+
     .payment-method-card i {
         font-size: 2rem;
         color: var(--arcade-primary);
     }
-    
+
     .payment-method-card span {
         font-size: 0.9rem;
         font-weight: 500;
     }
-    
+
     .payment-check {
         position: absolute;
         top: 0.5rem;
@@ -307,11 +321,11 @@
         justify-content: center;
         font-size: 0.7rem;
     }
-    
-    .payment-method input:checked ~ .payment-check {
+
+    .payment-method input:checked~.payment-check {
         display: flex;
     }
-    
+
     /* Card Visual */
     .card-visual {
         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
@@ -321,7 +335,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .card-visual::before {
         content: '';
         position: absolute;
@@ -331,7 +345,7 @@
         height: 150px;
         background: radial-gradient(circle, rgba(0, 212, 255, 0.2) 0%, transparent 70%);
     }
-    
+
     .card-chip {
         width: 45px;
         height: 35px;
@@ -339,7 +353,7 @@
         border-radius: 6px;
         margin-bottom: 1.5rem;
     }
-    
+
     .card-number-display {
         font-family: 'Courier New', monospace;
         font-size: 1.4rem;
@@ -347,26 +361,28 @@
         margin-bottom: 1rem;
         color: #fff;
     }
-    
+
     .card-details-row {
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
     }
-    
-    .card-holder-label, .card-expiry-label {
+
+    .card-holder-label,
+    .card-expiry-label {
         font-size: 0.7rem;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         text-transform: uppercase;
         margin-bottom: 0.25rem;
     }
-    
-    .card-holder-name, .card-expiry-value {
+
+    .card-holder-name,
+    .card-expiry-value {
         font-size: 0.9rem;
         color: #fff;
         text-transform: uppercase;
     }
-    
+
     .card-brand {
         position: absolute;
         bottom: 1.5rem;
@@ -375,26 +391,26 @@
         color: #fff;
         opacity: 0.8;
     }
-    
+
     /* Order Summary Enhanced */
     .summary-sticky {
         position: sticky;
         top: 100px;
     }
-    
+
     .summary-card {
         background: var(--arcade-bg-card);
         border: 2px solid var(--arcade-border);
         border-radius: 16px;
         overflow: hidden;
     }
-    
+
     .summary-header {
         background: linear-gradient(135deg, var(--arcade-primary), var(--arcade-accent));
         padding: 1.25rem 1.5rem;
         color: #000;
     }
-    
+
     .summary-header h3 {
         margin: 0;
         font-size: 1.1rem;
@@ -403,28 +419,28 @@
         align-items: center;
         gap: 0.75rem;
     }
-    
+
     .summary-body {
         padding: 1.5rem;
     }
-    
+
     .summary-items {
         max-height: 300px;
         overflow-y: auto;
         margin-bottom: 1rem;
     }
-    
+
     .summary-item {
         display: flex;
         gap: 1rem;
         padding: 0.75rem 0;
         border-bottom: 1px solid var(--arcade-border);
     }
-    
+
     .summary-item:last-child {
         border-bottom: none;
     }
-    
+
     .summary-item-image {
         width: 60px;
         height: 60px;
@@ -432,11 +448,11 @@
         object-fit: cover;
         border: 1px solid var(--arcade-border);
     }
-    
+
     .summary-item-details {
         flex: 1;
     }
-    
+
     .summary-item-name {
         font-weight: 600;
         font-size: 0.9rem;
@@ -445,32 +461,32 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     .summary-item-qty {
         font-size: 0.8rem;
         color: var(--arcade-text-muted);
         margin-top: 0.25rem;
     }
-    
+
     .summary-item-price {
         font-weight: 700;
         color: var(--arcade-primary);
         white-space: nowrap;
     }
-    
+
     .summary-divider {
         height: 1px;
         background: linear-gradient(90deg, transparent, var(--arcade-border), transparent);
         margin: 1rem 0;
     }
-    
+
     .summary-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0.5rem 0;
     }
-    
+
     .summary-row.total {
         font-size: 1.25rem;
         font-weight: 700;
@@ -478,16 +494,16 @@
         border-top: 2px solid var(--arcade-primary);
         margin-top: 0.5rem;
     }
-    
+
     .summary-row.total span:last-child {
         color: var(--arcade-primary);
     }
-    
+
     .free-shipping {
         color: var(--arcade-success);
         font-weight: 600;
     }
-    
+
     /* Place Order Button */
     .place-order-btn {
         width: 100%;
@@ -508,7 +524,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .place-order-btn::before {
         content: '';
         position: absolute;
@@ -516,19 +532,19 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         transition: left 0.5s ease;
     }
-    
+
     .place-order-btn:hover::before {
         left: 100%;
     }
-    
+
     .place-order-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
     }
-    
+
     /* Security Notice */
     .security-notice {
         display: flex;
@@ -540,17 +556,17 @@
         padding: 0.75rem 1rem;
         margin-top: 1rem;
     }
-    
+
     .security-notice i {
         color: var(--arcade-success);
         font-size: 1.25rem;
     }
-    
+
     .security-notice span {
         font-size: 0.85rem;
         color: var(--arcade-success);
     }
-    
+
     /* Terms */
     .checkout-terms {
         text-align: center;
@@ -558,16 +574,16 @@
         color: var(--arcade-text-muted);
         margin-top: 1rem;
     }
-    
+
     .checkout-terms a {
         color: var(--arcade-primary);
         text-decoration: none;
     }
-    
+
     .checkout-terms a:hover {
         text-decoration: underline;
     }
-    
+
     /* Delivery Estimate */
     .delivery-estimate {
         background: rgba(0, 212, 255, 0.05);
@@ -578,36 +594,36 @@
         align-items: center;
         gap: 1rem;
     }
-    
+
     .delivery-estimate i {
         font-size: 1.5rem;
         color: var(--arcade-primary);
     }
-    
+
     .delivery-estimate-text {
         font-size: 0.9rem;
     }
-    
+
     .delivery-estimate-text strong {
         color: var(--arcade-primary);
     }
-    
+
     @@media (max-width: 768px) {
         .checkout-steps::before {
             left: 40px;
             right: 40px;
         }
-        
+
         .step-circle {
             width: 40px;
             height: 40px;
             font-size: 0.9rem;
         }
-        
+
         .step-label {
             font-size: 0.8rem;
         }
-        
+
         .card-number-display {
             font-size: 1.1rem;
             letter-spacing: 2px;
@@ -689,7 +705,8 @@
                                     </label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-user input-icon"></i>
-                                        <input asp-for="FirstName" class="cyber-input" style="padding-left: 2.75rem;" placeholder="Enter first name" />
+                                        <input asp-for="FirstName" class="cyber-input" style="padding-left: 2.75rem;"
+                                            placeholder="Enter first name" />
                                     </div>
                                     <span asp-validation-for="FirstName" class="cyber-validation-error"></span>
                                 </div>
@@ -701,7 +718,8 @@
                                     </label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-user input-icon"></i>
-                                        <input asp-for="LastName" class="cyber-input" style="padding-left: 2.75rem;" placeholder="Enter last name" />
+                                        <input asp-for="LastName" class="cyber-input" style="padding-left: 2.75rem;"
+                                            placeholder="Enter last name" />
                                     </div>
                                     <span asp-validation-for="LastName" class="cyber-validation-error"></span>
                                 </div>
@@ -716,7 +734,8 @@
                                     </label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-envelope input-icon"></i>
-                                        <input asp-for="Email" class="cyber-input" style="padding-left: 2.75rem;" placeholder="your@email.com" />
+                                        <input asp-for="Email" class="cyber-input" style="padding-left: 2.75rem;"
+                                            placeholder="your@email.com" />
                                     </div>
                                     <span asp-validation-for="Email" class="cyber-validation-error"></span>
                                 </div>
@@ -728,7 +747,8 @@
                                     </label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-phone input-icon"></i>
-                                        <input asp-for="Phone" class="cyber-input" style="padding-left: 2.75rem;" placeholder="+20 xxx xxx xxxx" />
+                                        <input asp-for="Phone" class="cyber-input" style="padding-left: 2.75rem;"
+                                            placeholder="+20 xxx xxx xxxx" />
                                     </div>
                                     <span asp-validation-for="Phone" class="cyber-validation-error"></span>
                                 </div>
@@ -741,7 +761,8 @@
                             </label>
                             <div class="input-with-icon">
                                 <i class="fas fa-home input-icon"></i>
-                                <input asp-for="Street" class="cyber-input" style="padding-left: 2.75rem;" placeholder="Building number, street name, apartment" />
+                                <input asp-for="Street" class="cyber-input" style="padding-left: 2.75rem;"
+                                    placeholder="Building number, street name, apartment" />
                             </div>
                             <span asp-validation-for="Street" class="cyber-validation-error"></span>
                         </div>
@@ -754,7 +775,8 @@
                                     </label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-city input-icon"></i>
-                                        <input asp-for="City" class="cyber-input" style="padding-left: 2.75rem;" placeholder="City name" />
+                                        <input asp-for="City" class="cyber-input" style="padding-left: 2.75rem;"
+                                            placeholder="City name" />
                                     </div>
                                     <span asp-validation-for="City" class="cyber-validation-error"></span>
                                 </div>
@@ -839,8 +861,8 @@
                                 <label class="cyber-label">Card Number <span class="required">*</span></label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-credit-card input-icon"></i>
-                                    <input type="text" class="cyber-input" style="padding-left: 2.75rem;" 
-                                           placeholder="1234 5678 9012 3456" maxlength="19" id="cardNumber">
+                                    <input asp-for="CardNumber" type="text" class="cyber-input" style="padding-left: 2.75rem;"
+                                        placeholder="1234 5678 9012 3456" maxlength="19" id="cardNumber">
                                 </div>
                             </div>
 
@@ -848,7 +870,8 @@
                                 <div class="col-md-6">
                                     <div class="form-floating-group">
                                         <label class="cyber-label">Expiry Date <span class="required">*</span></label>
-                                        <input type="text" class="cyber-input" placeholder="MM/YY" maxlength="5" id="cardExpiry">
+                                        <input asp-for="ExpiryDate" type="text" class="cyber-input" placeholder="MM/YY" maxlength="5"
+                                            id="cardExpiry">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -856,8 +879,8 @@
                                         <label class="cyber-label">CVV <span class="required">*</span></label>
                                         <div class="input-with-icon">
                                             <i class="fas fa-lock input-icon"></i>
-                                            <input type="text" class="cyber-input" style="padding-left: 2.75rem;" 
-                                                   placeholder="123" maxlength="4" id="cardCvv">
+                                            <input asp-for="CVV" type="text" class="cyber-input" style="padding-left: 2.75rem;"
+                                                placeholder="123" maxlength="4" id="cardCvv">
                                         </div>
                                     </div>
                                 </div>
@@ -865,7 +888,7 @@
 
                             <div class="form-floating-group mb-0">
                                 <label class="cyber-label">Name on Card <span class="required">*</span></label>
-                                <input type="text" class="cyber-input" placeholder="As shown on card" id="cardName">
+                                <input asp-for="CardholderName" type="text" class="cyber-input" placeholder="As shown on card" id="cardName">
                             </div>
                         </div>
 
@@ -896,9 +919,9 @@
                                     @foreach (var item in Model.Items)
                                     {
                                         <div class="summary-item">
-                                            <img src="@(item.ImageUrl ?? "/images/placeholder.svg")" 
-                                                 alt="@item.ProductName" class="summary-item-image"
-                                                 onerror="this.onerror=null; this.src='/images/placeholder.svg';">
+                                            <img src="@(item.ImageUrl ?? "/images/placeholder.svg")" alt="@item.ProductName"
+                                                class="summary-item-image"
+                                                onerror="this.onerror=null; this.src='/images/placeholder.svg';">
                                             <div class="summary-item-details">
                                                 <div class="summary-item-name">@item.ProductName</div>
                                                 <div class="summary-item-qty">Qty: @item.Quantity</div>
@@ -935,7 +958,8 @@
                             <div class="delivery-estimate">
                                 <i class="fas fa-truck"></i>
                                 <div class="delivery-estimate-text">
-                                    Estimated delivery: <strong>@DateTime.Now.AddDays(3).ToString("MMM dd") - @DateTime.Now.AddDays(5).ToString("MMM dd")</strong>
+                                    Estimated delivery: <strong>@DateTime.Now.AddDays(3).ToString("MMM dd") -
+                                        @DateTime.Now.AddDays(5).ToString("MMM dd")</strong>
                                 </div>
                             </div>
 
@@ -957,7 +981,7 @@
     <script>
         // Payment method toggle
         document.querySelectorAll('.payment-method input').forEach(radio => {
-            radio.addEventListener('change', function() {
+            radio.addEventListener('change', function () {
                 const cardForm = document.getElementById('cardPaymentForm');
                 if (this.value === 'card' || this.value === 'debit') {
                     cardForm.style.display = 'block';
@@ -968,11 +992,11 @@
         });
 
         // Format card number and update display
-        document.getElementById('cardNumber')?.addEventListener('input', function(e) {
+        document.getElementById('cardNumber')?.addEventListener('input', function (e) {
             let value = this.value.replace(/\s/g, '').replace(/\D/g, '');
             let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
             this.value = formatted;
-            
+
             // Update card visual
             const display = document.getElementById('cardNumberDisplay');
             if (value.length > 0) {
@@ -981,7 +1005,7 @@
             } else {
                 display.textContent = '•••• •••• •••• ••••';
             }
-            
+
             // Detect card brand
             const brandIcon = document.getElementById('cardBrandIcon');
             if (value.startsWith('4')) {
@@ -994,31 +1018,31 @@
                 brandIcon.innerHTML = '<i class="fab fa-cc-visa"></i>';
             }
         });
-        
+
         // Format expiry and update display
-        document.getElementById('cardExpiry')?.addEventListener('input', function(e) {
+        document.getElementById('cardExpiry')?.addEventListener('input', function (e) {
             let value = this.value.replace(/\D/g, '');
             if (value.length >= 2) {
                 value = value.substring(0, 2) + '/' + value.substring(2, 4);
             }
             this.value = value;
-            
+
             const display = document.getElementById('cardExpiryDisplay');
             display.textContent = value || 'MM/YY';
         });
-        
+
         // Update cardholder name
-        document.getElementById('cardName')?.addEventListener('input', function(e) {
+        document.getElementById('cardName')?.addEventListener('input', function (e) {
             const display = document.getElementById('cardHolderDisplay');
             display.textContent = this.value.toUpperCase() || 'YOUR NAME';
         });
 
         // Step animation on form interaction
         document.querySelectorAll('.checkout-section input, .checkout-section textarea').forEach(input => {
-            input.addEventListener('focus', function() {
+            input.addEventListener('focus', function () {
                 this.closest('.checkout-section').style.borderColor = 'var(--arcade-primary)';
             });
-            input.addEventListener('blur', function() {
+            input.addEventListener('blur', function () {
                 this.closest('.checkout-section').style.borderColor = 'var(--arcade-border)';
             });
         });

@@ -191,15 +191,27 @@ namespace Arcade.Controllers
             var userId = GetCurrentUserId();
 
             // Validate required fields
-            if (string.IsNullOrEmpty(model.Street) || string.IsNullOrEmpty(model.City) || 
+            if (string.IsNullOrEmpty(model.Street) || string.IsNullOrEmpty(model.City) ||
                 string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Phone))
             {
                 TempData["ErrorMessage"] = "Please fill in all required fields.";
                 return RedirectToAction("Checkout");
             }
 
+            // Validate credit card if payment method is Credit Card
+            if (model.PaymentMethod == "Credit Card")
+            {
+                if (string.IsNullOrEmpty(model.CardNumber) || string.IsNullOrEmpty(model.CardholderName) ||
+                    string.IsNullOrEmpty(model.ExpiryDate) || string.IsNullOrEmpty(model.CVV))
+                {
+                    TempData["ErrorMessage"] = "Please complete all credit card fields.";
+                    return RedirectToAction("Checkout");
+                }
+            }
+
             var (success, message, order) = await _orderService.CreateOrderAsync(
-                userId, model.Street, model.City, model.Email, model.Phone, model.PaymentMethod);
+                userId, model.Street, model.City, model.Email, model.Phone, model.PaymentMethod,
+                model.CardNumber, model.CardholderName);
 
             if (!success || order == null)
             {

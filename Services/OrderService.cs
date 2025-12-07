@@ -13,7 +13,7 @@ namespace Arcade.Services
         Task<IEnumerable<Order>> GetUserOrdersAsync(int userId);
         Task<(IEnumerable<Order> Orders, int TotalCount, int TotalPages)> GetPagedAsync(
             int page, int pageSize, int? userId = null, string? status = null, string? searchTerm = null);
-        Task<(bool Success, string Message, Order? Order)> CreateOrderAsync(int userId, string street, string city, string email, string phone, string paymentMethod);
+        Task<(bool Success, string Message, Order? Order)> CreateOrderAsync(int userId, string street, string city, string email, string phone, string paymentMethod, string? cardNumber = null, string? cardholderName = null);
         Task<bool> UpdateStatusAsync(int orderId, string status);
         Task<int> GetPendingOrderCountAsync();
         Task<int> GetTodayOrderCountAsync();
@@ -66,7 +66,8 @@ namespace Arcade.Services
         }
 
         public async Task<(bool Success, string Message, Order? Order)> CreateOrderAsync(
-            int userId, string street, string city, string email, string phone, string paymentMethod)
+            int userId, string street, string city, string email, string phone, string paymentMethod,
+            string? cardNumber = null, string? cardholderName = null)
         {
             // Get cart items
             var cartItems = (await _cartRepository.GetUserCartAsync(userId)).ToList();
@@ -86,6 +87,27 @@ namespace Arcade.Services
             // Calculate total
             decimal totalAmount = cartItems.Sum(ci => ci.Product!.Price * ci.Quantity);
 
+            // Extract card details if Credit Card payment
+            string? cardLast4 = null;
+            string? cardType = null;
+            
+            if (paymentMethod == "Credit Card" && !string.IsNullOrEmpty(cardNumber))
+            {
+                // Extract last 4 digits
+                cardLast4 = cardNumber.Replace(" ", "").Substring(Math.Max(0, cardNumber.Replace(" ", "").Length - 4));
+                
+                // Detect card type based on first digit
+                var firstDigit = cardNumber.Replace(" ", "")[0];
+                cardType = firstDigit switch
+                {
+                    '4' => "Visa",
+                    '5' => "Mastercard",
+                    '3' => "American Express",
+                    '6' => "Discover",
+                    _ => "Other"
+                };
+            }
+
             // Create order
             var order = new Order
             {
@@ -97,7 +119,10 @@ namespace Arcade.Services
                 City = city,
                 EmailAddress = email,
                 PhoneNumber = phone,
-                PaymentMethod = paymentMethod
+                PaymentMethod = paymentMethod,
+                CardLast4Digits = cardLast4,
+                CardholderName = cardholderName,
+                CardType = cardType
             };
 
             // Create order details

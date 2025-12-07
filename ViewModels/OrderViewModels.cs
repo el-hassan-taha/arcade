@@ -190,9 +190,15 @@ namespace Arcade.ViewModels
         // Shipping address
         public string? Street { get; set; }
         public string? City { get; set; }
-        
+
         // Payment
         public string PaymentMethod { get; set; } = "Credit Card";
+        
+        // Credit Card Details (only used when PaymentMethod is "Credit Card")
+        public string? CardNumber { get; set; }
+        public string? CardholderName { get; set; }
+        public string? ExpiryDate { get; set; }
+        public string? CVV { get; set; }
     }
 
     /// <summary>
