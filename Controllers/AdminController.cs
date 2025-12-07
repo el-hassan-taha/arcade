@@ -7,6 +7,8 @@ using Arcade.Models;
 using Arcade.Data.Repositories;
 using Arcade.Data;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Arcade.Controllers
 {
@@ -21,7 +23,7 @@ namespace Arcade.Controllers
         private readonly IOrderService _orderService;
         private readonly IUserRepository _userRepository;
         private readonly ApplicationDbContext _context;
-        private readonly IAuthenticationService _authService;
+        private readonly Services.IAuthenticationService _authService;
         private readonly ILogger<AdminController> _logger;
 
         public AdminController(
@@ -29,7 +31,7 @@ namespace Arcade.Controllers
             IOrderService orderService,
             IUserRepository userRepository,
             ApplicationDbContext context,
-            IAuthenticationService authService,
+            Services.IAuthenticationService authService,
             ILogger<AdminController> logger)
         {
             _productService = productService;
@@ -141,9 +143,36 @@ namespace Arcade.Controllers
                 fullName = model.FullName;
             }
 
+            // Check if email is being changed and if it's already taken
+            if (!string.IsNullOrWhiteSpace(model.Email) && model.Email != user.Email)
+            {
+                var existingUser = await _userRepository.FindAsync(u => u.Email == model.Email);
+                if (existingUser.Any())
+                {
+                    ModelState.AddModelError("Email", "This email is already in use.");
+                    return View(model);
+                }
+                user.Email = model.Email;
+            }
+
             user.FullName = fullName;
             _userRepository.Update(user);
             await _userRepository.SaveChangesAsync();
+
+            // Update claims to reflect new name and email
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                new AuthenticationProperties { IsPersistent = true });
 
             TempData["SuccessMessage"] = "Profile updated successfully.";
             return RedirectToAction("Profile");
