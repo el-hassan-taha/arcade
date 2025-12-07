@@ -464,7 +464,7 @@ namespace Arcade.Controllers
         {
             const int pageSize = 20;
 
-            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status, search, fromDate, toDate);
+            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status, search);
 
             var model = new AdminOrderListViewModel
             {
@@ -473,6 +473,7 @@ namespace Arcade.Controllers
                 TotalPages = totalPages,
                 TotalCount = totalCount,
                 PageSize = pageSize,
+                SearchTerm = search,
                 Status = status,
                 Search = search,
                 FromDate = fromDate,
@@ -540,7 +541,7 @@ namespace Arcade.Controllers
         [HttpGet]
         public async Task<IActionResult> Inventory()
         {
-            var allProducts = await _productService.GetAllWithCategoryAsync();
+            var allProducts = await _productService.GetAllAsync();
             var productsList = allProducts.ToList();
 
             var model = new AdminInventoryViewModel
