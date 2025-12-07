@@ -34,18 +34,22 @@ namespace Arcade.Models
         [StringLength(100, ErrorMessage = "City cannot exceed 100 characters")]
         public string City { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Email address is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         [StringLength(100)]
-        public string? State { get; set; }
+        [Display(Name = "Email Address")]
+        public string EmailAddress { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Phone number is required")]
+        [Phone(ErrorMessage = "Invalid phone number")]
         [StringLength(20)]
-        [Display(Name = "Postal Code")]
-        public string? PostalCode { get; set; }
+        [Display(Name = "Phone Number")]
+        public string PhoneNumber { get; set; } = string.Empty;
 
-        [StringLength(100)]
-        public string? Country { get; set; } = "United States";
-
-        [StringLength(500)]
-        public string? Notes { get; set; }
+        [Required(ErrorMessage = "Payment method is required")]
+        [StringLength(50)]
+        [Display(Name = "Payment Method")]
+        public string PaymentMethod { get; set; } = "Credit Card"; // "Credit Card", "PayPal", "Cash on Delivery", "InstaPay"
 
         public DateTime? ShippedDate { get; set; }
 

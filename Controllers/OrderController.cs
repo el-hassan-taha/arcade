@@ -190,18 +190,16 @@ namespace Arcade.Controllers
         {
             var userId = GetCurrentUserId();
 
-            // Get address from form
-            var street = model.ShippingAddress ?? model.Street;
-            var city = model.City;
-            var notes = model.Notes;
-
-            if (string.IsNullOrEmpty(street) || string.IsNullOrEmpty(city))
+            // Validate required fields
+            if (string.IsNullOrEmpty(model.Street) || string.IsNullOrEmpty(model.City) || 
+                string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Phone))
             {
-                TempData["ErrorMessage"] = "Please enter your delivery address.";
+                TempData["ErrorMessage"] = "Please fill in all required fields.";
                 return RedirectToAction("Checkout");
             }
 
-            var (success, message, order) = await _orderService.CreateOrderAsync(userId, street, city, notes);
+            var (success, message, order) = await _orderService.CreateOrderAsync(
+                userId, model.Street, model.City, model.Email, model.Phone, model.PaymentMethod);
 
             if (!success || order == null)
             {
@@ -291,10 +289,6 @@ namespace Arcade.Controllers
             }
 
             var shippingAddress = $"{order.Street}, {order.City}";
-            if (!string.IsNullOrEmpty(order.State))
-                shippingAddress += $", {order.State}";
-            if (!string.IsNullOrEmpty(order.PostalCode))
-                shippingAddress += $" {order.PostalCode}";
 
             var model = new OrderDetailsViewModel
             {
@@ -304,7 +298,9 @@ namespace Arcade.Controllers
                 Total = order.TotalAmount,
                 Status = order.Status,
                 ShippingAddress = shippingAddress,
-                Notes = order.Notes,
+                EmailAddress = order.EmailAddress,
+                PhoneNumber = order.PhoneNumber,
+                PaymentMethod = order.PaymentMethod,
                 ShippedDate = order.ShippedDate,
                 DeliveredDate = order.DeliveredDate,
                 StatusBadgeClass = order.StatusBadgeClass,

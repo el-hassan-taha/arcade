@@ -133,8 +133,10 @@ namespace Arcade.ViewModels
         public decimal Shipping { get; set; }
         public decimal Total { get; set; }
         public string Status { get; set; } = string.Empty;
-        public string? Notes { get; set; }
         public string ShippingAddress { get; set; } = string.Empty;
+        public string EmailAddress { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string PaymentMethod { get; set; } = string.Empty;
         public DateTime? ShippedDate { get; set; }
         public DateTime? DeliveredDate { get; set; }
         public string StatusBadgeClass { get; set; } = string.Empty;
@@ -186,12 +188,11 @@ namespace Arcade.ViewModels
         public string? Phone { get; set; }
 
         // Shipping address
-        public string? ShippingAddress { get; set; }
         public string? Street { get; set; }
         public string? City { get; set; }
-        public string? State { get; set; }
-        public string? ZipCode { get; set; }
-        public string? Notes { get; set; }
+        
+        // Payment
+        public string PaymentMethod { get; set; } = "Credit Card";
     }
 
     /// <summary>

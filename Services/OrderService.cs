@@ -13,7 +13,7 @@ namespace Arcade.Services
         Task<IEnumerable<Order>> GetUserOrdersAsync(int userId);
         Task<(IEnumerable<Order> Orders, int TotalCount, int TotalPages)> GetPagedAsync(
             int page, int pageSize, int? userId = null, string? status = null, string? searchTerm = null);
-        Task<(bool Success, string Message, Order? Order)> CreateOrderAsync(int userId, string street, string city, string? notes = null);
+        Task<(bool Success, string Message, Order? Order)> CreateOrderAsync(int userId, string street, string city, string email, string phone, string paymentMethod);
         Task<bool> UpdateStatusAsync(int orderId, string status);
         Task<int> GetPendingOrderCountAsync();
         Task<int> GetTodayOrderCountAsync();
@@ -66,7 +66,7 @@ namespace Arcade.Services
         }
 
         public async Task<(bool Success, string Message, Order? Order)> CreateOrderAsync(
-            int userId, string street, string city, string? notes = null)
+            int userId, string street, string city, string email, string phone, string paymentMethod)
         {
             // Get cart items
             var cartItems = (await _cartRepository.GetUserCartAsync(userId)).ToList();
@@ -95,7 +95,9 @@ namespace Arcade.Services
                 Status = "Pending",
                 Street = street,
                 City = city,
-                Notes = notes
+                EmailAddress = email,
+                PhoneNumber = phone,
+                PaymentMethod = paymentMethod
             };
 
             // Create order details

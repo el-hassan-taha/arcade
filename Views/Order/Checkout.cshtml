@@ -736,18 +736,18 @@
                         </div>
 
                         <div class="form-floating-group">
-                            <label asp-for="ShippingAddress" class="cyber-label">
+                            <label asp-for="Street" class="cyber-label">
                                 Street Address <span class="required">*</span>
                             </label>
                             <div class="input-with-icon">
                                 <i class="fas fa-home input-icon"></i>
-                                <input asp-for="ShippingAddress" class="cyber-input" style="padding-left: 2.75rem;" placeholder="Building number, street name, apartment" />
+                                <input asp-for="Street" class="cyber-input" style="padding-left: 2.75rem;" placeholder="Building number, street name, apartment" />
                             </div>
-                            <span asp-validation-for="ShippingAddress" class="cyber-validation-error"></span>
+                            <span asp-validation-for="Street" class="cyber-validation-error"></span>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-12">
                                 <div class="form-floating-group">
                                     <label asp-for="City" class="cyber-label">
                                         City <span class="required">*</span>
@@ -757,27 +757,6 @@
                                         <input asp-for="City" class="cyber-input" style="padding-left: 2.75rem;" placeholder="City name" />
                                     </div>
                                     <span asp-validation-for="City" class="cyber-validation-error"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-floating-group">
-                                    <label asp-for="State" class="cyber-label">
-                                        Governorate <span class="required">*</span>
-                                    </label>
-                                    <div class="input-with-icon">
-                                        <i class="fas fa-map input-icon"></i>
-                                        <input asp-for="State" class="cyber-input" style="padding-left: 2.75rem;" placeholder="Governorate" />
-                                    </div>
-                                    <span asp-validation-for="State" class="cyber-validation-error"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-floating-group">
-                                    <label asp-for="ZipCode" class="cyber-label">
-                                        Postal Code <span class="required">*</span>
-                                    </label>
-                                    <input asp-for="ZipCode" class="cyber-input" placeholder="12345" />
-                                    <span asp-validation-for="ZipCode" class="cyber-validation-error"></span>
                                 </div>
                             </div>
                         </div>
@@ -795,7 +774,7 @@
                     <div class="section-body">
                         <div class="payment-methods">
                             <label class="payment-method">
-                                <input type="radio" name="paymentMethod" value="card" checked>
+                                <input type="radio" asp-for="PaymentMethod" value="Credit Card" checked>
                                 <div class="payment-method-card">
                                     <i class="fas fa-credit-card"></i>
                                     <span>Credit Card</span>
@@ -805,7 +784,7 @@
                                 </div>
                             </label>
                             <label class="payment-method">
-                                <input type="radio" name="paymentMethod" value="paypal">
+                                <input type="radio" asp-for="PaymentMethod" value="PayPal">
                                 <div class="payment-method-card">
                                     <i class="fab fa-paypal"></i>
                                     <span>PayPal</span>
@@ -815,7 +794,7 @@
                                 </div>
                             </label>
                             <label class="payment-method">
-                                <input type="radio" name="paymentMethod" value="cod">
+                                <input type="radio" asp-for="PaymentMethod" value="Cash on Delivery">
                                 <div class="payment-method-card">
                                     <i class="fas fa-money-bill-wave"></i>
                                     <span>Cash on Delivery</span>
@@ -825,7 +804,7 @@
                                 </div>
                             </label>
                             <label class="payment-method">
-                                <input type="radio" name="paymentMethod" value="instapay">
+                                <input type="radio" asp-for="PaymentMethod" value="InstaPay">
                                 <div class="payment-method-card">
                                     <i class="fas fa-mobile-alt"></i>
                                     <span>InstaPay</span>
@@ -898,21 +877,6 @@
                 </div>
 
                 <!-- Order Notes -->
-                <div class="checkout-section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <i class="fas fa-sticky-note"></i>
-                        </div>
-                        <h3 class="section-title">Order Notes (Optional)</h3>
-                    </div>
-                    <div class="section-body">
-                        <div class="form-floating-group mb-0">
-                            <label class="cyber-label">Special Instructions</label>
-                            <textarea asp-for="Notes" class="cyber-input cyber-textarea" rows="3"
-                                placeholder="Special delivery instructions, gift message, etc."></textarea>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Order Summary -->
