@@ -50,38 +50,66 @@ namespace Arcade.Controllers
         [Route("~/Admin/Dashboard")]
         public async Task<IActionResult> Dashboard()
         {
-            var allProducts = await _productService.GetAllAsync();
-            var productsList = allProducts.ToList();
-            var lowStockProducts = await _productService.GetLowStockAsync(10);
-            var recentOrders = await _orderService.GetRecentOrdersAsync(5);
-
-            var model = new AdminDashboardViewModel
+            try
             {
-                TotalProducts = productsList.Count,
-                TotalOrders = (await _orderService.GetPagedAsync(1, 1)).TotalCount,
-                TotalRevenue = await _orderService.GetTotalRevenueAsync(),
-                TotalCustomers = await _userRepository.GetCustomerCountAsync(),
-                TodayOrders = await _orderService.GetTodayOrderCountAsync(),
-                TodayRevenue = await _orderService.GetTodayRevenueAsync(),
-                PendingOrders = await _orderService.GetPendingOrderCountAsync(),
-                ProcessingOrders = await _orderService.GetOrderCountByStatusAsync("Processing"),
-                ShippedOrders = await _orderService.GetOrderCountByStatusAsync("Shipped"),
-                DeliveredOrders = await _orderService.GetOrderCountByStatusAsync("Delivered"),
-                LowStockItems = productsList.Count(p => p.StockQuantity > 0 && p.StockQuantity < 10),
-                OutOfStockItems = productsList.Count(p => p.StockQuantity == 0),
-                RecentOrders = recentOrders.Select(o => new AdminRecentOrderViewModel
-                {
-                    OrderId = o.OrderId,
-                    OrderNumber = o.OrderNumber,
-                    CustomerName = o.User?.FullName ?? "Unknown",
-                    OrderDate = o.OrderDate,
-                    Total = o.TotalAmount,
-                    Status = o.Status
-                }),
-                LowStockProducts = lowStockProducts.Take(5)
-            };
+                // Fetch all data in parallel for better performance
+                var allProductsTask = _productService.GetAllAsync();
+                var lowStockProductsTask = _productService.GetLowStockAsync(10);
+                var recentOrdersTask = _orderService.GetRecentOrdersAsync(5);
+                var totalOrdersTask = _orderService.GetPagedAsync(1, 1);
+                var totalRevenueTask = _orderService.GetTotalRevenueAsync();
+                var totalCustomersTask = _userRepository.GetCustomerCountAsync();
+                var todayOrdersTask = _orderService.GetTodayOrderCountAsync();
+                var todayRevenueTask = _orderService.GetTodayRevenueAsync();
+                var pendingOrdersTask = _orderService.GetPendingOrderCountAsync();
+                var processingOrdersTask = _orderService.GetOrderCountByStatusAsync("Processing");
+                var shippedOrdersTask = _orderService.GetOrderCountByStatusAsync("Shipped");
+                var deliveredOrdersTask = _orderService.GetOrderCountByStatusAsync("Delivered");
 
-            return View(model);
+                await Task.WhenAll(
+                    allProductsTask, lowStockProductsTask, recentOrdersTask, totalOrdersTask,
+                    totalRevenueTask, totalCustomersTask, todayOrdersTask, todayRevenueTask,
+                    pendingOrdersTask, processingOrdersTask, shippedOrdersTask, deliveredOrdersTask
+                );
+
+                var productsList = allProductsTask.Result.ToList();
+                var lowStockProducts = lowStockProductsTask.Result;
+                var recentOrders = recentOrdersTask.Result;
+
+                var model = new AdminDashboardViewModel
+                {
+                    TotalProducts = productsList.Count,
+                    TotalOrders = totalOrdersTask.Result.TotalCount,
+                    TotalRevenue = totalRevenueTask.Result,
+                    TotalCustomers = totalCustomersTask.Result,
+                    TodayOrders = todayOrdersTask.Result,
+                    TodayRevenue = todayRevenueTask.Result,
+                    PendingOrders = pendingOrdersTask.Result,
+                    ProcessingOrders = processingOrdersTask.Result,
+                    ShippedOrders = shippedOrdersTask.Result,
+                    DeliveredOrders = deliveredOrdersTask.Result,
+                    LowStockItems = productsList.Count(p => p.StockQuantity > 0 && p.StockQuantity < 10),
+                    OutOfStockItems = productsList.Count(p => p.StockQuantity == 0),
+                    RecentOrders = recentOrders.Select(o => new AdminRecentOrderViewModel
+                    {
+                        OrderId = o.OrderId,
+                        OrderNumber = o.OrderNumber,
+                        CustomerName = o.User?.FullName ?? "Unknown",
+                        OrderDate = o.OrderDate,
+                        Total = o.TotalAmount,
+                        Status = o.Status
+                    }),
+                    LowStockProducts = lowStockProducts.Take(5)
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading dashboard data");
+                TempData["ErrorMessage"] = "Failed to load dashboard data. Please try again.";
+                return View(new AdminDashboardViewModel());
+            }
         }
 
         #region Profile
