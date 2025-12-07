@@ -48,6 +48,7 @@ namespace Arcade.Data.Repositories
         public async Task<User?> GetWithOrdersAsync(int userId)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(u => u.Orders)
                     .ThenInclude(o => o.OrderDetails)
                         .ThenInclude(od => od.Product)
@@ -56,7 +57,7 @@ namespace Arcade.Data.Repositories
 
         public async Task<int> GetCustomerCountAsync()
         {
-            return await _dbSet.CountAsync(u => u.Role == "Customer" && u.IsActive);
+            return await _dbSet.AsNoTracking().CountAsync(u => u.Role == "Customer" && u.IsActive);
         }
     }
 }

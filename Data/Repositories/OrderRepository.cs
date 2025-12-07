@@ -38,6 +38,7 @@ namespace Arcade.Data.Repositories
         public async Task<Order?> GetWithDetailsAsync(int orderId)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(o => o.User)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
@@ -48,6 +49,7 @@ namespace Arcade.Data.Repositories
         public async Task<IEnumerable<Order>> GetUserOrdersAsync(int userId)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
                 .Where(o => o.UserId == userId)
@@ -58,6 +60,7 @@ namespace Arcade.Data.Repositories
         public async Task<IEnumerable<Order>> GetRecentOrdersAsync(int count = 10)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(o => o.User)
                 .Include(o => o.OrderDetails)
                 .OrderByDescending(o => o.OrderDate)
@@ -68,6 +71,7 @@ namespace Arcade.Data.Repositories
         public async Task<IEnumerable<Order>> GetPendingOrdersAsync()
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(o => o.User)
                 .Include(o => o.OrderDetails)
                 .Where(o => o.Status == "Pending")
@@ -78,13 +82,14 @@ namespace Arcade.Data.Repositories
         public async Task<int> GetTodayOrderCountAsync()
         {
             var today = DateTime.UtcNow.Date;
-            return await _dbSet.CountAsync(o => o.OrderDate.Date == today);
+            return await _dbSet.AsNoTracking().CountAsync(o => o.OrderDate.Date == today);
         }
 
         public async Task<decimal> GetTodayRevenueAsync()
         {
             var today = DateTime.UtcNow.Date;
             return await _dbSet
+                .AsNoTracking()
                 .Where(o => o.OrderDate.Date == today)
                 .SumAsync(o => o.TotalAmount);
         }
@@ -92,13 +97,14 @@ namespace Arcade.Data.Repositories
         public async Task<decimal> GetTotalRevenueAsync()
         {
             return await _dbSet
+                .AsNoTracking()
                 .Where(o => o.Status != "Cancelled")
                 .SumAsync(o => o.TotalAmount);
         }
 
         public async Task<int> GetOrderCountByStatusAsync(string status)
         {
-            return await _dbSet.CountAsync(o => o.Status == status);
+            return await _dbSet.AsNoTracking().CountAsync(o => o.Status == status);
         }
 
         public async Task<(IEnumerable<Order> Orders, int TotalCount)> GetPagedAsync(

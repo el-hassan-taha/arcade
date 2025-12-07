@@ -24,29 +24,29 @@ namespace Arcade.Data.Repositories
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet.AsNoTracking().ToListAsync();
         }
 
         public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.Where(predicate).ToListAsync();
+            return await _dbSet.AsNoTracking().Where(predicate).ToListAsync();
         }
 
         public virtual async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.FirstOrDefaultAsync(predicate);
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
         }
 
         public virtual async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.AnyAsync(predicate);
+            return await _dbSet.AsNoTracking().AnyAsync(predicate);
         }
 
         public virtual async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
         {
             return predicate == null
-                ? await _dbSet.CountAsync()
-                : await _dbSet.CountAsync(predicate);
+                ? await _dbSet.AsNoTracking().CountAsync()
+                : await _dbSet.AsNoTracking().CountAsync(predicate);
         }
 
         public virtual async Task AddAsync(T entity)

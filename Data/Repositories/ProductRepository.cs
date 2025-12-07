@@ -38,6 +38,7 @@ namespace Arcade.Data.Repositories
         public async Task<Product?> GetWithCategoryAsync(int productId)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(p => p.ProductId == productId && p.IsActive);
         }
@@ -45,6 +46,7 @@ namespace Arcade.Data.Repositories
         public async Task<IEnumerable<Product>> GetByCategoryAsync(int categoryId)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(p => p.Category)
                 .Where(p => p.CategoryId == categoryId && p.IsActive)
                 .OrderBy(p => p.ProductName)
@@ -54,6 +56,7 @@ namespace Arcade.Data.Repositories
         public async Task<IEnumerable<Product>> GetFeaturedAsync(int count = 8)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(p => p.Category)
                 .Where(p => p.IsActive && p.IsFeatured && p.StockQuantity > 0)
                 .OrderByDescending(p => p.CreatedAt)
@@ -64,6 +67,7 @@ namespace Arcade.Data.Repositories
         public async Task<IEnumerable<Product>> GetLowStockAsync(int threshold = 10)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(p => p.Category)
                 .Where(p => p.IsActive && p.StockQuantity <= threshold)
                 .OrderBy(p => p.StockQuantity)
@@ -74,6 +78,7 @@ namespace Arcade.Data.Repositories
         {
             var term = searchTerm.ToLower().Trim();
             return await _dbSet
+                .AsNoTracking()
                 .Include(p => p.Category)
                 .Where(p => p.IsActive &&
                     (p.ProductName.ToLower().Contains(term) ||
