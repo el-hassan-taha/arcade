@@ -486,7 +486,7 @@
         <div class="order-details-header-top">
             <div>
                 <h1 class="order-title"><i class="fas fa-receipt"></i>Order <span>#@Model.OrderNumber</span></h1>
-                <p class="order-date"><i class="fas fa-calendar-alt"></i> Placed on @Model.OrderDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
+                <p class="order-date"><i class="fas fa-calendar-alt"></i> Placed on @Model.OrderDate.ToString("MMMM dd,     yyyy 'at' h:mm tt")</p>
             </div>
             <span class="order-status-large @Model.Status.ToLower()">
                 <i class="fas @GetStatusIcon(Model.Status)"></i> @Model.Status
