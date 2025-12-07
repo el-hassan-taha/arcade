@@ -6,6 +6,7 @@ using Arcade.ViewModels;
 using Arcade.Models;
 using Arcade.Data.Repositories;
 using Arcade.Data;
+using System.Security.Claims;
 
 namespace Arcade.Controllers
 {
@@ -20,6 +21,7 @@ namespace Arcade.Controllers
         private readonly IOrderService _orderService;
         private readonly IUserRepository _userRepository;
         private readonly ApplicationDbContext _context;
+        private readonly IAuthenticationService _authService;
         private readonly ILogger<AdminController> _logger;
 
         public AdminController(
@@ -27,12 +29,14 @@ namespace Arcade.Controllers
             IOrderService orderService,
             IUserRepository userRepository,
             ApplicationDbContext context,
+            IAuthenticationService authService,
             ILogger<AdminController> logger)
         {
             _productService = productService;
             _orderService = orderService;
             _userRepository = userRepository;
             _context = context;
+            _authService = authService;
             _logger = logger;
         }
 
@@ -78,6 +82,109 @@ namespace Arcade.Controllers
             return View(model);
         }
 
+        #region Profile
+
+        /// <summary>
+        /// Admin profile (separate from customer profile)
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = GetCurrentUserId();
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var names = (user.FullName ?? string.Empty).Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+            var firstName = names.Length > 0 ? names[0] : string.Empty;
+            var lastName = names.Length > 1 ? names[1] : string.Empty;
+
+            var model = new ProfileViewModel
+            {
+                Email = user.Email,
+                FullName = user.FullName,
+                FirstName = firstName,
+                LastName = lastName,
+                Role = user.Role,
+                MemberSince = user.CreatedAt
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Updates admin profile (name only)
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = GetCurrentUserId();
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var fullName = $"{model.FirstName} {model.LastName}".Trim();
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                fullName = model.FullName;
+            }
+
+            user.FullName = fullName;
+            _userRepository.Update(user);
+            await _userRepository.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Profile updated successfully.";
+            return RedirectToAction("Profile");
+        }
+
+        /// <summary>
+        /// Admin change password (admin layout)
+        /// </summary>
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Processes admin password change
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = GetCurrentUserId();
+            var (success, message) = await _authService.ChangePasswordAsync(userId, model.CurrentPassword, model.NewPassword);
+
+            if (success)
+            {
+                TempData["SuccessMessage"] = message;
+                return RedirectToAction("Profile");
+            }
+
+            ModelState.AddModelError(string.Empty, message);
+            return View(model);
+        }
+
+        #endregion
+
         #region Product Management
 
         /// <summary>
@@ -87,14 +194,52 @@ namespace Arcade.Controllers
         public async Task<IActionResult> Products(
             int? categoryId = null,
             string? searchTerm = null,
+            string? stockStatus = null,
             string? sortBy = null,
             bool sortDesc = false,
             int page = 1)
         {
             const int pageSize = 20;
 
+            // Get products based on search/category filter (without stock status filter first)
             var (products, totalCount, totalPages) = await _productService.GetPagedAsync(
                 page, pageSize, categoryId, null, null, null, searchTerm, sortBy, sortDesc);
+
+            // Get all products matching the current search/category filter for stats calculation
+            var allFilteredProducts = await _productService.GetAllAsync();
+            var filteredProductsList = allFilteredProducts.ToList();
+            
+            // Apply category filter for stats
+            if (categoryId.HasValue)
+            {
+                filteredProductsList = filteredProductsList.Where(p => p.CategoryId == categoryId.Value).ToList();
+            }
+            
+            // Apply search filter for stats
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                filteredProductsList = filteredProductsList.Where(p => 
+                    p.ProductName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    (p.Description != null && p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
+                    (p.SKU != null && p.SKU.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))).ToList();
+            }
+            
+            // Calculate stock counts from filtered results
+            int totalInStockCount = filteredProductsList.Count(p => p.StockQuantity >= 10);
+            int totalLowStockCount = filteredProductsList.Count(p => p.StockQuantity > 0 && p.StockQuantity < 10);
+            int totalOutOfStockCount = filteredProductsList.Count(p => p.StockQuantity == 0);
+
+            // Apply stock status filter for display
+            if (!string.IsNullOrEmpty(stockStatus))
+            {
+                products = stockStatus switch
+                {
+                    "instock" => products.Where(p => p.StockQuantity >= 10),
+                    "lowstock" => products.Where(p => p.StockQuantity > 0 && p.StockQuantity < 10),
+                    "outofstock" => products.Where(p => p.StockQuantity == 0),
+                    _ => products
+                };
+            }
 
             var categories = await _productService.GetCategoriesAsync();
 
@@ -105,12 +250,16 @@ namespace Arcade.Controllers
                 CurrentPage = page,
                 TotalPages = totalPages,
                 TotalCount = totalCount,
-                TotalItems = totalCount,
+                TotalItems = filteredProductsList.Count,
                 PageSize = pageSize,
                 CategoryId = categoryId,
                 SearchTerm = searchTerm,
+                StockStatus = stockStatus,
                 SortBy = sortBy,
-                SortDescending = sortDesc
+                SortDescending = sortDesc,
+                TotalInStockCount = totalInStockCount,
+                TotalLowStockCount = totalLowStockCount,
+                TotalOutOfStockCount = totalOutOfStockCount
             };
 
             return View(model);
@@ -283,9 +432,9 @@ namespace Arcade.Controllers
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStock(int id, int quantity)
+        public async Task<IActionResult> UpdateStock(int productId, int quantity)
         {
-            var success = await _productService.UpdateStockAsync(id, quantity);
+            var success = await _productService.UpdateStockAsync(productId, quantity);
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
@@ -308,14 +457,14 @@ namespace Arcade.Controllers
         [HttpGet]
         public async Task<IActionResult> Orders(
             string? status = null,
-            string? searchTerm = null,
+            string? search = null,
             DateTime? fromDate = null,
             DateTime? toDate = null,
             int page = 1)
         {
             const int pageSize = 20;
 
-            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status, searchTerm);
+            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status, search, fromDate, toDate);
 
             var model = new AdminOrderListViewModel
             {
@@ -325,7 +474,7 @@ namespace Arcade.Controllers
                 TotalCount = totalCount,
                 PageSize = pageSize,
                 Status = status,
-                SearchTerm = searchTerm,
+                Search = search,
                 FromDate = fromDate,
                 ToDate = toDate
             };
@@ -371,7 +520,14 @@ namespace Arcade.Controllers
             TempData[success ? "SuccessMessage" : "ErrorMessage"] =
                 success ? "Order status updated!" : "Failed to update order status.";
 
-            return RedirectToAction("OrderDetails", new { id });
+            // Check if request came from OrderDetails page
+            var referer = Request.Headers["Referer"].ToString();
+            if (referer.Contains("OrderDetails"))
+            {
+                return RedirectToAction("OrderDetails", new { id });
+            }
+
+            return RedirectToAction("Orders");
         }
 
         #endregion
@@ -384,7 +540,7 @@ namespace Arcade.Controllers
         [HttpGet]
         public async Task<IActionResult> Inventory()
         {
-            var allProducts = await _productService.GetAllAsync();
+            var allProducts = await _productService.GetAllWithCategoryAsync();
             var productsList = allProducts.ToList();
 
             var model = new AdminInventoryViewModel
@@ -422,6 +578,16 @@ namespace Arcade.Controllers
             }
 
             return RedirectToAction("Products");
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            return int.TryParse(userIdClaim?.Value, out var userId) ? userId : 0;
         }
 
         #endregion

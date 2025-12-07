@@ -56,6 +56,11 @@ namespace Arcade.ViewModels
         public string? StockStatus { get; set; }
         public bool SortDescending { get; set; }
 
+        // Total stock counts from entire database
+        public int TotalInStockCount { get; set; }
+        public int TotalLowStockCount { get; set; }
+        public int TotalOutOfStockCount { get; set; }
+
         public bool HasPreviousPage => CurrentPage > 1;
         public bool HasNextPage => CurrentPage < TotalPages;
     }
@@ -73,7 +78,7 @@ namespace Arcade.ViewModels
         public int PageSize { get; set; } = 20;
 
         public string? Status { get; set; }
-        public string? SearchTerm { get; set; }
+        public string? Search { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
 
@@ -87,7 +92,7 @@ namespace Arcade.ViewModels
     public class AdminOrderDetailsViewModel
     {
         public Order Order { get; set; } = new Order();
-        public string[] AvailableStatuses { get; set; } = { "Pending", "Processing", "Shipped", "Completed", "Cancelled" };
+        public string[] AvailableStatuses { get; set; } = { "Pending", "Processing", "Shipped", "Delivered", "Cancelled" };
     }
 
     /// <summary>
