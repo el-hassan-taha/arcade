@@ -237,22 +237,22 @@ namespace Arcade.Controllers
             // Get all products matching the current search/category filter for stats calculation
             var allFilteredProducts = await _productService.GetAllAsync();
             var filteredProductsList = allFilteredProducts.ToList();
-            
+
             // Apply category filter for stats
             if (categoryId.HasValue)
             {
                 filteredProductsList = filteredProductsList.Where(p => p.CategoryId == categoryId.Value).ToList();
             }
-            
+
             // Apply search filter for stats
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                filteredProductsList = filteredProductsList.Where(p => 
+                filteredProductsList = filteredProductsList.Where(p =>
                     p.ProductName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                     (p.Description != null && p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
                     (p.SKU != null && p.SKU.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))).ToList();
             }
-            
+
             // Calculate stock counts from filtered results
             int totalInStockCount = filteredProductsList.Count(p => p.StockQuantity >= 10);
             int totalLowStockCount = filteredProductsList.Count(p => p.StockQuantity > 0 && p.StockQuantity < 10);
