@@ -159,12 +159,20 @@
     .stat-value {
         font-size: 2rem;
         font-weight: 700;
+        color: var(--arcade-primary);
         background: linear-gradient(135deg, var(--arcade-primary), var(--arcade-secondary));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         line-height: 1;
         margin-bottom: 0.75rem;
+    }
+    
+    /* Fallback for browsers that don't support background-clip */
+    @@supports not (background-clip: text) {
+        .stat-value {
+            color: var(--arcade-primary);
+        }
     }
     
     .stat-trend {
@@ -790,6 +798,25 @@
             </div>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (Model.TotalProducts == 0 && Model.TotalOrders == 0)
+{
+    <div class="alert alert-info mb-4" style="border-left: 4px solid var(--arcade-primary); background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(139, 0, 255, 0.1)); border-radius: 12px; border: 1px solid var(--arcade-border);">
+        <div class="d-flex align-items-start">
+            <i class="fas fa-rocket me-3 mt-1" style="font-size: 1.5rem; color: var(--arcade-primary);"></i>
+            <div>
+                <h5 class="mb-2" style="color: var(--arcade-primary);">🎮 Welcome to Your Arcade Store!</h5>
+                <p class="mb-2">Your store is ready to go! Here's how to get started:</p>
+                <ol class="mb-0 ps-3">
+                    <li><strong>Add Products:</strong> Click "Add New Product" below to start building your inventory</li>
+                    <li><strong>Set Stock Levels:</strong> Keep track of your inventory in the Products section</li>
+                    <li><strong>Track Orders:</strong> Once customers start shopping, you'll see orders here</li>
+                    <li><strong>Monitor Stats:</strong> Watch your revenue and customer growth in real-time</li>
+                </ol>
+            </div>
+        </div>
     </div>
 }
 
