@@ -17,7 +17,7 @@ A modern, feature-rich e-commerce platform for electronics and gaming products b
 
 ## 🚀 Technologies Used
 
-- **Backend**: ASP.NET Core MVC (.NET 9.0)
+- **Backend**: ASP.NET Core MVC (.NET 10.0)
 - **Database**: Entity Framework Core with SQL Server
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Styling**: Bootstrap 5, Custom CSS with CSS Variables
