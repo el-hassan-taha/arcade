@@ -29,6 +29,12 @@ namespace Arcade.Models
         [StringLength(20)]
         public string Role { get; set; } = "Customer"; // "Customer" or "Admin"
 
+        [StringLength(20)]
+        public string? Phone { get; set; }
+
+        [StringLength(500)]
+        public string? Address { get; set; }
+
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

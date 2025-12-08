@@ -52,6 +52,8 @@ namespace Arcade.ViewModels
 
         public int? CategoryId { get; set; }
         public string? SearchTerm { get; set; }
+        public string? Brand { get; set; }
+        public string? SKU { get; set; }
         public string? SortBy { get; set; }
         public string? StockStatus { get; set; }
         public bool SortDescending { get; set; }

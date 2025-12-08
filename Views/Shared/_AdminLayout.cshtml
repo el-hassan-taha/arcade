@@ -273,7 +273,7 @@
             background: linear-gradient(135deg, #7c3aed, #6366f1);
         }
 
-        .admin-user-menu > div[data-bs-toggle="dropdown"] {
+        .admin-user-menu>div[data-bs-toggle="dropdown"] {
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -286,7 +286,7 @@
             transition: all 0.3s ease;
         }
 
-        .admin-user-menu > div[data-bs-toggle="dropdown"]:hover {
+        .admin-user-menu>div[data-bs-toggle="dropdown"]:hover {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(34, 211, 238, 0.15));
             border-color: rgba(99, 102, 241, 0.4);
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
@@ -524,7 +524,7 @@
                         </a>
                     </li>
                     <li class="sidebar-nav-item">
-                        <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                        <form asp-controller="AdminAuth" asp-action="Logout" method="post" style="margin: 0;">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="sidebar-nav-link"
                                 style="width: 100%; border: none; background: none; cursor: pointer; text-align: left;">
@@ -563,7 +563,8 @@
                             <div class="admin-user-avatar">
                                 @{
                                     var userName = User.Identity?.Name ?? "Admin";
-                                    var initials = string.Join("", userName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(n => n[0]));
+                                    var initials = string.Join("", userName.Split(' ',
+                                    StringSplitOptions.RemoveEmptyEntries).Take(2).Select(n => n[0]));
                                 }
                                 @initials.ToUpper()
                             </div>
@@ -580,7 +581,7 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                <form asp-controller="AdminAuth" asp-action="Logout" method="post">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="dropdown-item cyber-dropdown-item text-danger">
                                         <i class="fas fa-sign-out-alt"></i> Logout

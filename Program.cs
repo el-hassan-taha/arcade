@@ -31,22 +31,54 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 // --------------------------------------------------------------------------
-// Authentication (Cookie-based)
+// Authentication (Dual Cookie-based: Customer and Admin)
 // --------------------------------------------------------------------------
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "CustomerScheme";
+    options.DefaultChallengeScheme = "CustomerScheme";
+})
+.AddCookie("CustomerScheme", options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.Name = "Arcade.Customer";
+})
+.AddCookie("AdminScheme", options =>
+{
+    options.LoginPath = "/Admin/Login";
+    options.LogoutPath = "/Admin/Logout";
+    options.AccessDeniedPath = "/Admin/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = false;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.Name = "Arcade.Admin";
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CustomerOnly", policy =>
     {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.AccessDeniedPath = "/Account/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);
-        options.SlidingExpiration = true;
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Lax;
+        policy.AuthenticationSchemes.Add("CustomerScheme");
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Customer");
     });
 
-builder.Services.AddAuthorization();
+    options.AddPolicy("AdminOnly", policy =>
+    {
+        policy.AuthenticationSchemes.Add("AdminScheme");
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Admin");
+    });
+});
 
 // --------------------------------------------------------------------------
 // MVC & Session

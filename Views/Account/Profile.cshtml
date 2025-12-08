@@ -1,267 +1,346 @@
 @model Arcade.ViewModels.ProfileViewModel
 @{
     ViewData["Title"] = "My Profile";
-    var memberSince = DateTime.Now.AddMonths(-6);
 }
 
 <style>
-    .profile-hero {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(34, 211, 238, 0.1) 50%, rgba(168, 85, 247, 0.1) 100%);
-        border-radius: 20px;
-        padding: 2.5rem;
-        margin-bottom: 2rem;
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .profile-hero::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-        pointer-events: none;
-    }
-    
-    .profile-hero-content {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        position: relative;
-        z-index: 1;
-    }
-    
-    .profile-avatar-wrapper { position: relative; }
-    
-    .profile-avatar-large {
-        width: 120px;
-        height: 120px;
-        background: linear-gradient(135deg, #6366f1, #22d3ee, #a855f7);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: white;
-        box-shadow: 0 0 40px rgba(99, 102, 241, 0.4);
-        border: 4px solid rgba(255, 255, 255, 0.1);
-        animation: avatarGlow 3s ease-in-out infinite;
-    }
-    
-    @@keyframes avatarGlow {
-        0%, 100% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.4); }
-        50% { box-shadow: 0 0 60px rgba(34, 211, 238, 0.5); }
-    }
-    
-    .profile-avatar-badge {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, #10b981, #22d3ee);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.9rem;
-        color: white;
-        border: 3px solid #0f172a;
-    }
-    
-    .profile-info h1 {
-        font-family: 'Poppins', sans-serif;
-        font-size: 2rem;
-        font-weight: 700;
-        color: #e2e8f0;
-        margin-bottom: 0.5rem;
-    }
-    
-    .profile-info-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        color: #94a3b8;
-        font-size: 0.95rem;
-    }
-    
-    .profile-info-meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .profile-info-meta-item i { color: #22d3ee; }
-    
-    .profile-stats-row {
+    /* Profile Container */
+    .profile-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+        min-height: calc(100vh - 200px);
     }
-    
-    .profile-stat-card {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-        border: 1px solid rgba(99, 102, 241, 0.2);
+
+    /* Sidebar */
+    .profile-sidebar {
+        background: var(--arcade-surface);
+        border: 1px solid var(--arcade-border);
         border-radius: 16px;
         padding: 1.5rem;
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .profile-sidebar-header {
         text-align: center;
-        transition: all 0.3s ease;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--arcade-border);
+        margin-bottom: 1.5rem;
     }
-    
-    .profile-stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
-        border-color: rgba(99, 102, 241, 0.4);
-    }
-    
-    .profile-stat-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, var(--arcade-primary), var(--arcade-accent));
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
+        font-size: 2.5rem;
+        color: #000000;
         margin: 0 auto 1rem;
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+        border: 4px solid var(--arcade-bg);
+        position: relative;
     }
-    
-    .profile-stat-icon.orders { background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.1)); color: #818cf8; }
-    .profile-stat-icon.cart { background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.1)); color: #22d3ee; }
-    .profile-stat-icon.wishlist { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1)); color: #f87171; }
-    .profile-stat-icon.rewards { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1)); color: #fbbf24; }
-    
-    .profile-stat-value {
-        font-family: 'Poppins', sans-serif;
-        font-size: 2rem;
-        font-weight: 700;
-        color: #e2e8f0;
-        line-height: 1;
+
+    .profile-avatar-badge {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 28px;
+        height: 28px;
+        background: var(--arcade-success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 0.75rem;
+        border: 3px solid var(--arcade-bg);
     }
-    
-    .profile-stat-label {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-top: 0.25rem;
-    }
-    
-    .profile-section-title {
+
+    .profile-user-name {
         font-family: 'Poppins', sans-serif;
         font-size: 1.25rem;
         font-weight: 600;
-        color: #e2e8f0;
-        margin-bottom: 1.5rem;
+        color: var(--arcade-text);
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-user-email {
+        font-size: 0.85rem;
+        color: var(--arcade-text-muted);
+        word-break: break-all;
+    }
+
+    .profile-user-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.75rem;
+        background: rgba(124, 58, 237, 0.1);
+        border: 1px solid rgba(124, 58, 237, 0.2);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        color: var(--arcade-primary);
+        margin-top: 0.75rem;
+    }
+
+    .profile-nav {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .profile-nav-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.875rem 1rem;
+        color: var(--arcade-text-secondary);
+        text-decoration: none;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .profile-nav-link i {
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .profile-nav-link:hover,
+    .profile-nav-link.active {
+        background: rgba(124, 58, 237, 0.1);
+        color: var(--arcade-primary);
+    }
+
+    .profile-nav-link.active {
+        font-weight: 600;
+    }
+
+    .profile-nav-divider {
+        height: 1px;
+        background: var(--arcade-border);
+        margin: 1rem 0;
+    }
+
+    /* Main Content */
+    .profile-content {
+        background: var(--arcade-surface);
+        border: 1px solid var(--arcade-border);
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    .profile-content-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--arcade-border);
+    }
+
+    .profile-content-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--arcade-text);
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
-    
-    .profile-section-title i {
-        background: linear-gradient(135deg, #6366f1, #22d3ee);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+
+    .profile-content-title i {
+        color: var(--arcade-primary);
     }
-    
-    .profile-form-card {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        border-radius: 20px;
-        padding: 2rem;
-    }
-    
-    .profile-form-group { margin-bottom: 1.5rem; }
-    
-    .profile-form-label {
-        display: block;
-        font-weight: 500;
-        color: #cbd5e1;
-        margin-bottom: 0.5rem;
+
+    .profile-content-subtitle {
+        color: var(--arcade-text-muted);
         font-size: 0.95rem;
     }
-    
-    .profile-form-input {
-        width: 100%;
-        padding: 0.875rem 1rem;
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        border-radius: 10px;
-        color: #e2e8f0;
-        font-size: 1rem;
+
+    /* Stats Grid */
+    .profile-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .profile-stat-card {
+        background: var(--arcade-bg-alt);
+        border: 1px solid var(--arcade-border);
+        border-radius: 12px;
+        padding: 1.25rem;
         transition: all 0.3s ease;
     }
-    
-    .profile-form-input:focus {
-        outline: none;
-        border-color: #6366f1;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+
+    .profile-stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
+        border-color: var(--arcade-primary);
     }
-    
-    .profile-form-input:read-only {
-        background: rgba(51, 65, 85, 0.4);
-        color: #94a3b8;
-        cursor: not-allowed;
-    }
-    
-    .profile-form-hint {
-        font-size: 0.8rem;
-        color: #64748b;
-        margin-top: 0.5rem;
-    }
-    
-    .profile-actions-card {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        border-radius: 20px;
-        padding: 2rem;
-    }
-    
-    .profile-action-item {
+
+    .profile-stat-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        border-radius: 12px;
-        color: #e2e8f0;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
+        gap: 0.75rem;
         margin-bottom: 0.75rem;
     }
-    
-    .profile-action-item:last-child { margin-bottom: 0; }
-    
-    .profile-action-item:hover {
-        background: rgba(99, 102, 241, 0.1);
-        border-color: rgba(99, 102, 241, 0.2);
-        color: #22d3ee;
-    }
-    
-    .profile-action-icon {
-        width: 44px;
-        height: 44px;
-        background: rgba(99, 102, 241, 0.1);
+
+    .profile-stat-icon {
+        width: 40px;
+        height: 40px;
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.1rem;
-        color: #818cf8;
+    }
+
+    .profile-stat-icon.orders {
+        background: rgba(124, 58, 237, 0.1);
+        color: var(--arcade-primary);
+    }
+
+    .profile-stat-icon.cart {
+        background: rgba(6, 182, 212, 0.1);
+        color: var(--arcade-accent);
+    }
+
+    .profile-stat-value {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--arcade-text);
+        line-height: 1;
+    }
+
+    .profile-stat-label {
+        font-size: 0.85rem;
+        color: var(--arcade-text-muted);
+        margin-top: 0.25rem;
+    }
+
+    /* Info Sections */
+    .profile-info-section {
+        background: var(--arcade-bg-alt);
+        border: 1px solid var(--arcade-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-info-section-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--arcade-text);
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .profile-info-section-title i {
+        color: var(--arcade-primary);
+    }
+
+    .profile-info-row {
+        display: flex;
+        align-items: flex-start;
+        padding: 0.875rem 0;
+        border-bottom: 1px solid var(--arcade-border);
+    }
+
+    .profile-info-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .profile-info-row:first-child {
+        padding-top: 0;
+    }
+
+    .profile-info-label {
+        font-weight: 500;
+        color: var(--arcade-text-secondary);
+        font-size: 0.9rem;
+        width: 140px;
         flex-shrink: 0;
     }
-    
-    .profile-action-content { flex: 1; }
-    .profile-action-title { font-weight: 500; font-size: 0.95rem; }
-    .profile-action-desc { font-size: 0.8rem; color: #64748b; }
-    .profile-action-arrow { color: #64748b; transition: transform 0.3s ease; }
-    
-    .profile-action-item:hover .profile-action-arrow {
-        transform: translateX(5px);
-        color: #22d3ee;
+
+    .profile-info-value {
+        color: var(--arcade-text);
+        font-size: 0.95rem;
+        flex: 1;
+        word-break: break-word;
     }
-    
+
+    .profile-info-value.empty {
+        color: var(--arcade-text-muted);
+        font-style: italic;
+    }
+
+    /* Form Styles */
+    .profile-form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .profile-form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--arcade-text);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .profile-form-label .required {
+        color: var(--arcade-danger);
+    }
+
+    .profile-form-input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: var(--arcade-bg);
+        border: 1px solid var(--arcade-border);
+        border-radius: 10px;
+        color: var(--arcade-text);
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .profile-form-input:focus {
+        outline: none;
+        border-color: var(--arcade-primary);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .profile-form-input:read-only {
+        background: var(--arcade-surface-hover);
+        color: var(--arcade-text-muted);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .profile-form-hint {
+        font-size: 0.8rem;
+        color: var(--arcade-text-muted);
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
     .profile-security-badge {
         display: inline-flex;
         align-items: center;
@@ -270,210 +349,350 @@
         background: rgba(16, 185, 129, 0.1);
         border: 1px solid rgba(16, 185, 129, 0.2);
         border-radius: 20px;
-        color: #10b981;
+        color: var(--arcade-success);
         font-size: 0.85rem;
         margin-top: 1rem;
     }
 
-    @@media (max-width: 768px) {
-        .profile-hero-content { flex-direction: column; text-align: center; }
-        .profile-info-meta { justify-content: center; }
-        .profile-avatar-large { width: 100px; height: 100px; font-size: 2.5rem; }
-        .profile-info h1 { font-size: 1.5rem; }
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .profile-sidebar {
+            position: static;
+        }
+
+        .profile-sidebar-header {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            gap: 1rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .profile-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 
-    /* Light Mode Styles */
-    :root:not(.dark-mode) .profile-hero {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(34, 211, 238, 0.06) 50%, rgba(168, 85, 247, 0.06) 100%);
-        border: 1px solid rgba(99, 102, 241, 0.15);
-    }
+    @@media (max-width: 576px) {
+        .profile-sidebar {
+            padding: 1rem;
+        }
 
-    :root:not(.dark-mode) .profile-info h1 {
-        color: #1e293b;
-    }
+        .profile-content {
+            padding: 1.25rem;
+        }
 
-    :root:not(.dark-mode) .profile-info-meta {
-        color: #475569;
-    }
+        .profile-content-title {
+            font-size: 1.4rem;
+        }
 
-    :root:not(.dark-mode) .profile-stat-card {
-        background: white;
-        border: 1px solid rgba(99, 102, 241, 0.15);
-    }
+        .profile-stats-grid {
+            grid-template-columns: 1fr;
+        }
 
-    :root:not(.dark-mode) .profile-stat-value {
-        color: #1e293b;
-    }
+        .profile-info-row {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
 
-    :root:not(.dark-mode) .profile-stat-label {
-        color: #64748b;
-    }
-
-    :root:not(.dark-mode) .profile-section-title {
-        color: #1e293b;
-    }
-
-    :root:not(.dark-mode) .profile-form-card,
-    :root:not(.dark-mode) .profile-actions-card {
-        background: white;
-        border: 1px solid rgba(99, 102, 241, 0.15);
-    }
-
-    :root:not(.dark-mode) .profile-form-label {
-        color: #334155;
-    }
-
-    :root:not(.dark-mode) .profile-form-input {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        color: #1e293b;
-    }
-
-    :root:not(.dark-mode) .profile-form-input:focus {
-        background: white;
-        border-color: #6366f1;
-    }
-
-    :root:not(.dark-mode) .profile-action-item {
-        color: #334155;
-    }
-
-    :root:not(.dark-mode) .profile-action-item:hover {
-        color: #6366f1;
-        background: rgba(99, 102, 241, 0.05);
-    }
-
-    :root:not(.dark-mode) .profile-action-text h4 {
-        color: #1e293b;
-    }
-
-    :root:not(.dark-mode) .profile-action-text p {
-        color: #64748b;
+        .profile-info-label {
+            width: 100%;
+        }
     }
 </style>
 
 <div class="container py-4">
-    <div class="profile-hero">
-        <div class="profile-hero-content">
-            <div class="profile-avatar-wrapper">
-                <div class="profile-avatar-large"><i class="fas fa-user"></i></div>
-                <div class="profile-avatar-badge"><i class="fas fa-check"></i></div>
-            </div>
-            <div class="profile-info">
-                <h1>@Model.FirstName @Model.LastName</h1>
-                <div class="profile-info-meta">
-                    <span class="profile-info-meta-item"><i class="fas fa-envelope"></i> @Model.Email</span>
-                    @if (!string.IsNullOrEmpty(Model.Phone))
-                    {
-                        <span class="profile-info-meta-item"><i class="fas fa-phone"></i> @Model.Phone</span>
-                    }
-                    <span class="profile-info-meta-item"><i class="fas fa-calendar-alt"></i> Member since @memberSince.ToString("MMM yyyy")</span>
+    <div class="profile-container">
+        <!-- Sidebar -->
+        <aside class="profile-sidebar">
+            <div class="profile-sidebar-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                    <div class="profile-avatar-badge"><i class="fas fa-check"></i></div>
+                </div>
+                <div>
+                    <h2 class="profile-user-name">@Model.FirstName @Model.LastName</h2>
+                    <p class="profile-user-email">@Model.Email</p>
+                    <span class="profile-user-badge">
+                        <i class="fas fa-shield-check"></i>
+                        Verified Member
+                    </span>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="profile-stats-row">
-        <div class="profile-stat-card">
-            <div class="profile-stat-icon orders"><i class="fas fa-shopping-bag"></i></div>
-            <div class="profile-stat-value">@ViewBag.OrderCount</div>
-            <div class="profile-stat-label">Total Orders</div>
-        </div>
-        <div class="profile-stat-card">
-            <div class="profile-stat-icon cart"><i class="fas fa-shopping-cart"></i></div>
-            <div class="profile-stat-value">@ViewBag.CartItems</div>
-            <div class="profile-stat-label">Cart Items</div>
-        </div>
-        <div class="profile-stat-card">
-            <div class="profile-stat-icon wishlist"><i class="fas fa-heart"></i></div>
-            <div class="profile-stat-value">0</div>
-            <div class="profile-stat-label">Wishlist</div>
-        </div>
-        <div class="profile-stat-card">
-            <div class="profile-stat-icon rewards"><i class="fas fa-star"></i></div>
-            <div class="profile-stat-value">150</div>
-            <div class="profile-stat-label">Reward Points</div>
-        </div>
-    </div>
+            <nav class="profile-nav">
+                <ul class="profile-nav">
+                    <li class="profile-nav-item">
+                        <a href="#overview" class="profile-nav-link active" onclick="showSection('overview', event)">
+                            <i class="fas fa-home"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="profile-nav-item">
+                        <a href="#edit-profile" class="profile-nav-link" onclick="showSection('edit-profile', event)">
+                            <i class="fas fa-user-edit"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                    </li>
+                    <li class="profile-nav-item">
+                        <a asp-action="History" asp-controller="Order" class="profile-nav-link">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>Order History</span>
+                        </a>
+                    </li>
+                    <li class="profile-nav-item">
+                        <a asp-action="Index" asp-controller="Cart" class="profile-nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Shopping Cart</span>
+                        </a>
+                    </li>
+                    <div class="profile-nav-divider"></div>
+                    <li class="profile-nav-item">
+                        <a asp-action="ChangePassword" class="profile-nav-link">
+                            <i class="fas fa-key"></i>
+                            <span>Change Password</span>
+                        </a>
+                    </li>
+                    <li class="profile-nav-item">
+                        <a asp-action="Logout" class="profile-nav-link" style="color: var(--arcade-danger);">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
-    <div class="text-center mb-4">
-        <button type="button" class="cyber-btn cyber-btn-primary cyber-btn-lg" onclick="toggleEditProfile()">
-            <i class="fas fa-user-edit"></i> Edit Profile Information
-        </button>
-    </div>
+        <!-- Main Content -->
+        <main class="profile-content">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            <!-- Overview Section -->
+            <div id="overview-section" class="profile-section">
+                <div class="profile-content-header">
+                    <h1 class="profile-content-title">
+                        <i class="fas fa-user-circle"></i>
+                        Profile Overview
+                    </h1>
+                    <p class="profile-content-subtitle">View your account information and activity</p>
+                </div>
 
-    <div class="row g-4" id="editProfileSection" style="display: none;">
-        <div class="col-lg-12">
-            <div class="profile-form-card">
-                <h3 class="profile-section-title"><i class="fas fa-user-edit"></i> Edit Profile Information</h3>
-                <form asp-action="Profile" method="post">
-                    <div asp-validation-summary="ModelOnly" class="cyber-alert cyber-alert-danger mb-3"></div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label class="profile-form-label">First Name</label>
-                                <input type="text" class="profile-form-input" asp-for="FirstName" placeholder="Enter first name" />
-                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                <!-- Stats Grid -->
+                <div class="profile-stats-grid">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-header">
+                            <div class="profile-stat-icon orders">
+                                <i class="fas fa-shopping-bag"></i>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label class="profile-form-label">Last Name</label>
-                                <input type="text" class="profile-form-input" asp-for="LastName" placeholder="Enter last name" />
-                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            <div>
+                                <div class="profile-stat-value">@ViewBag.OrderCount</div>
+                                <div class="profile-stat-label">Total Orders</div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label class="profile-form-label">Email Address</label>
-                                <input type="email" class="profile-form-input" asp-for="Email" readonly />
-                                <p class="profile-form-hint"><i class="fas fa-lock"></i> Email cannot be changed for security</p>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-header">
+                            <div class="profile-stat-icon cart">
+                                <i class="fas fa-shopping-cart"></i>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label class="profile-form-label">Phone Number</label>
-                                <input type="tel" class="profile-form-input" asp-for="Phone" placeholder="+20 xxx xxx xxxx" />
-                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            <div>
+                                <div class="profile-stat-value">@ViewBag.CartItems</div>
+                                <div class="profile-stat-label">Cart Items</div>
                             </div>
                         </div>
                     </div>
-                    <div class="profile-form-group">
-                        <label class="profile-form-label">Shipping Address</label>
-                        <textarea class="profile-form-input" asp-for="Address" rows="3" placeholder="Enter your complete address..."></textarea>
-                        <span asp-validation-for="Address" class="text-danger small"></span>
+                </div>
+
+                <!-- Account Information -->
+                <div class="profile-info-section">
+                    <h3 class="profile-info-section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Account Information
+                    </h3>
+                    <div class="profile-info-row">
+                        <span class="profile-info-label">Full Name</span>
+                        <span class="profile-info-value">@Model.FirstName @Model.LastName</span>
                     </div>
+                    <div class="profile-info-row">
+                        <span class="profile-info-label">Email Address</span>
+                        <span class="profile-info-value">@Model.Email</span>
+                    </div>
+                    <div class="profile-info-row">
+                        <span class="profile-info-label">Phone Number</span>
+                        <span class="profile-info-value @(string.IsNullOrEmpty(Model.Phone) ? "empty" : "")">
+                            @(!string.IsNullOrEmpty(Model.Phone) ? Model.Phone : "Not provided")
+                        </span>
+                    </div>
+                    <div class="profile-info-row">
+                        <span class="profile-info-label">Member Since</span>
+                        <span class="profile-info-value">@(Model.MemberSince?.ToString("MMMM dd, yyyy") ?? "N/A")</span>
+                    </div>
+                    <div class="profile-info-row">
+                        <span class="profile-info-label">Account Type</span>
+                        <span class="profile-info-value">@Model.Role</span>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="profile-info-section">
+                    <h3 class="profile-info-section-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Shipping Address
+                    </h3>
+                    <div class="profile-info-row">
+                        <span class="profile-info-label">Address</span>
+                        <span class="profile-info-value @(string.IsNullOrEmpty(Model.Address) ? "empty" : "")">
+                            @(!string.IsNullOrEmpty(Model.Address) ? Model.Address : "No address saved")
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Profile Section -->
+            <div id="edit-profile-section" class="profile-section" style="display: none;">
+                <div class="profile-content-header">
+                    <h1 class="profile-content-title">
+                        <i class="fas fa-user-edit"></i>
+                        Edit Profile
+                    </h1>
+                    <p class="profile-content-subtitle">Update your personal information</p>
+                </div>
+
+                <form asp-action="Profile" method="post" asp-antiforgery="true">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+                    
+                    <div class="profile-info-section">
+                        <h3 class="profile-info-section-title">
+                            <i class="fas fa-user"></i>
+                            Personal Information
+                        </h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="profile-form-group">
+                                    <label class="profile-form-label">First Name <span class="required">*</span></label>
+                                    <input type="text" class="profile-form-input" asp-for="FirstName" placeholder="Enter first name" />
+                                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-form-group">
+                                    <label class="profile-form-label">Last Name <span class="required">*</span></label>
+                                    <input type="text" class="profile-form-input" asp-for="LastName" placeholder="Enter last name" />
+                                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="profile-form-group">
+                                    <label class="profile-form-label">Email Address <span class="required">*</span></label>
+                                    <input type="email" class="profile-form-input" asp-for="Email" placeholder="Enter email address" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-form-group">
+                                    <label class="profile-form-label">Phone Number</label>
+                                    <input type="tel" class="profile-form-input" asp-for="Phone" placeholder="+20 xxx xxx xxxx" />
+                                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-section">
+                        <h3 class="profile-info-section-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Shipping Information
+                        </h3>
+                        <div class="profile-form-group">
+                            <label class="profile-form-label">Complete Address</label>
+                            <textarea class="profile-form-input" asp-for="Address" rows="3" placeholder="Enter your complete shipping address..."></textarea>
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                    </div>
+
                     <div class="d-flex flex-wrap gap-3 mt-4">
-                        <button type="submit" class="cyber-btn cyber-btn-primary px-4"><i class="fas fa-save"></i> Save Changes</button>
-                        <a asp-controller="Home" asp-action="Index" class="cyber-btn cyber-btn-ghost"><i class="fas fa-times"></i> Cancel</a>
+                        <button type="submit" class="cyber-btn cyber-btn-primary cyber-btn-lg px-4">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <button type="button" class="cyber-btn cyber-btn-ghost" onclick="showSection('overview', event)">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
                     </div>
-                    <div class="profile-security-badge"><i class="fas fa-shield-alt"></i> Your data is secured with encryption</div>
+                    <div class="profile-security-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        Your data is encrypted and secured
+                    </div>
                 </form>
             </div>
-        </div>
+        </main>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        function toggleEditProfile() {
-            const editSection = document.getElementById('editProfileSection');
-            const button = event.target.closest('button');
+        function showSection(sectionId, event) {
+            if (event) {
+                event.preventDefault();
+            }
 
-            if (editSection.style.display === 'none') {
-                editSection.style.display = 'block';
+            // Hide all sections
+            document.querySelectorAll('.profile-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Remove active class from all nav links
+            document.querySelectorAll('.profile-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            const section = document.getElementById(sectionId + '-section');
+            if (section) {
+                section.style.display = 'block';
+                
+                // Add active class to clicked link
+                if (event && event.currentTarget) {
+                    event.currentTarget.classList.add('active');
+                }
+
+                // Scroll to top of content
                 setTimeout(() => {
-                    editSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
-                button.innerHTML = '<i class="fas fa-times"></i> Close Edit Form';
-            } else {
-                editSection.style.display = 'none';
-                button.innerHTML = '<i class="fas fa-user-edit"></i> Edit Profile Information';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
+
+        // Show overview section by default on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('overview');
+        });
     </script>
 }

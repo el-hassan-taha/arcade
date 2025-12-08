@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Arcade.Models;
 using Arcade.Services;
 using Arcade.ViewModels;
 
@@ -80,15 +78,6 @@ namespace Arcade.Controllers
         public IActionResult FAQ()
         {
             return View();
-        }
-
-        /// <summary>
-        /// Displays error page
-        /// </summary>
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         /// <summary>

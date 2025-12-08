@@ -45,7 +45,7 @@ namespace Arcade.Controllers
         }
 
         /// <summary>
-        /// Processes user login
+        /// Processes user login - CUSTOMER ONLY
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -64,24 +64,40 @@ namespace Arcade.Controllers
                 return View(model);
             }
 
-            // Create claims
+            // CRITICAL: Block admin login on customer page
+            if (user.Role == "Admin")
+            {
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                _logger.LogWarning("Admin user attempted customer login: {Email}", model.Email);
+                return View(model);
+            }
+
+            // CRITICAL: Only allow Customer role
+            if (user.Role != "Customer")
+            {
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                return View(model);
+            }
+
+            // Create claims for customer
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, "Customer"),
+                new Claim("AuthScheme", "Customer")
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(claims, "CustomerScheme");
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = model.RememberMe,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24)
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
             };
 
             await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                "CustomerScheme",
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
@@ -89,12 +105,6 @@ namespace Arcade.Controllers
             HttpContext.Session.SetString("JwtToken", token ?? string.Empty);
 
             TempData["SuccessMessage"] = $"Welcome back, {user.FullName}!";
-
-            // Role-based redirect
-            if (user.Role == "Admin")
-            {
-                return RedirectToAction("Dashboard", "Admin");
-            }
 
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
@@ -145,18 +155,19 @@ namespace Arcade.Controllers
                 return View(model);
             }
 
-            // Auto-login after registration
+            // Auto-login after registration with CustomerScheme
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, "Customer"),
+                new Claim("AuthScheme", "Customer")
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(claims, "CustomerScheme");
             await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                "CustomerScheme",
                 new ClaimsPrincipal(claimsIdentity));
 
             TempData["SuccessMessage"] = "Welcome to Arcade! Your account has been created successfully.";
@@ -170,7 +181,7 @@ namespace Arcade.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync("CustomerScheme");
             HttpContext.Session.Clear();
             TempData["SuccessMessage"] = "You have been logged out successfully.";
             return RedirectToAction("Index", "Home");
@@ -179,7 +190,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Displays user profile
         /// </summary>
-        [Authorize]
+        [Authorize(Policy = "CustomerOnly", AuthenticationSchemes = "CustomerScheme")]
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -192,13 +203,16 @@ namespace Arcade.Controllers
             }
 
             var orders = await _orderService.GetUserOrdersAsync(userId);
+            var nameParts = user.FullName?.Split(' ', 2) ?? Array.Empty<string>();
 
             var model = new ProfileViewModel
             {
                 Email = user.Email,
-                FullName = user.FullName,
-                FirstName = user.FullName?.Split(' ').FirstOrDefault() ?? "",
-                LastName = user.FullName?.Split(' ').Skip(1).FirstOrDefault() ?? "",
+                FullName = user.FullName ?? string.Empty,
+                FirstName = nameParts.Length > 0 ? nameParts[0] : "",
+                LastName = nameParts.Length > 1 ? nameParts[1] : "",
+                Phone = user.Phone,
+                Address = user.Address,
                 Role = user.Role,
                 MemberSince = user.CreatedAt,
                 OrderCount = orders.Count()
@@ -213,26 +227,95 @@ namespace Arcade.Controllers
         /// <summary>
         /// Updates user profile
         /// </summary>
-        [Authorize]
+        [Authorize(Policy = "CustomerOnly", AuthenticationSchemes = "CustomerScheme")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                var userId = GetCurrentUserId();
+                var user = await _authService.GetUserByIdAsync(userId);
+                model.Email = user?.Email ?? "";
+                model.Role = user?.Role ?? "";
+                model.MemberSince = user?.CreatedAt;
+                model.OrderCount = (await _orderService.GetUserOrdersAsync(userId)).Count();
+                ViewBag.OrderCount = model.OrderCount;
+                ViewBag.CartItems = await _cartService.GetCartItemCountAsync(userId);
                 return View(model);
             }
 
-            var userId = GetCurrentUserId();
-            var success = await _authService.UpdateProfileAsync(userId, model.FullName);
+            var currentUserId = GetCurrentUserId();
 
-            if (success)
+            // Check if email is being changed and if it's already in use
+            var currentUser = await _authService.GetUserByIdAsync(currentUserId);
+            if (currentUser != null && currentUser.Email != model.Email.ToLower().Trim())
             {
+                var emailExists = await _authService.EmailExistsAsync(model.Email, currentUserId);
+                if (emailExists)
+                {
+                    ModelState.AddModelError("Email", "This email is already in use by another account.");
+                    model.Role = currentUser.Role;
+                    model.MemberSince = currentUser.CreatedAt;
+                    model.OrderCount = (await _orderService.GetUserOrdersAsync(currentUserId)).Count();
+                    ViewBag.OrderCount = model.OrderCount;
+                    ViewBag.CartItems = await _cartService.GetCartItemCountAsync(currentUserId);
+                    return View(model);
+                }
+            }
+
+            // Combine first and last name for full name
+            var fullName = $"{model.FirstName} {model.LastName}".Trim();
+
+            _logger.LogInformation($"Updating profile for user {currentUserId}: Name={fullName}, Email={model.Email}, Phone={model.Phone}, Address={model.Address}");
+
+            var result = await _authService.UpdateProfileAsync(currentUserId, fullName, model.Email, model.Phone, model.Address);
+
+            if (result)
+            {
+                _logger.LogInformation($"Profile update successful for user {currentUserId}");
+
+                // Update authentication claims with new name and email
+                var updatedUser = await _authService.GetUserByIdAsync(currentUserId);
+                if (updatedUser != null)
+                {
+                    _logger.LogInformation($"Retrieved updated user: Name={updatedUser.FullName}, Email={updatedUser.Email}");
+
+                    // Sign out the current user (CustomerScheme)
+                    await HttpContext.SignOutAsync("CustomerScheme");
+
+                    // Create new claims with updated information
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, updatedUser.UserId.ToString()),
+                        new Claim(ClaimTypes.Email, updatedUser.Email),
+                        new Claim(ClaimTypes.Name, updatedUser.FullName),
+                        new Claim(ClaimTypes.Role, "Customer"),
+                        new Claim("AuthScheme", "Customer")
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, "CustomerScheme");
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+                    };
+
+                    // Sign in with updated claims (CustomerScheme)
+                    await HttpContext.SignInAsync(
+                        "CustomerScheme",
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+                    _logger.LogInformation($"Authentication claims updated for user {currentUserId}");
+                }
+
                 TempData["SuccessMessage"] = "Profile updated successfully!";
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed to update profile.";
+                _logger.LogWarning($"Profile update failed for user {currentUserId}");
+                TempData["ErrorMessage"] = "Failed to update profile. Please try again.";
             }
 
             return RedirectToAction("Profile");
@@ -241,7 +324,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Displays change password form
         /// </summary>
-        [Authorize]
+        [Authorize(Policy = "CustomerOnly", AuthenticationSchemes = "CustomerScheme")]
         [HttpGet]
         public IActionResult ChangePassword()
         {
@@ -251,7 +334,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Processes password change
         /// </summary>
-        [Authorize]
+        [Authorize(Policy = "CustomerOnly", AuthenticationSchemes = "CustomerScheme")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)

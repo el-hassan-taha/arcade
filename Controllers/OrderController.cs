@@ -9,7 +9,7 @@ namespace Arcade.Controllers
     /// <summary>
     /// Controller for checkout and order operations
     /// </summary>
-    [Authorize]
+    [Authorize(Policy = "CustomerOnly", AuthenticationSchemes = "CustomerScheme")]
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;

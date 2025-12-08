@@ -15,8 +15,8 @@ namespace Arcade.Controllers
     /// <summary>
     /// Admin controller for dashboard and management
     /// </summary>
-    [Authorize(Roles = "Admin")]
-    [Route("Admin/[action]")]
+    [Authorize(Policy = "AdminOnly", AuthenticationSchemes = "AdminScheme")]
+    [Route("Admin")]
     public class AdminController : Controller
     {
         private readonly IProductService _productService;
@@ -45,9 +45,8 @@ namespace Arcade.Controllers
         /// <summary>
         /// Admin dashboard
         /// </summary>
-        [HttpGet]
-        [Route("~/Admin")]
-        [Route("~/Admin/Dashboard")]
+        [HttpGet("")]
+        [HttpGet("Dashboard")]
         public async Task<IActionResult> Dashboard()
         {
             try
@@ -98,7 +97,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Admin profile (separate from customer profile)
         /// </summary>
-        [HttpGet]
+        [HttpGet("Profile")]
         public async Task<IActionResult> Profile()
         {
             var userId = GetCurrentUserId();
@@ -129,7 +128,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Updates admin profile (name only)
         /// </summary>
-        [HttpPost]
+        [HttpPost("Profile")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileViewModel model)
         {
@@ -168,18 +167,19 @@ namespace Arcade.Controllers
             _userRepository.Update(user);
             await _userRepository.SaveChangesAsync();
 
-            // Update claims to reflect new name and email
+            // Update claims to reflect new name and email using AdminScheme
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim("AuthScheme", "Admin")
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(claims, "AdminScheme");
             await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                "AdminScheme",
                 new ClaimsPrincipal(claimsIdentity),
                 new AuthenticationProperties { IsPersistent = true });
 
@@ -190,7 +190,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Admin change password (admin layout)
         /// </summary>
-        [HttpGet]
+        [HttpGet("ChangePassword")]
         public IActionResult ChangePassword()
         {
             return View();
@@ -199,7 +199,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Processes admin password change
         /// </summary>
-        [HttpPost]
+        [HttpPost("ChangePassword")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
@@ -228,10 +228,12 @@ namespace Arcade.Controllers
         /// <summary>
         /// List all products
         /// </summary>
-        [HttpGet]
+        [HttpGet("Products")]
         public async Task<IActionResult> Products(
             int? categoryId = null,
             string? searchTerm = null,
+            string? brand = null,
+            string? sku = null,
             string? stockStatus = null,
             string? sortBy = null,
             bool sortDesc = false,
@@ -262,10 +264,36 @@ namespace Arcade.Controllers
                     (p.SKU != null && p.SKU.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))).ToList();
             }
 
+            // Apply brand filter for stats
+            if (!string.IsNullOrEmpty(brand))
+            {
+                filteredProductsList = filteredProductsList.Where(p =>
+                    p.Brand != null && p.Brand.Contains(brand, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            // Apply SKU filter for stats
+            if (!string.IsNullOrEmpty(sku))
+            {
+                filteredProductsList = filteredProductsList.Where(p =>
+                    p.SKU != null && p.SKU.Contains(sku, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
             // Calculate stock counts from filtered results
             int totalInStockCount = filteredProductsList.Count(p => p.StockQuantity >= 10);
             int totalLowStockCount = filteredProductsList.Count(p => p.StockQuantity > 0 && p.StockQuantity < 10);
             int totalOutOfStockCount = filteredProductsList.Count(p => p.StockQuantity == 0);
+
+            // Apply brand filter for display
+            if (!string.IsNullOrEmpty(brand))
+            {
+                products = products.Where(p => p.Brand != null && p.Brand.Contains(brand, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Apply SKU filter for display
+            if (!string.IsNullOrEmpty(sku))
+            {
+                products = products.Where(p => p.SKU != null && p.SKU.Contains(sku, StringComparison.OrdinalIgnoreCase));
+            }
 
             // Apply stock status filter for display
             if (!string.IsNullOrEmpty(stockStatus))
@@ -292,6 +320,8 @@ namespace Arcade.Controllers
                 PageSize = pageSize,
                 CategoryId = categoryId,
                 SearchTerm = searchTerm,
+                Brand = brand,
+                SKU = sku,
                 StockStatus = stockStatus,
                 SortBy = sortBy,
                 SortDescending = sortDesc,
@@ -306,7 +336,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Create product form
         /// </summary>
-        [HttpGet]
+        [HttpGet("CreateProduct")]
         public async Task<IActionResult> CreateProduct()
         {
             var categories = await _productService.GetCategoriesAsync();
@@ -327,7 +357,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Create product
         /// </summary>
-        [HttpPost]
+        [HttpPost("CreateProduct")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateProduct(ProductFormViewModel model)
         {
@@ -365,7 +395,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Edit product form
         /// </summary>
-        [HttpGet]
+        [HttpGet("EditProduct/{id}")]
         public async Task<IActionResult> EditProduct(int id)
         {
             var product = await _productService.GetByIdAsync(id);
@@ -403,7 +433,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Update product
         /// </summary>
-        [HttpPost]
+        [HttpPost("EditProduct")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProduct(ProductFormViewModel model)
         {
@@ -450,7 +480,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Delete product
         /// </summary>
-        [HttpPost]
+        [HttpPost("DeleteProduct")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -468,7 +498,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Quick update stock
         /// </summary>
-        [HttpPost]
+        [HttpPost("UpdateStock")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStock(int productId, int quantity)
         {
@@ -492,7 +522,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// List all orders
         /// </summary>
-        [HttpGet]
+        [HttpGet("Orders")]
         public async Task<IActionResult> Orders(
             string? status = null,
             string? search = null,
@@ -524,7 +554,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// View order details
         /// </summary>
-        [HttpGet]
+        [HttpGet("OrderDetails/{id}")]
         public async Task<IActionResult> OrderDetails(int id)
         {
             var order = await _orderService.GetWithDetailsAsync(id);
@@ -545,7 +575,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Update order status
         /// </summary>
-        [HttpPost]
+        [HttpPost("UpdateOrderStatus")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateOrderStatus(int id, string status)
         {
@@ -576,7 +606,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Inventory management view
         /// </summary>
-        [HttpGet]
+        [HttpGet("Inventory")]
         public async Task<IActionResult> Inventory()
         {
             var allProducts = await _productService.GetAllAsync();
@@ -601,7 +631,7 @@ namespace Arcade.Controllers
         /// <summary>
         /// Seed real products (development only)
         /// </summary>
-        [HttpPost]
+        [HttpPost("SeedRealProducts")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SeedRealProducts()
         {

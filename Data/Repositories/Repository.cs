@@ -61,7 +61,15 @@ namespace Arcade.Data.Repositories
 
         public virtual void Update(T entity)
         {
-            _dbSet.Attach(entity);
+            // Check if entity is already tracked
+            var existingEntity = _context.ChangeTracker.Entries<T>()
+                .FirstOrDefault(e => e.Entity == entity);
+
+            if (existingEntity == null)
+            {
+                _dbSet.Attach(entity);
+            }
+
             _context.Entry(entity).State = EntityState.Modified;
         }
 

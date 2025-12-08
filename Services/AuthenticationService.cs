@@ -19,7 +19,8 @@ namespace Arcade.Services
         Task<bool> ValidatePasswordStrengthAsync(string password);
         string GenerateJwtToken(User user);
         Task<User?> GetUserByIdAsync(int userId);
-        Task<bool> UpdateProfileAsync(int userId, string fullName);
+        Task<bool> EmailExistsAsync(string email, int? excludeUserId = null);
+        Task<bool> UpdateProfileAsync(int userId, string fullName, string email, string? phone = null, string? address = null);
         Task<(bool Success, string Message)> ChangePasswordAsync(int userId, string currentPassword, string newPassword);
         Task RecordLoginAttemptAsync(int userId, bool success);
     }
@@ -165,15 +166,37 @@ namespace Arcade.Services
             return await _userRepository.GetByIdAsync(userId);
         }
 
-        public async Task<bool> UpdateProfileAsync(int userId, string fullName)
+        public async Task<bool> EmailExistsAsync(string email, int? excludeUserId = null)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _userRepository.GetByEmailAsync(email.ToLower().Trim());
             if (user == null) return false;
-
-            user.FullName = fullName.Trim();
-            _userRepository.Update(user);
-            await _userRepository.SaveChangesAsync();
+            if (excludeUserId.HasValue && user.UserId == excludeUserId.Value) return false;
             return true;
+        }
+
+        public async Task<bool> UpdateProfileAsync(int userId, string fullName, string email, string? phone = null, string? address = null)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user == null) return false;
+
+                // Update all fields
+                user.FullName = fullName.Trim();
+                user.Email = email.ToLower().Trim();
+                user.Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
+                user.Address = string.IsNullOrWhiteSpace(address) ? null : address.Trim();
+
+                // Explicitly mark entity as modified and save
+                _userRepository.Update(user);
+                var changes = await _userRepository.SaveChangesAsync();
+
+                return changes > 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<(bool Success, string Message)> ChangePasswordAsync(int userId, string currentPassword, string newPassword)

@@ -9,7 +9,7 @@ namespace Arcade.Controllers
     /// <summary>
     /// Controller for shopping cart operations
     /// </summary>
-    [Authorize]
+    [Authorize(Policy = "CustomerOnly", AuthenticationSchemes = "CustomerScheme")]
     public class CartController : Controller
     {
         private readonly ICartService _cartService;

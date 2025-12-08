@@ -4,82 +4,418 @@
     Layout = "_AdminLayout";
 }
 
-<div class="cyber-admin-header">
-    <div class="cyber-admin-header-content">
-        <h1 class="cyber-admin-title">
-            <i class="fas @(Model.ProductId == 0 ? "fa-plus-circle" : "fa-edit")"></i>
-            @(Model.ProductId == 0 ? "Add New Product" : "Edit Product")
-        </h1>
-    </div>
-    <div class="cyber-admin-actions">
-        <a asp-action="Products" class="cyber-btn cyber-btn-ghost">
-            <i class="fas fa-arrow-left"></i> Back to Products
-        </a>
-    </div>
+<style>
+    /* Enhanced Product Form Styles */
+    .product-form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .product-form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .product-form-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+
+    .product-form-card:hover {
+        border-color: rgba(99, 102, 241, 0.4);
+        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
+    }
+
+    .product-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+    }
+
+    .product-card-header i {
+        color: #6366f1;
+        font-size: 1.3rem;
+    }
+
+    .product-card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #fff;
+        margin: 0;
+    }
+
+    .product-form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .product-form-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: rgba(148, 163, 184, 0.95);
+        margin-bottom: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .product-form-input {
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1.5px solid rgba(99, 102, 241, 0.3);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .product-form-input:focus {
+        outline: none;
+        border-color: rgba(99, 102, 241, 0.7);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        background: rgba(15, 23, 42, 0.95);
+    }
+
+    .product-form-input::placeholder {
+        color: rgba(148, 163, 184, 0.4);
+    }
+
+    .product-form-textarea {
+        min-height: 140px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .product-form-select {
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1.5px solid rgba(99, 102, 241, 0.3);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .product-form-select:focus {
+        outline: none;
+        border-color: rgba(99, 102, 241, 0.7);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    .product-input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .product-input-addon {
+        position: absolute;
+        left: 1rem;
+        color: rgba(99, 102, 241, 0.8);
+        font-weight: 600;
+        font-size: 1rem;
+        z-index: 1;
+    }
+
+    .product-input-group .product-form-input {
+        padding-left: 2.5rem;
+    }
+
+    .product-checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .product-checkbox-wrapper:hover {
+        background: rgba(99, 102, 241, 0.12);
+        border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .product-checkbox {
+        width: 20px;
+        height: 20px;
+        accent-color: #6366f1;
+        cursor: pointer;
+    }
+
+    .product-checkbox-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.95rem;
+        cursor: pointer;
+        user-select: none;
+        margin: 0;
+    }
+
+    .product-form-hint {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: rgba(148, 163, 184, 0.7);
+    }
+
+    .product-image-preview {
+        margin-top: 1rem;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid rgba(99, 102, 241, 0.3);
+        background: rgba(15, 23, 42, 0.8);
+    }
+
+    .product-image-preview img {
+        width: 100%;
+        height: auto;
+        display: block;
+        max-height: 400px;
+        object-fit: contain;
+    }
+
+    .product-btn-primary {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .product-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .product-btn-outline {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        background: transparent;
+        border: 1.5px solid rgba(99, 102, 241, 0.4);
+        border-radius: 12px;
+        color: rgba(99, 102, 241, 0.95);
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .product-btn-outline:hover {
+        background: rgba(99, 102, 241, 0.1);
+        border-color: rgba(99, 102, 241, 0.6);
+        color: rgba(99, 102, 241, 1);
+    }
+
+    .product-btn-ghost {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        background: transparent;
+        border: 1.5px solid rgba(148, 163, 184, 0.3);
+        border-radius: 12px;
+        color: rgba(148, 163, 184, 0.9);
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .product-btn-ghost:hover {
+        background: rgba(148, 163, 184, 0.1);
+        border-color: rgba(148, 163, 184, 0.5);
+        color: rgba(148, 163, 184, 1);
+    }
+
+    .product-back-btn {
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+        border: 1.5px solid rgba(99, 102, 241, 0.3);
+        border-radius: 10px;
+        color: rgba(99, 102, 241, 0.9);
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .product-back-btn:hover {
+        background: rgba(99, 102, 241, 0.1);
+        border-color: rgba(99, 102, 241, 0.5);
+        transform: translateX(-3px);
+    }
+
+    .product-tips-card {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+        border-color: rgba(251, 191, 36, 0.3);
+    }
+
+    .product-tips-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .product-tips-list li {
+        padding: 0.75rem 0;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .product-tips-list li:before {
+        content: "✦";
+        color: #fbbf24;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .product-tips-list li:not(:last-child) {
+        border-bottom: 1px solid rgba(251, 191, 36, 0.15);
+    }
+
+    .product-validation-error {
+        display: block;
+        margin-top: 0.5rem;
+        color: #ef4444;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="product-form-header">
+    <h1 class="product-form-title">
+        <i class="fas @(Model.ProductId == 0 ? "fa-plus-circle" : "fa-edit")"></i>
+        @(Model.ProductId == 0 ? "Add New Product" : "Edit Product")
+    </h1>
+    <a asp-action="Products" class="product-back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Products
+    </a>
 </div>
 
-<form asp-action="@(Model.ProductId == 0 ? "CreateProduct" : "EditProduct")" method="post" enctype="multipart/form-data"
-    class="cyber-form">
+<form asp-action="@(Model.ProductId == 0 ? "CreateProduct" : "EditProduct")" method="post"
+    enctype="multipart/form-data">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="ProductId" />
-    <div asp-validation-summary="ModelOnly" class="cyber-alert cyber-alert-danger"></div>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
     <div class="row g-4">
         <div class="col-lg-8">
             <!-- Basic Info -->
-            <div class="cyber-card">
-                <div class="cyber-card-header">
-                    <h3 class="cyber-card-title">
-                        <i class="fas fa-info-circle"></i> Basic Information
-                    </h3>
+            <div class="product-form-card">
+                <div class="product-card-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h3 class="product-card-title">Basic Information</h3>
                 </div>
-                <div class="cyber-card-body">
-                    <div class="cyber-form-group">
-                        <label asp-for="ProductName" class="cyber-label">Product Name *</label>
-                        <input asp-for="ProductName" class="cyber-input" placeholder="Enter product name" />
-                        <span asp-validation-for="ProductName" class="cyber-validation-error"></span>
+                <div>
+                    <div class="product-form-group">
+                        <label asp-for="ProductName" class="product-form-label">Product Name *</label>
+                        <input asp-for="ProductName" class="product-form-input" placeholder="Enter product name" />
+                        <span asp-validation-for="ProductName" class="product-validation-error"></span>
                     </div>
 
-                    <div class="cyber-form-group">
-                        <label asp-for="ShortDescription" class="cyber-label">Short Description</label>
-                        <input asp-for="ShortDescription" class="cyber-input"
+                    <div class="product-form-group">
+                        <label asp-for="ShortDescription" class="product-form-label">Short Description</label>
+                        <input asp-for="ShortDescription" class="product-form-input"
                             placeholder="Brief description (max 200 chars)" />
-                        <span asp-validation-for="ShortDescription" class="cyber-validation-error"></span>
+                        <span asp-validation-for="ShortDescription" class="product-validation-error"></span>
                     </div>
 
-                    <div class="cyber-form-group">
-                        <label asp-for="Description" class="cyber-label">Full Description *</label>
-                        <textarea asp-for="Description" class="cyber-input cyber-textarea" rows="5"
+                    <div class="product-form-group">
+                        <label asp-for="Description" class="product-form-label">Full Description *</label>
+                        <textarea asp-for="Description" class="product-form-input product-form-textarea" rows="5"
                             placeholder="Detailed product description"></textarea>
-                        <span asp-validation-for="Description" class="cyber-validation-error"></span>
+                        <span asp-validation-for="Description" class="product-validation-error"></span>
                     </div>
                 </div>
             </div>
 
             <!-- Pricing & Inventory -->
-            <div class="cyber-card mt-4">
-                <div class="cyber-card-header">
-                    <h3 class="cyber-card-title">
-                        <i class="fas fa-dollar-sign"></i> Pricing & Inventory
-                    </h3>
+            <div class="product-form-card">
+                <div class="product-card-header">
+                    <i class="fas fa-dollar-sign"></i>
+                    <h3 class="product-card-title">Pricing & Inventory</h3>
                 </div>
-                <div class="cyber-card-body">
+                <div>
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="cyber-form-group">
-                                <label asp-for="Price" class="cyber-label">Price *</label>
-                                <div class="cyber-input-group">
-                                    <span class="cyber-input-addon">$</span>
-                                    <input asp-for="Price" class="cyber-input" type="number" step="0.01" min="0" />
+                            <div class="product-form-group">
+                                <label asp-for="Price" class="product-form-label">Price *</label>
+                                <div class="product-input-group">
+                                    <span class="product-input-addon">$</span>
+                                    <input asp-for="Price" class="product-form-input" type="number" step="0.01" min="0"
+                                        placeholder="0.00" />
                                 </div>
-                                <span asp-validation-for="Price" class="cyber-validation-error"></span>
+                                <span asp-validation-for="Price" class="product-validation-error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="cyber-form-group">
-                                <label asp-for="StockQuantity" class="cyber-label">Stock Quantity *</label>
-                                <input asp-for="StockQuantity" class="cyber-input" type="number" min="0" />
-                                <span asp-validation-for="StockQuantity" class="cyber-validation-error"></span>
+                            <div class="product-form-group">
+                                <label asp-for="StockQuantity" class="product-form-label">Stock Quantity *</label>
+                                <input asp-for="StockQuantity" class="product-form-input" type="number" min="0"
+                                    placeholder="0" />
+                                <span asp-validation-for="StockQuantity" class="product-validation-error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="product-form-group">
+                                <label asp-for="Brand" class="product-form-label">Brand</label>
+                                <input asp-for="Brand" class="product-form-input" placeholder="e.g., Sony, Samsung" />
+                                <span asp-validation-for="Brand" class="product-validation-error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="product-form-group">
+                                <label asp-for="SKU" class="product-form-label">SKU</label>
+                                <input asp-for="SKU" class="product-form-input" placeholder="e.g., PROD-12345" />
+                                <span asp-validation-for="SKU" class="product-validation-error"></span>
                             </div>
                         </div>
                     </div>
@@ -87,25 +423,32 @@
             </div>
 
             <!-- Media -->
-            <div class="cyber-card mt-4">
-                <div class="cyber-card-header">
-                    <h3 class="cyber-card-title">
-                        <i class="fas fa-image"></i> Product Image
-                    </h3>
+            <div class="product-form-card">
+                <div class="product-card-header">
+                    <i class="fas fa-image"></i>
+                    <h3 class="product-card-title">Product Image</h3>
                 </div>
-                <div class="cyber-card-body">
-                    <div class="cyber-form-group">
-                        <label asp-for="ImageUrl" class="cyber-label">Image URL</label>
-                        <input asp-for="ImageUrl" class="cyber-input" placeholder="https://example.com/image.jpg" />
-                        <span asp-validation-for="ImageUrl" class="cyber-validation-error"></span>
-                        <small class="cyber-form-hint">Enter a direct link to the product image</small>
+                <div>
+                    <div class="product-form-group">
+                        <label asp-for="ImageUrl" class="product-form-label">Image URL</label>
+                        <input asp-for="ImageUrl" class="product-form-input" placeholder="https://example.com/image.jpg"
+                            id="ImageUrl" />
+                        <span asp-validation-for="ImageUrl" class="product-validation-error"></span>
+                        <small class="product-form-hint">Enter a direct link to the product image (recommended size:
+                            800x800px)</small>
                     </div>
 
                     @if (!string.IsNullOrEmpty(Model.ImageUrl))
                     {
-                        <div class="cyber-image-preview mt-3">
+                        <div class="product-image-preview">
                             <img src="@Model.ImageUrl" alt="Product preview" id="imagePreview"
                                 onerror="this.style.display='none'">
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="product-image-preview" id="imagePreviewContainer" style="display: none;">
+                            <img src="" alt="Product preview" id="imagePreview" />
                         </div>
                     }
                 </div>
@@ -114,70 +457,69 @@
 
         <div class="col-lg-4">
             <!-- Category & Status -->
-            <div class="cyber-card">
-                <div class="cyber-card-header">
-                    <h3 class="cyber-card-title">
-                        <i class="fas fa-cog"></i> Organization
-                    </h3>
+            <div class="product-form-card">
+                <div class="product-card-header">
+                    <i class="fas fa-cog"></i>
+                    <h3 class="product-card-title">Organization</h3>
                 </div>
-                <div class="cyber-card-body">
-                    <div class="cyber-form-group">
-                        <label asp-for="CategoryId" class="cyber-label">Category *</label>
-                        <select asp-for="CategoryId" asp-items="Model.Categories" class="cyber-select">
+                <div>
+                    <div class="product-form-group">
+                        <label asp-for="CategoryId" class="product-form-label">Category *</label>
+                        <select asp-for="CategoryId" asp-items="Model.Categories" class="product-form-select">
                             <option value="">Select a category</option>
                         </select>
-                        <span asp-validation-for="CategoryId" class="cyber-validation-error"></span>
+                        <span asp-validation-for="CategoryId" class="product-validation-error"></span>
                     </div>
 
-                    <div class="cyber-form-group">
-                        <div class="cyber-checkbox-wrapper">
-                            <input asp-for="IsActive" class="cyber-checkbox" />
-                            <label asp-for="IsActive" class="cyber-checkbox-label">Active (visible to customers)</label>
+                    <div class="product-form-group">
+                        <div class="product-checkbox-wrapper">
+                            <input asp-for="IsActive" class="product-checkbox" />
+                            <label asp-for="IsActive" class="product-checkbox-label">Active (visible to
+                                customers)</label>
                         </div>
                     </div>
 
-                    <div class="cyber-form-group">
-                        <div class="cyber-checkbox-wrapper">
-                            <input asp-for="IsFeatured" class="cyber-checkbox" />
-                            <label asp-for="IsFeatured" class="cyber-checkbox-label">Featured Product</label>
+                    <div class="product-form-group">
+                        <div class="product-checkbox-wrapper">
+                            <input asp-for="IsFeatured" class="product-checkbox" />
+                            <label asp-for="IsFeatured" class="product-checkbox-label">Featured Product</label>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Actions -->
-            <div class="cyber-card mt-4">
-                <div class="cyber-card-body">
-                    <button type="submit" class="cyber-btn cyber-btn-primary cyber-btn-lg cyber-btn-block">
+            <div class="product-form-card">
+                <div>
+                    <button type="submit" class="product-btn-primary">
                         <i class="fas fa-save"></i> @(Model.ProductId == 0 ? "Create Product" : "Update Product")
                     </button>
                     @if (Model.ProductId != 0)
                     {
                         <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ProductId"
-                            class="cyber-btn cyber-btn-outline cyber-btn-block mt-2">
+                            class="product-btn-outline mt-3">
                             <i class="fas fa-eye"></i> View Product
                         </a>
                     }
-                    <a asp-action="Products" class="cyber-btn cyber-btn-ghost cyber-btn-block mt-2">
-                        Cancel
+                    <a asp-action="Products" class="product-btn-ghost mt-2">
+                        <i class="fas fa-times"></i> Cancel
                     </a>
                 </div>
             </div>
 
             <!-- Tips -->
-            <div class="cyber-card mt-4 cyber-tips-card">
-                <div class="cyber-card-header">
-                    <h3 class="cyber-card-title">
-                        <i class="fas fa-lightbulb"></i> Tips
-                    </h3>
+            <div class="product-form-card product-tips-card">
+                <div class="product-card-header">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3 class="product-card-title">Tips</h3>
                 </div>
-                <div class="cyber-card-body">
-                    <ul class="cyber-tips-list">
-                        <li>Use high-quality images (800x800 recommended)</li>
+                <div>
+                    <ul class="product-tips-list">
+                        <li>Use high-quality images (800x800px recommended)</li>
                         <li>Write clear, descriptive product names</li>
                         <li>Include all key features in the description</li>
-                        <li>Set competitive pricing</li>
-                        <li>Keep stock quantities updated</li>
+                        <li>Set competitive pricing based on market research</li>
+                        <li>Keep stock quantities updated regularly</li>
                     </ul>
                 </div>
             </div>
@@ -188,12 +530,55 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Image preview
-        document.getElementById('ImageUrl')?.addEventListener('input', function () {
-            const preview = document.getElementById('imagePreview');
-            if (preview) {
-                preview.src = this.value;
-                preview.style.display = this.value ? 'block' : 'none';
+        // Image preview with better error handling
+        document.addEventListener('DOMContentLoaded', function () {
+            const imageUrlInput = document.getElementById('ImageUrl');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+
+            if (imageUrlInput) {
+                imageUrlInput.addEventListener('input', function () {
+                    const url = this.value.trim();
+
+                    if (url) {
+                        if (imagePreview) {
+                            imagePreview.src = url;
+                            imagePreview.style.display = 'block';
+                        }
+                        if (previewContainer) {
+                            previewContainer.style.display = 'block';
+                        }
+                    } else {
+                        if (imagePreview) {
+                            imagePreview.style.display = 'none';
+                        }
+                        if (previewContainer) {
+                            previewContainer.style.display = 'none';
+                        }
+                    }
+                });
+
+                // Handle image load errors
+                if (imagePreview) {
+                    imagePreview.addEventListener('error', function () {
+                        this.style.display = 'none';
+                        if (previewContainer && !imageUrlInput.value.trim()) {
+                            previewContainer.style.display = 'none';
+                        }
+                    });
+                }
+            }
+
+            // Add smooth validation feedback
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    const invalidInputs = form.querySelectorAll(':invalid');
+                    if (invalidInputs.length > 0) {
+                        invalidInputs[0].focus();
+                        invalidInputs[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
             }
         });
     </script>

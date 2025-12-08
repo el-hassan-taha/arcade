@@ -65,10 +65,32 @@ namespace Arcade.ViewModels
     }
 
     /// <summary>
+    /// ViewModel for admin login (separate from customer login)
+    /// </summary>
+    public class AdminLoginViewModel
+    {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
+        [Display(Name = "Admin Email")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password is required")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Admin Password")]
+        public string Password { get; set; } = string.Empty;
+
+        [Display(Name = "Remember me for 8 hours")]
+        public bool RememberMe { get; set; }
+    }
+
+    /// <summary>
     /// ViewModel for user profile
     /// </summary>
     public class ProfileViewModel
     {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [StringLength(256, ErrorMessage = "Email cannot exceed 256 characters")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "First name is required")]
@@ -89,7 +111,6 @@ namespace Arcade.ViewModels
         [Display(Name = "Address")]
         public string? Address { get; set; }
 
-        [Required(ErrorMessage = "Full name is required")]
         [StringLength(100, ErrorMessage = "Full name cannot exceed 100 characters")]
         [Display(Name = "Full Name")]
         public string FullName { get; set; } = string.Empty;
