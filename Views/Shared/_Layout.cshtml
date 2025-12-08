@@ -25,6 +25,17 @@
 </head>
 
 <body class="cyber-body">
+    <!-- Animated Background -->
+    <div class="cyber-animated-bg">
+        <div class="cyber-particles"></div>
+        <div class="cyber-gradient-orbs">
+            <div class="cyber-orb cyber-orb-1"></div>
+            <div class="cyber-orb cyber-orb-2"></div>
+            <div class="cyber-orb cyber-orb-3"></div>
+        </div>
+        <div class="cyber-grid-overlay"></div>
+    </div>
+
     <!-- Navigation: Logo | Search | Profile | Cart | Dark Mode -->
     <nav class="cyber-navbar" id="cyberNav">
         <div class="container">
@@ -52,8 +63,8 @@
             <!-- Search -->
             <div class="cyber-search-container">
                 <form class="cyber-search" asp-controller="Product" asp-action="Index" method="get" id="searchForm">
-                    <input type="text" name="searchTerm" class="cyber-search-input" id="searchInput" placeholder="Search products..."
-                        autocomplete="off">
+                    <input type="text" name="searchTerm" class="cyber-search-input" id="searchInput"
+                        placeholder="Search products..." autocomplete="off">
                     <button class="cyber-search-btn" type="submit"><i class="fas fa-search"></i></button>
                 </form>
                 <div class="cyber-search-dropdown" id="searchDropdown"></div>
@@ -65,7 +76,8 @@
                 {
                     <!-- Profile Dropdown -->
                     <li class="cyber-dropdown">
-                        <a class="cyber-dropdown-toggle cyber-user-toggle" href="#" data-bs-toggle="dropdown" title="@User.Identity.Name">
+                        <a class="cyber-dropdown-toggle cyber-user-toggle" href="#" data-bs-toggle="dropdown"
+                            title="@User.Identity.Name">
                             <i class="fas fa-user"></i>
                             <span class="cyber-username">@User.Identity.Name</span>
                         </a>
@@ -250,9 +262,11 @@
                     </a>
                     <p class="cyber-footer-desc">Your gateway to premium tech. Experience the future today.</p>
                     <div class="cyber-social">
-                        <a href="https://www.facebook.com" class="cyber-social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.facebook.com" class="cyber-social-link"><i
+                                class="fab fa-facebook-f"></i></a>
                         <a href="https://www.twitter.com" class="cyber-social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="https://www.instagram.com" class="cyber-social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.instagram.com" class="cyber-social-link"><i
+                                class="fab fa-instagram"></i></a>
                         <a href="https://www.discord.com" class="cyber-social-link"><i class="fab fa-discord"></i></a>
                     </div>
                 </div>
@@ -268,10 +282,13 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="cyber-footer-heading">Support</h5>
                     <ul class="cyber-footer-links">
-                        <li><a asp-controller="Home" asp-action="Privacy"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy"><i class="fas fa-shield-alt"></i> Privacy
+                                Policy</a></li>
                         <li><a asp-controller="Home" asp-action="Returns"><i class="fas fa-undo"></i> Returns</a></li>
-                        <li><a asp-controller="Home" asp-action="Shipping"><i class="fas fa-truck"></i> Shipping</a></li>
-                        <li><a asp-controller="Home" asp-action="FAQ"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a asp-controller="Home" asp-action="Shipping"><i class="fas fa-truck"></i> Shipping</a>
+                        </li>
+                        <li><a asp-controller="Home" asp-action="FAQ"><i class="fas fa-question-circle"></i> FAQ</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -302,6 +319,7 @@
     <script
         src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/cybercore-animations.js" asp-append-version="true"></script>
+    <script src="~/js/animations.js" asp-append-version="true"></script>
 
     @if (User.Identity?.IsAuthenticated == true)
     {

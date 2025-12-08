@@ -16,7 +16,7 @@
         gap: 1.5rem;
         margin-bottom: 2rem;
     }
-    
+
     .inventory-title-section h1 {
         font-size: 1.75rem;
         font-weight: 700;
@@ -25,21 +25,21 @@
         align-items: center;
         gap: 0.75rem;
     }
-    
+
     .inventory-title-section h1 i {
         color: var(--arcade-primary);
     }
-    
+
     .inventory-title-section p {
         color: var(--arcade-text-muted);
         margin: 0;
     }
-    
+
     .inventory-header-actions {
         display: flex;
         gap: 0.75rem;
     }
-    
+
     /* Enhanced Stats Grid */
     .stats-grid {
         display: grid;
@@ -47,19 +47,19 @@
         gap: 1rem;
         margin-bottom: 2rem;
     }
-    
+
     @@media (max-width: 1200px) {
         .stats-grid {
             grid-template-columns: repeat(3, 1fr);
         }
     }
-    
+
     @@media (max-width: 768px) {
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
         }
     }
-    
+
     .stat-card {
         background: var(--arcade-bg-card);
         border: 1px solid var(--arcade-border);
@@ -69,7 +69,7 @@
         overflow: hidden;
         transition: all 0.3s ease;
     }
-    
+
     .stat-card::before {
         content: '';
         position: absolute;
@@ -80,29 +80,43 @@
         opacity: 0;
         transition: opacity 0.3s ease;
     }
-    
+
     .stat-card:hover::before {
         opacity: 1;
     }
-    
+
     .stat-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
-    
-    .stat-card.total::before { background: var(--arcade-primary); }
-    .stat-card.instock::before { background: var(--arcade-success); }
-    .stat-card.low::before { background: var(--arcade-warning); }
-    .stat-card.out::before { background: var(--arcade-danger); }
-    .stat-card.health::before { background: linear-gradient(90deg, var(--arcade-primary), var(--arcade-accent)); }
-    
+
+    .stat-card.total::before {
+        background: var(--arcade-primary);
+    }
+
+    .stat-card.instock::before {
+        background: var(--arcade-success);
+    }
+
+    .stat-card.low::before {
+        background: var(--arcade-warning);
+    }
+
+    .stat-card.out::before {
+        background: var(--arcade-danger);
+    }
+
+    .stat-card.health::before {
+        background: linear-gradient(90deg, var(--arcade-primary), var(--arcade-accent));
+    }
+
     .stat-card-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 1rem;
     }
-    
+
     .stat-icon {
         width: 48px;
         height: 48px;
@@ -112,30 +126,49 @@
         justify-content: center;
         font-size: 1.25rem;
     }
-    
-    .stat-card.total .stat-icon { background: rgba(0, 212, 255, 0.15); color: var(--arcade-primary); }
-    .stat-card.instock .stat-icon { background: rgba(0, 255, 136, 0.15); color: var(--arcade-success); }
-    .stat-card.low .stat-icon { background: rgba(255, 193, 7, 0.15); color: var(--arcade-warning); }
-    .stat-card.out .stat-icon { background: rgba(255, 68, 68, 0.15); color: var(--arcade-danger); }
-    .stat-card.health .stat-icon { background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 255, 136, 0.15)); color: var(--arcade-primary); }
-    
+
+    .stat-card.total .stat-icon {
+        background: rgba(0, 212, 255, 0.15);
+        color: var(--arcade-primary);
+    }
+
+    .stat-card.instock .stat-icon {
+        background: rgba(0, 255, 136, 0.15);
+        color: var(--arcade-success);
+    }
+
+    .stat-card.low .stat-icon {
+        background: rgba(255, 193, 7, 0.15);
+        color: var(--arcade-warning);
+    }
+
+    .stat-card.out .stat-icon {
+        background: rgba(255, 68, 68, 0.15);
+        color: var(--arcade-danger);
+    }
+
+    .stat-card.health .stat-icon {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 255, 136, 0.15));
+        color: var(--arcade-primary);
+    }
+
     .stat-card-body {
         display: flex;
         flex-direction: column;
     }
-    
+
     .stat-value {
         font-size: 2rem;
         font-weight: 700;
         line-height: 1;
         margin-bottom: 0.5rem;
     }
-    
+
     .stat-label {
         font-size: 0.9rem;
         color: var(--arcade-text-muted);
     }
-    
+
     /* Health Gauge */
     .health-gauge {
         width: 100%;
@@ -145,14 +178,14 @@
         margin-top: 1rem;
         overflow: hidden;
     }
-    
+
     .health-gauge-fill {
         height: 100%;
         border-radius: 4px;
         background: linear-gradient(90deg, var(--arcade-danger), var(--arcade-warning), var(--arcade-success));
         transition: width 0.5s ease;
     }
-    
+
     /* Quick Update Card */
     .quick-update-card {
         background: var(--arcade-bg-card);
@@ -161,7 +194,7 @@
         margin-bottom: 2rem;
         overflow: hidden;
     }
-    
+
     .quick-update-header {
         background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 136, 0.05));
         padding: 1.25rem;
@@ -170,92 +203,147 @@
         align-items: center;
         gap: 0.75rem;
     }
-    
+
     .quick-update-header i {
         color: var(--arcade-warning);
         font-size: 1.25rem;
     }
-    
+
     .quick-update-header h3 {
         margin: 0;
         font-size: 1.1rem;
         font-weight: 600;
     }
-    
+
     .quick-update-body {
         padding: 1.5rem;
     }
-    
+
     .quick-update-form {
         display: grid;
         grid-template-columns: 2fr 1fr 1fr auto;
         gap: 1rem;
         align-items: end;
     }
-    
+
     @@media (max-width: 768px) {
         .quick-update-form {
             grid-template-columns: 1fr;
         }
     }
-    
+
     .form-group {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
     }
-    
+
     .form-label {
         font-size: 0.85rem;
         color: var(--arcade-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    
-    /* Bulk Update Section */
+
+    /* Bulk Update Section - Quick Actions */
     .bulk-update-section {
-        background: rgba(255, 193, 7, 0.05);
-        border-top: 1px solid var(--arcade-border);
-        padding: 1.25rem;
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 152, 0, 0.05) 100%);
+        border-top: 2px solid rgba(255, 193, 7, 0.2);
+        padding: 1.5rem;
+        border-radius: 0 0 16px 16px;
+        margin-top: 1.5rem;
     }
-    
+
     .bulk-update-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
     }
-    
+
     .bulk-update-header h4 {
         margin: 0;
-        font-size: 0.95rem;
-        color: var(--arcade-warning);
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fbbf24;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .bulk-update-options {
-        display: flex;
         gap: 0.75rem;
-        flex-wrap: wrap;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    
+
+    .bulk-update-header h4 i {
+        font-size: 1.2rem;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @@keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.6;
+        }
+    }
+
+    .bulk-update-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
     .bulk-option {
-        background: var(--arcade-bg);
-        border: 1px solid var(--arcade-border);
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
+        background: linear-gradient(135deg, var(--arcade-bg-card) 0%, var(--arcade-bg) 100%);
+        border: 1.5px solid rgba(255, 193, 7, 0.3);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--arcade-text);
         cursor: pointer;
         transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
     }
-    
+
+    .bulk-option::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .bulk-option:hover::before {
+        left: 100%;
+    }
+
     .bulk-option:hover {
-        border-color: var(--arcade-warning);
-        color: var(--arcade-warning);
+        border-color: rgba(255, 193, 7, 0.6);
+        color: #fbbf24;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 193, 7, 0.2);
     }
-    
+
+    .bulk-option:active {
+        transform: translateY(0);
+    }
+
+    .bulk-option i {
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
     /* Inventory Table Card */
     .inventory-table-card {
         background: var(--arcade-bg-card);
@@ -263,7 +351,7 @@
         border-radius: 16px;
         overflow: hidden;
     }
-    
+
     .table-header {
         display: flex;
         justify-content: space-between;
@@ -274,13 +362,13 @@
         flex-wrap: wrap;
         gap: 1rem;
     }
-    
+
     .table-header-left {
         display: flex;
         align-items: center;
         gap: 1rem;
     }
-    
+
     .table-header h3 {
         margin: 0;
         font-size: 1.1rem;
@@ -289,16 +377,16 @@
         align-items: center;
         gap: 0.75rem;
     }
-    
+
     .table-header h3 i {
         color: var(--arcade-primary);
     }
-    
+
     .filter-tabs {
         display: flex;
         gap: 0.5rem;
     }
-    
+
     .filter-tab {
         padding: 0.5rem 1rem;
         border-radius: 8px;
@@ -309,18 +397,18 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .filter-tab:hover {
         border-color: var(--arcade-primary);
         color: var(--arcade-primary);
     }
-    
+
     .filter-tab.active {
         background: var(--arcade-primary);
         border-color: var(--arcade-primary);
         color: #000;
     }
-    
+
     .filter-tab .count {
         background: rgba(0, 0, 0, 0.2);
         padding: 0.15rem 0.5rem;
@@ -328,17 +416,17 @@
         font-size: 0.75rem;
         margin-left: 0.25rem;
     }
-    
+
     .filter-tab.active .count {
         background: rgba(0, 0, 0, 0.3);
     }
-    
+
     /* Table Styles */
     .inventory-table {
         width: 100%;
         border-collapse: collapse;
     }
-    
+
     .inventory-table th {
         padding: 1rem 1.25rem;
         text-align: left;
@@ -350,37 +438,44 @@
         background: rgba(0, 0, 0, 0.2);
         border-bottom: 1px solid var(--arcade-border);
     }
-    
+
     .inventory-table td {
         padding: 1rem 1.25rem;
         border-bottom: 1px solid var(--arcade-border);
         vertical-align: middle;
     }
-    
+
     .inventory-table tbody tr {
         transition: all 0.2s ease;
     }
-    
+
     .inventory-table tbody tr:hover {
         background: rgba(0, 212, 255, 0.03);
     }
-    
+
     .inventory-table tbody tr.alert-row {
         animation: pulse 2s infinite;
     }
-    
+
     @@keyframes pulse {
-        0%, 100% { background: transparent; }
-        50% { background: rgba(255, 68, 68, 0.05); }
+
+        0%,
+        100% {
+            background: transparent;
+        }
+
+        50% {
+            background: rgba(255, 68, 68, 0.05);
+        }
     }
-    
+
     /* Product Cell */
     .product-cell {
         display: flex;
         align-items: center;
         gap: 1rem;
     }
-    
+
     .product-thumb {
         width: 50px;
         height: 50px;
@@ -388,12 +483,12 @@
         object-fit: cover;
         border: 1px solid var(--arcade-border);
     }
-    
+
     .product-info {
         flex: 1;
         min-width: 0;
     }
-    
+
     .product-name {
         font-weight: 600;
         display: -webkit-box;
@@ -401,25 +496,25 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     .product-sku {
         font-size: 0.8rem;
         color: var(--arcade-text-muted);
         font-family: 'Courier New', monospace;
     }
-    
+
     /* Stock Level Visual */
     .stock-level {
         display: flex;
         align-items: center;
         gap: 1rem;
     }
-    
+
     .stock-visual {
         flex: 1;
         max-width: 120px;
     }
-    
+
     .stock-bar {
         height: 8px;
         background: var(--arcade-border);
@@ -427,33 +522,49 @@
         overflow: hidden;
         margin-bottom: 0.25rem;
     }
-    
+
     .stock-bar-fill {
         height: 100%;
         border-radius: 4px;
         transition: width 0.3s ease;
     }
-    
-    .stock-bar-fill.high { background: var(--arcade-success); }
-    .stock-bar-fill.medium { background: var(--arcade-warning); }
-    .stock-bar-fill.low { background: var(--arcade-danger); }
-    
+
+    .stock-bar-fill.high {
+        background: var(--arcade-success);
+    }
+
+    .stock-bar-fill.medium {
+        background: var(--arcade-warning);
+    }
+
+    .stock-bar-fill.low {
+        background: var(--arcade-danger);
+    }
+
     .stock-label {
         font-size: 0.7rem;
         color: var(--arcade-text-muted);
     }
-    
+
     .stock-number {
         font-weight: 700;
         font-size: 1.25rem;
         min-width: 50px;
         text-align: right;
     }
-    
-    .stock-number.out { color: var(--arcade-danger); }
-    .stock-number.low { color: var(--arcade-warning); }
-    .stock-number.ok { color: var(--arcade-success); }
-    
+
+    .stock-number.out {
+        color: var(--arcade-danger);
+    }
+
+    .stock-number.low {
+        color: var(--arcade-warning);
+    }
+
+    .stock-number.ok {
+        color: var(--arcade-success);
+    }
+
     /* Status Badge */
     .status-badge {
         display: inline-flex;
@@ -464,25 +575,36 @@
         font-size: 0.8rem;
         font-weight: 600;
     }
-    
-    .status-badge.success { background: rgba(0, 255, 136, 0.15); color: var(--arcade-success); }
-    .status-badge.warning { background: rgba(255, 193, 7, 0.15); color: var(--arcade-warning); }
-    .status-badge.danger { background: rgba(255, 68, 68, 0.15); color: var(--arcade-danger); }
-    
+
+    .status-badge.success {
+        background: rgba(0, 255, 136, 0.15);
+        color: var(--arcade-success);
+    }
+
+    .status-badge.warning {
+        background: rgba(255, 193, 7, 0.15);
+        color: var(--arcade-warning);
+    }
+
+    .status-badge.danger {
+        background: rgba(255, 68, 68, 0.15);
+        color: var(--arcade-danger);
+    }
+
     /* Inline Edit */
     .inline-edit-form {
         display: flex;
         gap: 0.5rem;
         align-items: center;
     }
-    
+
     .inline-edit-form .stock-input {
         width: 80px;
         text-align: center;
         padding: 0.5rem;
         border-radius: 8px;
     }
-    
+
     .inline-edit-form .save-btn {
         width: 36px;
         height: 36px;
@@ -493,11 +615,11 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .inline-edit-form .save-btn:hover {
         transform: scale(1.1);
     }
-    
+
     /* Category Badge */
     .category-badge {
         background: rgba(0, 212, 255, 0.1);
@@ -506,25 +628,25 @@
         border-radius: 20px;
         font-size: 0.8rem;
     }
-    
+
     /* Date */
     .date-small {
         font-size: 0.85rem;
         color: var(--arcade-text-muted);
     }
-    
+
     /* Empty State */
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
     }
-    
+
     .empty-state i {
         font-size: 4rem;
         color: var(--arcade-text-muted);
         margin-bottom: 1rem;
     }
-    
+
     /* Alert Banner */
     .alert-banner {
         background: linear-gradient(135deg, rgba(255, 68, 68, 0.1), rgba(255, 193, 7, 0.1));
@@ -536,20 +658,20 @@
         align-items: center;
         gap: 1rem;
     }
-    
+
     .alert-banner i {
         font-size: 1.5rem;
         color: var(--arcade-danger);
     }
-    
+
     .alert-banner-content {
         flex: 1;
     }
-    
+
     .alert-banner-content strong {
         color: var(--arcade-danger);
     }
-    
+
     .alert-banner-content p {
         margin: 0;
         font-size: 0.9rem;
@@ -564,12 +686,12 @@
         <p>Monitor and manage your stock levels across all products</p>
     </div>
     <div class="inventory-header-actions">
-        <button type="button" class="cyber-btn cyber-btn-ghost" onclick="window.print()">
-            <i class="fas fa-print"></i> Print Report
-        </button>
         <button type="button" class="cyber-btn cyber-btn-primary" onclick="exportInventory()">
             <i class="fas fa-download"></i> Export CSV
         </button>
+        <a asp-action="Products" class="cyber-btn cyber-btn-secondary">
+            <i class="fas fa-boxes"></i> Manage Products
+        </a>
     </div>
 </div>
 
@@ -580,7 +702,8 @@
         <i class="fas fa-exclamation-circle"></i>
         <div class="alert-banner-content">
             <strong>Attention Required!</strong>
-            <p>You have @Model.OutOfStockCount out of stock and @Model.LowStockCount low stock items that need restocking.</p>
+            <p>You have @Model.OutOfStockCount out of stock and @Model.LowStockCount low stock items that need restocking.
+            </p>
         </div>
         <button type="button" class="cyber-btn cyber-btn-danger cyber-btn-sm" onclick="filterByStock('low')">
             View All <i class="fas fa-arrow-right"></i>
@@ -601,7 +724,7 @@
             <div class="stat-label">Total Products</div>
         </div>
     </div>
-    
+
     <div class="stat-card instock">
         <div class="stat-card-header">
             <div class="stat-icon">
@@ -613,7 +736,7 @@
             <div class="stat-label">In Stock</div>
         </div>
     </div>
-    
+
     <div class="stat-card low">
         <div class="stat-card-header">
             <div class="stat-icon">
@@ -625,7 +748,7 @@
             <div class="stat-label">Low Stock</div>
         </div>
     </div>
-    
+
     <div class="stat-card out">
         <div class="stat-card-header">
             <div class="stat-icon">
@@ -637,7 +760,7 @@
             <div class="stat-label">Out of Stock</div>
         </div>
     </div>
-    
+
     <div class="stat-card health">
         <div class="stat-card-header">
             <div class="stat-icon">
@@ -681,20 +804,26 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Current Stock</label>
-                <input type="text" class="cyber-input" id="currentStockDisplay" value="-" readonly 
-                       style="text-align: center; background: var(--arcade-bg);">
+                <input type="text" class="cyber-input" id="currentStockDisplay" value="-" readonly
+                    style="text-align: center; background: var(--arcade-bg);">
             </div>
             <div class="form-group">
                 <label class="form-label">New Quantity</label>
-                <input type="number" name="quantity" class="cyber-input" min="0" required 
-                       placeholder="Enter new quantity" id="newQuantityInput">
+                <input type="number" name="quantity" class="cyber-input" min="0" max="99999" required
+                    placeholder="Enter new quantity" id="newQuantityInput"
+                    oninput="this.value = Math.abs(this.value); updateStockPreview()">
             </div>
-            <button type="submit" class="cyber-btn cyber-btn-primary">
+            <div class="form-group" id="stockChangePreview" style="display: none;">
+                <label class="form-label">Change</label>
+                <input type="text" class="cyber-input" id="stockChangeDisplay" readonly
+                    style="text-align: center; font-weight: 600;">
+            </div>
+            <button type="submit" class="cyber-btn cyber-btn-primary" id="quickUpdateBtn" disabled>
                 <i class="fas fa-save"></i> Update Stock
             </button>
         </form>
     </div>
-    
+
     <div class="bulk-update-section">
         <div class="bulk-update-header">
             <h4><i class="fas fa-layer-group"></i> Quick Actions</h4>
@@ -732,7 +861,7 @@
             </button>
         </div>
     </div>
-    
+
     <div style="overflow-x: auto;">
         <table class="inventory-table" id="inventoryTable">
             <thead>
@@ -754,7 +883,7 @@
                         var stockClass = product.StockQuantity == 0 ? "low" : (product.IsLowStock ? "medium" : "high");
                         var numberClass = product.StockQuantity == 0 ? "out" : (product.IsLowStock ? "low" : "ok");
                         var isAlert = product.StockQuantity == 0;
-                        <tr data-stock-status="@(product.StockQuantity == 0 ? "out" : product.IsLowStock ? "low" : "ok")" 
+                        <tr data-stock-status="@(product.StockQuantity == 0 ? "out" : product.IsLowStock ? "low" : "ok")"
                             class="@(isAlert ? "alert-row" : "")">
                             <td>
                                 <div class="product-cell">
@@ -808,11 +937,13 @@
                                 </span>
                             </td>
                             <td>
-                                <form asp-action="UpdateStock" method="post" class="inline-edit-form">
+                                <form asp-action="UpdateStock" method="post" class="inline-edit-form"
+                                    onsubmit="return validateStockUpdate(this)">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="productId" value="@product.ProductId" />
                                     <input type="number" name="quantity" value="@product.StockQuantity"
-                                        class="cyber-input stock-input" min="0">
+                                        class="cyber-input stock-input" min="0" max="99999" required
+                                        oninput="this.value = Math.abs(this.value)">
                                     <button type="submit" class="save-btn" title="Update Stock">
                                         <i class="fas fa-check"></i>
                                     </button>
@@ -842,13 +973,13 @@
     <script>
         // Filter tabs functionality
         document.querySelectorAll('.filter-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
+            tab.addEventListener('click', function () {
                 document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
                 filterByStock(this.dataset.filter);
             });
         });
-        
+
         function filterByStock(value) {
             const rows = document.querySelectorAll('#inventoryTable tbody tr');
             rows.forEach(row => {
@@ -863,21 +994,87 @@
                     row.style.display = status === 'ok' ? '' : 'none';
                 }
             });
+
+            // Update active tab to match filter
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.filter === value) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Scroll to table smoothly
+            const tableCard = document.querySelector('.inventory-table-card');
+            if (tableCard) {
+                tableCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
-        
+
+        // Validation function for inline stock update
+        function validateStockUpdate(form) {
+            const input = form.querySelector('input[name="quantity"]');
+            const value = parseInt(input.value);
+
+            if (isNaN(value) || value < 0) {
+                alert('Please enter a valid quantity (0 or greater)');
+                return false;
+            }
+
+            if (value > 99999) {
+                alert('Quantity cannot exceed 99,999 units');
+                return false;
+            }
+
+            return true;
+        }
+
         // Quick product select - show current stock
-        document.getElementById('quickProductSelect')?.addEventListener('change', function() {
+        document.getElementById('quickProductSelect')?.addEventListener('change', function () {
             const selected = this.options[this.selectedIndex];
             const current = selected.dataset.current || '-';
             document.getElementById('currentStockDisplay').value = current;
-            
-            // Pre-fill new quantity
+
+            // Reset and enable new quantity input
             const newInput = document.getElementById('newQuantityInput');
+            const updateBtn = document.getElementById('quickUpdateBtn');
+            const previewDiv = document.getElementById('stockChangePreview');
+
             if (current !== '-') {
+                newInput.value = '';
+                newInput.disabled = false;
                 newInput.focus();
+                previewDiv.style.display = 'none';
+                updateBtn.disabled = true;
+            } else {
+                newInput.disabled = true;
+                updateBtn.disabled = true;
             }
         });
-        
+
+        // Update stock change preview
+        function updateStockPreview() {
+            const currentDisplay = document.getElementById('currentStockDisplay');
+            const newInput = document.getElementById('newQuantityInput');
+            const changeDisplay = document.getElementById('stockChangeDisplay');
+            const previewDiv = document.getElementById('stockChangePreview');
+            const updateBtn = document.getElementById('quickUpdateBtn');
+
+            const currentVal = parseInt(currentDisplay.value);
+            const newVal = parseInt(newInput.value);
+
+            if (!isNaN(currentVal) && !isNaN(newVal)) {
+                const change = newVal - currentVal;
+                const sign = change >= 0 ? '+' : '';
+                changeDisplay.value = `${sign}${change} units`;
+                changeDisplay.style.color = change > 0 ? 'var(--arcade-success)' : change < 0 ? 'var(--arcade-danger)' : 'var(--arcade-text-muted)';
+                previewDiv.style.display = 'flex';
+                updateBtn.disabled = false;
+            } else {
+                previewDiv.style.display = 'none';
+                updateBtn.disabled = true;
+            }
+        }
+
         // Export functionality
         function exportInventory() {
             let csv = 'Product,Category,Stock,Status,Last Updated\n';
@@ -892,7 +1089,7 @@
                     csv += `"${product}","${category}",${stock},"${status}","${updated}"\n`;
                 }
             });
-            
+
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -900,12 +1097,12 @@
             a.download = 'inventory-report.csv';
             a.click();
         }
-        
+
         // Bulk update placeholders (would need backend support)
         function setAllLowStockTo50() {
             alert('This feature would update all low stock items to 50 units. Please implement the backend action.');
         }
-        
+
         function setAllOutOfStockTo25() {
             alert('This feature would update all out of stock items to 25 units. Please implement the backend action.');
         }

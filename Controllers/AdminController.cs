@@ -512,6 +512,12 @@ namespace Arcade.Controllers
             TempData[success ? "SuccessMessage" : "ErrorMessage"] =
                 success ? "Stock updated successfully!" : "Failed to update stock.";
 
+            // Redirect back to Inventory page if coming from there, otherwise Products
+            var referer = Request.Headers["Referer"].ToString();
+            if (referer.Contains("/Inventory", StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectToAction("Inventory");
+            }
             return RedirectToAction("Products");
         }
 

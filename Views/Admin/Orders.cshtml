@@ -643,11 +643,8 @@
         <span class="orders-count-badge">@Model.TotalCount Total Orders</span>
     </div>
     <div class="orders-actions">
-        <button type="button" class="cyber-btn cyber-btn-outline">
-            <i class="fas fa-download"></i> Export
-        </button>
-        <button type="button" class="cyber-btn cyber-btn-outline">
-            <i class="fas fa-print"></i> Print Report
+        <button type="button" class="cyber-btn cyber-btn-primary" onclick="exportOrders()">
+            <i class="fas fa-download"></i> Export CSV
         </button>
     </div>
 </div>
@@ -753,7 +750,7 @@
     </div>
 
     <div style="overflow-x: auto;">
-        <table class="orders-table">
+        <table class="orders-table" id="ordersTable">
             <thead>
                 <tr>
                     <th style="width: 40px;"></th>
@@ -915,6 +912,39 @@
             const btn = document.getElementById('bulkActionBtn');
             btn.disabled = checked === 0;
             btn.textContent = checked > 0 ? `Actions (${checked})` : 'Bulk Actions';
+        }
+
+        // Export orders to CSV
+        function exportOrders() {
+            let csv = 'Order #,Customer Name,Customer Email,Date,Time,Items,Total,Status\n';
+
+            document.querySelectorAll('#ordersTable tbody tr').forEach(row => {
+                // Skip empty state row
+                if (row.querySelector('.empty-state')) return;
+
+                const orderNumber = row.querySelector('.order-id')?.textContent?.trim().replace('#', '') || '';
+                const customerName = row.querySelector('.customer-name')?.textContent?.trim() || '';
+                const customerEmail = row.querySelector('.customer-email')?.textContent?.trim() || '';
+                const dateMain = row.querySelector('.date-main')?.textContent?.trim() || '';
+                const dateTime = row.querySelector('.date-time')?.textContent?.trim() || '';
+                const itemsCount = row.querySelector('.items-count')?.textContent?.trim() || '';
+                const amount = row.querySelector('.amount')?.textContent?.trim().replace(/[^0-9.,]/g, '') || '';
+                const status = row.querySelector('.status-select')?.value || '';
+
+                csv += `"${orderNumber}","${customerName}","${customerEmail}","${dateMain}","${dateTime}","${itemsCount}","${amount}","${status}"\n`;
+            });
+
+            // Create and download file
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const today = new Date().toISOString().split('T')[0];
+            link.href = url;
+            link.download = `orders-export-${today}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
         }
     </script>
 }

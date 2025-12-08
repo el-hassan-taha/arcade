@@ -375,8 +375,15 @@
     }
 
     @@keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .specs-table {
@@ -468,9 +475,8 @@
         <!-- Image Gallery -->
         <div class="product-gallery">
             <div class="product-image-main" data-bs-toggle="modal" data-bs-target="#imageModal">
-                <img src="@(Model.Product.ImageUrl ?? "/images/placeholder.svg")"
-                    alt="@Model.Product.ProductName" id="currentImage"
-                    onerror="this.onerror=null; this.src='/images/placeholder.svg';">
+                <img src="@(Model.Product.ImageUrl ?? "/images/placeholder.svg")" alt="@Model.Product.ProductName"
+                    id="currentImage" onerror="this.onerror=null; this.src='/images/placeholder.svg';">
                 <div class="product-zoom-icon">
                     <i class="fas fa-search-plus"></i>
                 </div>
@@ -483,8 +489,15 @@
                 <i class="fas fa-tag"></i>
                 @Model.Product.Category?.CategoryName
             </span>
-            
+
             <h1 class="product-title">@Model.Product.ProductName</h1>
+
+            @if (!string.IsNullOrEmpty(Model.Product.ShortDescription))
+            {
+                <p
+                    style="color: var(--arcade-text-muted); font-size: 1.1rem; margin: 0.75rem 0 1.5rem 0; font-weight: 500;">
+                    @Model.Product.ShortDescription</p>
+            }
 
             <div class="product-price-section">
                 <div class="product-price-large">EGP @Model.Product.Price.ToString("N0")</div>
@@ -507,7 +520,7 @@
             {
                 <form asp-controller="Cart" asp-action="Add" method="post" class="product-actions">
                     <input type="hidden" name="productId" value="@Model.Product.ProductId" />
-                    
+
                     <div class="quantity-selector">
                         <span class="quantity-label">Quantity:</span>
                         <div class="quantity-controls">
@@ -516,8 +529,7 @@
                             </button>
                             <input type="number" name="quantity" id="quantity" value="1" min="1"
                                 max="@Model.Product.StockQuantity" class="quantity-input" readonly />
-                            <button type="button" class="quantity-btn"
-                                onclick="incrementQty(@Model.Product.StockQuantity)">
+                            <button type="button" class="quantity-btn" onclick="incrementQty(@Model.Product.StockQuantity)">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
@@ -571,24 +583,30 @@
                 <table class="specs-table">
                     <tbody>
                         <tr>
-                            <td><i class="fas fa-tag" style="color: var(--arcade-primary); margin-right: 0.5rem;"></i> Category</td>
+                            <td><i class="fas fa-tag" style="color: var(--arcade-primary); margin-right: 0.5rem;"></i>
+                                Category</td>
                             <td>@Model.Product.Category?.CategoryName</td>
                         </tr>
                         <tr>
-                            <td><i class="fas fa-building" style="color: var(--arcade-primary); margin-right: 0.5rem;"></i> Brand</td>
+                            <td><i class="fas fa-building"
+                                    style="color: var(--arcade-primary); margin-right: 0.5rem;"></i> Brand</td>
                             <td>@(Model.Product.Brand ?? "N/A")</td>
                         </tr>
                         <tr>
-                            <td><i class="fas fa-barcode" style="color: var(--arcade-primary); margin-right: 0.5rem;"></i> SKU</td>
+                            <td><i class="fas fa-barcode"
+                                    style="color: var(--arcade-primary); margin-right: 0.5rem;"></i> SKU</td>
                             <td>@(Model.Product.SKU ?? $"ARC-{Model.Product.ProductId:D6}")</td>
                         </tr>
                         <tr>
-                            <td><i class="fas fa-box" style="color: var(--arcade-primary); margin-right: 0.5rem;"></i> Stock Quantity</td>
+                            <td><i class="fas fa-box" style="color: var(--arcade-primary); margin-right: 0.5rem;"></i>
+                                Stock Quantity</td>
                             <td>@Model.Product.StockQuantity units</td>
                         </tr>
                         <tr>
-                            <td><i class="fas fa-dollar-sign" style="color: var(--arcade-primary); margin-right: 0.5rem;"></i> Price</td>
-                            <td><strong style="color: var(--arcade-primary);">EGP @Model.Product.Price.ToString("N0")</strong></td>
+                            <td><i class="fas fa-dollar-sign"
+                                    style="color: var(--arcade-primary); margin-right: 0.5rem;"></i> Price</td>
+                            <td><strong style="color: var(--arcade-primary);">EGP
+                                    @Model.Product.Price.ToString("N0")</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -668,11 +686,11 @@
         document.querySelectorAll('.product-tab').forEach(tab => {
             tab.addEventListener('click', function () {
                 const target = this.dataset.tab;
-                
+
                 // Remove active class from all tabs and panes
                 document.querySelectorAll('.product-tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.product-tab-pane').forEach(p => p.classList.remove('active'));
-                
+
                 // Add active class to clicked tab and corresponding pane
                 this.classList.add('active');
                 document.getElementById(target).classList.add('active');
@@ -680,13 +698,13 @@
         });
 
         // Add to cart animation
-        document.querySelector('.add-to-cart-btn')?.addEventListener('click', function(e) {
+        document.querySelector('.add-to-cart-btn')?.addEventListener('click', function (e) {
             const btn = this;
             const originalText = btn.innerHTML;
-            
+
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
             btn.disabled = true;
-            
+
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -696,29 +714,29 @@
         // Image zoom on hover effect
         const mainImage = document.querySelector('.product-image-main img');
         if (mainImage) {
-            mainImage.addEventListener('mousemove', function(e) {
+            mainImage.addEventListener('mousemove', function (e) {
                 const rect = this.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 const xPercent = (x / rect.width) * 100;
                 const yPercent = (y / rect.height) * 100;
-                
+
                 this.style.transformOrigin = `${xPercent}% ${yPercent}%`;
             });
 
-            mainImage.addEventListener('mouseenter', function() {
+            mainImage.addEventListener('mouseenter', function () {
                 this.style.transform = 'scale(1.5)';
                 this.style.transition = 'transform 0.3s ease';
             });
 
-            mainImage.addEventListener('mouseleave', function() {
+            mainImage.addEventListener('mouseleave', function () {
                 this.style.transform = 'scale(1)';
             });
         }
 
         // Smooth scroll for breadcrumb
         document.querySelectorAll('.product-breadcrumb a').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 if (this.getAttribute('href') === '#') {
                     e.preventDefault();
                 }
