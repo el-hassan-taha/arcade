@@ -14,7 +14,7 @@ namespace Arcade.Services
     /// </summary>
     public interface IAuthenticationService
     {
-        Task<(bool Success, string Message, User? User)> RegisterAsync(string email, string password, string fullName);
+        Task<(bool Success, string Message, User? User)> RegisterAsync(string email, string password, string fullName, string? phone = null, string? address = null);
         Task<(bool Success, string Message, User? User, string? Token)> LoginAsync(string email, string password);
         Task<bool> ValidatePasswordStrengthAsync(string password);
         string GenerateJwtToken(User user);
@@ -42,7 +42,7 @@ namespace Arcade.Services
             _configuration = configuration;
         }
 
-        public async Task<(bool Success, string Message, User? User)> RegisterAsync(string email, string password, string fullName)
+        public async Task<(bool Success, string Message, User? User)> RegisterAsync(string email, string password, string fullName, string? phone = null, string? address = null)
         {
             try
             {
@@ -67,6 +67,8 @@ namespace Arcade.Services
                     Email = email.ToLower().Trim(),
                     PasswordHash = passwordHash,
                     FullName = fullName.Trim(),
+                    Phone = phone?.Trim(),
+                    Address = address?.Trim(),
                     Role = "Customer",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow

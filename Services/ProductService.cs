@@ -118,6 +118,7 @@ namespace Arcade.Services
             existingProduct.CategoryId = product.CategoryId;
             existingProduct.Price = product.Price;
             existingProduct.StockQuantity = product.StockQuantity;
+            existingProduct.ShortDescription = product.ShortDescription;
             existingProduct.Description = product.Description;
             existingProduct.ImageUrl = product.ImageUrl;
             existingProduct.Brand = product.Brand;

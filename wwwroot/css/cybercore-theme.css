@@ -7,6 +7,7 @@
     /* Dark Mode (Default) - Rich dark with color accents */
     --arcade-bg: #0c0f1a;
     --arcade-bg-alt: #141829;
+    --arcade-bg-card: #1e2340;
     --arcade-surface: #1a1f35;
     --arcade-surface-hover: #232942;
     --arcade-card: #1e2340;
@@ -18,11 +19,13 @@
     --arcade-primary-hover: #6d28d9;
     --arcade-primary-light: rgba(124, 58, 237, 0.15);
     --arcade-primary-glow: rgba(124, 58, 237, 0.4);
+    --arcade-secondary: #8b5cf6;
     
     /* Accent Colors */
     --arcade-accent: #06b6d4;
     --arcade-accent-light: rgba(6, 182, 212, 0.15);
     --arcade-success: #10b981;
+    --arcade-info: #3b82f6;
     --arcade-warning: #f59e0b;
     --arcade-danger: #ef4444;
     --arcade-pink: #ec4899;
@@ -63,6 +66,7 @@
 [data-theme="light"] {
     --arcade-bg: #f0f4ff;
     --arcade-bg-alt: #e8eeff;
+    --arcade-bg-card: #ffffff;
     --arcade-surface: #ffffff;
     --arcade-surface-hover: #f8faff;
     --arcade-card: #ffffff;
@@ -72,6 +76,9 @@
     --arcade-text: #1e293b;
     --arcade-text-secondary: #475569;
     --arcade-text-muted: #64748b;
+    
+    --arcade-secondary: #7c3aed;
+    --arcade-info: #2563eb;
     
     --arcade-shadow: 0 4px 20px rgba(124, 58, 237, 0.1);
     --arcade-shadow-lg: 0 10px 40px rgba(124, 58, 237, 0.15);
@@ -2881,24 +2888,76 @@ a:hover { color: var(--arcade-primary); }
 /* ==========================================================================
    AUTH PAGES
    ========================================================================== */
-.cyber-auth-container { max-width: 420px; margin: 2rem auto; }
+.cyber-auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, var(--arcade-bg) 0%, var(--arcade-bg-alt) 100%);
+}
+
+.cyber-auth-container { 
+    width: 100%;
+    max-width: 520px; 
+    margin: 0 auto;
+}
 
 .cyber-auth-card {
     background: var(--arcade-card);
     border: 1px solid var(--arcade-border);
     border-radius: var(--arcade-radius-xl);
-    padding: 2.5rem;
+    padding: 2.5rem 2rem;
+    box-shadow: var(--arcade-shadow-lg), 0 0 60px rgba(124, 58, 237, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
-.cyber-auth-card::before,
+.cyber-auth-card-wide {
+    max-width: 560px;
+}
+
+.cyber-auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--arcade-gradient);
+}
+
 .cyber-auth-card::after { display: none; }
 
-.cyber-auth-logo { text-align: center; margin-bottom: 2rem; }
-.cyber-auth-logo svg { width: 64px; height: 64px; }
+.cyber-auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.cyber-auth-logo { 
+    text-align: center; 
+    margin-bottom: 1.5rem;
+}
+
+.cyber-auth-logo i {
+    font-size: 3rem;
+    background: var(--arcade-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.5));
+}
+
+.cyber-auth-logo svg { 
+    width: 64px; 
+    height: 64px;
+    filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.5));
+}
 
 .cyber-auth-title {
     font-family: var(--arcade-font-display);
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    font-weight: 700;
     text-align: center;
     margin-bottom: 0.5rem;
     color: var(--arcade-text);
@@ -2909,7 +2968,12 @@ a:hover { color: var(--arcade-primary); }
 .cyber-auth-subtitle {
     text-align: center;
     color: var(--arcade-text-secondary);
-    margin-bottom: 2rem;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+.cyber-auth-form {
+    margin-top: 1.5rem;
 }
 
 .cyber-auth-divider {
@@ -2935,7 +2999,235 @@ a:hover { color: var(--arcade-primary); }
     color: var(--arcade-text-secondary);
 }
 
-.cyber-auth-footer a { color: var(--arcade-primary); }
+.cyber-auth-footer p {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.cyber-auth-footer a { 
+    color: var(--arcade-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--arcade-transition);
+}
+
+.cyber-auth-footer a:hover {
+    color: var(--arcade-accent);
+}
+
+/* Auth Visual Elements */
+.cyber-auth-visual {
+    display: none;
+}
+
+.cyber-auth-shapes {
+    display: none;
+}
+
+/* Auth Form Enhancements */
+.cyber-auth-form .cyber-form-group {
+    margin-bottom: 1.25rem;
+}
+
+.cyber-auth-form .cyber-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--arcade-text);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cyber-auth-form .cyber-label i {
+    color: var(--arcade-primary);
+    font-size: 0.8rem;
+}
+
+.cyber-auth-form .cyber-input {
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
+    background: var(--arcade-bg-alt);
+    border: 1px solid var(--arcade-border);
+    border-radius: var(--arcade-radius);
+    transition: all 0.2s ease;
+}
+
+.cyber-auth-form .cyber-input:focus {
+    border-color: var(--arcade-primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    background: var(--arcade-surface);
+}
+
+.cyber-auth-form .cyber-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cyber-auth-form .cyber-input-group .cyber-input {
+    padding-right: 3rem;
+}
+
+.cyber-auth-form .cyber-input-group .cyber-input-addon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--arcade-text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s;
+}
+
+.cyber-auth-form .cyber-input-group .cyber-input-addon:hover {
+    color: var(--arcade-primary);
+}
+
+.cyber-password-hint {
+    margin-top: 0.5rem;
+}
+
+.cyber-password-hint small {
+    font-size: 0.75rem;
+    color: var(--arcade-accent);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.cyber-checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.cyber-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--arcade-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.cyber-checkbox-label {
+    font-size: 0.875rem;
+    color: var(--arcade-text-secondary);
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.cyber-checkbox-label a {
+    color: var(--arcade-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.cyber-checkbox-label a:hover {
+    text-decoration: underline;
+}
+
+/* Form Row for inline elements */
+.cyber-form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.cyber-form-row .cyber-checkbox-wrapper {
+    margin-bottom: 0;
+}
+
+.cyber-forgot-link {
+    font-size: 0.875rem;
+    color: var(--arcade-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.cyber-forgot-link:hover {
+    color: var(--arcade-accent);
+    text-decoration: underline;
+}
+
+.cyber-validation-error {
+    display: block;
+    color: var(--arcade-danger);
+    font-size: 0.8rem;
+    margin-top: 0.375rem;
+}
+
+.cyber-alert {
+    padding: 1rem 1.25rem;
+    border-radius: var(--arcade-radius);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.cyber-alert-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.cyber-alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+}
+
+/* Auth Button Styles */
+.cyber-btn-lg {
+    padding: 1rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 600;
+}
+
+.cyber-auth-form .cyber-btn-primary {
+    background: var(--arcade-gradient);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    transition: all 0.3s ease;
+}
+
+.cyber-auth-form .cyber-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(124, 58, 237, 0.5);
+}
+
+.cyber-auth-form .cyber-btn-outline {
+    background: transparent;
+    border: 1px solid var(--arcade-border);
+    color: var(--arcade-text);
+}
+
+.cyber-auth-form .cyber-btn-outline:hover {
+    border-color: var(--arcade-primary);
+    color: var(--arcade-primary);
+    background: rgba(124, 58, 237, 0.05);
+}
+
+/* Row spacing fix for auth forms */
+.cyber-auth-form .row {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+}
+
+.cyber-auth-form .row > [class*="col-"] {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
 
 /* ==========================================================================
    BADGES

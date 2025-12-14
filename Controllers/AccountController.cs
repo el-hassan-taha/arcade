@@ -111,7 +111,7 @@ namespace Arcade.Controllers
                 return Redirect(model.ReturnUrl);
             }
 
-            return RedirectToAction("Index", "Product");
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Arcade.Controllers
                 fullName = model.FullName;
             }
 
-            var (success, message, user) = await _authService.RegisterAsync(model.Email, model.Password, fullName);
+            var (success, message, user) = await _authService.RegisterAsync(model.Email, model.Password, fullName, model.Phone, model.Address);
 
             if (!success || user == null)
             {
@@ -171,7 +171,7 @@ namespace Arcade.Controllers
                 new ClaimsPrincipal(claimsIdentity));
 
             TempData["SuccessMessage"] = "Welcome to Arcade! Your account has been created successfully.";
-            return RedirectToAction("Index", "Product");
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>

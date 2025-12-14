@@ -378,6 +378,7 @@ namespace Arcade.Controllers
                 CategoryId = model.CategoryId,
                 Price = model.Price,
                 StockQuantity = model.StockQuantity,
+                ShortDescription = model.ShortDescription,
                 Description = model.Description,
                 ImageUrl = model.ImageUrl,
                 Brand = model.Brand,
@@ -414,6 +415,7 @@ namespace Arcade.Controllers
                 CategoryId = product.CategoryId,
                 Price = product.Price,
                 StockQuantity = product.StockQuantity,
+                ShortDescription = product.ShortDescription,
                 Description = product.Description,
                 ImageUrl = product.ImageUrl,
                 Brand = product.Brand,
@@ -433,9 +435,9 @@ namespace Arcade.Controllers
         /// <summary>
         /// Update product
         /// </summary>
-        [HttpPost("EditProduct")]
+        [HttpPost("EditProduct/{id?}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProduct(ProductFormViewModel model)
+        public async Task<IActionResult> EditProduct(ProductFormViewModel model, int? id = null)
         {
             if (!ModelState.IsValid)
             {
@@ -455,6 +457,7 @@ namespace Arcade.Controllers
                 CategoryId = model.CategoryId,
                 Price = model.Price,
                 StockQuantity = model.StockQuantity,
+                ShortDescription = model.ShortDescription,
                 Description = model.Description,
                 ImageUrl = model.ImageUrl,
                 Brand = model.Brand,
