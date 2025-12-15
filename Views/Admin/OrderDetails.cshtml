@@ -114,35 +114,50 @@
     /* Quick Stats Row */
     .order-stats-row {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
         margin-bottom: 2rem;
     }
 
     @@media (max-width: 992px) {
         .order-stats-row {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .order-stats-row {
+            grid-template-columns: 1fr;
         }
     }
 
     .order-stat-card {
         background: var(--arcade-bg-card);
         border: 1px solid var(--arcade-border);
-        border-radius: 12px;
-        padding: 1.25rem;
+        border-radius: 16px;
+        padding: 1.5rem;
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.25rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.15);
+        border-color: var(--arcade-primary);
     }
 
     .order-stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: 1.5rem;
+        flex-shrink: 0;
     }
 
     .order-stat-icon.items {
@@ -160,20 +175,26 @@
         color: var(--arcade-warning);
     }
 
-    .order-stat-icon.priority {
-        background: rgba(139, 92, 246, 0.15);
-        color: #8b5cf6;
+    .order-stat-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
     }
 
     .order-stat-value {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
         font-weight: 700;
-        line-height: 1;
+        line-height: 1.2;
+        background: linear-gradient(135deg, var(--arcade-text), var(--arcade-primary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .order-stat-label {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         color: var(--arcade-text-muted);
+        font-weight: 500;
     }
 
     /* Main Content Grid */
@@ -193,14 +214,20 @@
     .detail-card {
         background: var(--arcade-bg-card);
         border: 1px solid var(--arcade-border);
-        border-radius: 16px;
+        border-radius: 20px;
         overflow: hidden;
         margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .detail-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 212, 255, 0.1);
     }
 
     .detail-card-header {
-        background: rgba(0, 0, 0, 0.2);
-        padding: 1rem 1.25rem;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
+        padding: 1.25rem 1.5rem;
         border-bottom: 1px solid var(--arcade-border);
         display: flex;
         align-items: center;
@@ -208,7 +235,7 @@
     }
 
     .detail-card-title {
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 600;
         margin: 0;
         display: flex;
@@ -218,10 +245,11 @@
 
     .detail-card-title i {
         color: var(--arcade-primary);
+        font-size: 1.1rem;
     }
 
     .detail-card-body {
-        padding: 1.25rem;
+        padding: 1.5rem;
     }
 
     /* Items Table */
@@ -621,7 +649,7 @@
                 Order <span class="order-number">#@Model.Order.OrderNumber</span>
             </h1>
             <span class="status-badge @Model.Order.Status.ToLower()">
-                @GetStatusIcon(Model.Order.Status)
+                @Html.Raw(GetStatusIcon(Model.Order.Status))
                 @Model.Order.Status
             </span>
         </div>
@@ -635,14 +663,6 @@
                 @orderAge days ago
             </div>
         </div>
-    </div>
-    <div class="order-header-actions">
-        <button type="button" class="cyber-btn cyber-btn-ghost" onclick="window.print()">
-            <i class="fas fa-print"></i> Print
-        </button>
-        <button type="button" class="cyber-btn cyber-btn-primary" onclick="downloadInvoice()">
-            <i class="fas fa-download"></i> Download Invoice
-        </button>
     </div>
 </div>
 
@@ -673,15 +693,6 @@
         <div>
             <div class="order-stat-value">@orderAge</div>
             <div class="order-stat-label">Days Since Order</div>
-        </div>
-    </div>
-    <div class="order-stat-card">
-        <div class="order-stat-icon priority">
-            <i class="fas fa-flag"></i>
-        </div>
-        <div>
-            <div class="order-stat-value">@(Model.Order.TotalAmount > 5000 ? "High" : "Normal")</div>
-            <div class="order-stat-label">Priority Level</div>
         </div>
     </div>
 </div>
@@ -929,7 +940,7 @@
                             <div class="timeline-dot"></div>
                             <div class="timeline-content">
                                 <span class="timeline-title">Delivered</span>
-                                <span class="timeline-date">@Model.Order.DeliveredDate?.ToString("MMM dd, yyyy h:mm tt")</span>
+                                <span class="timeline-date">@Model.Order.DeliveredDate?.ToString("MMM dd, yyyy h:mm                                tt")</span>
                             </div>
                         </div>
                     }

@@ -541,7 +541,7 @@ namespace Arcade.Controllers
         {
             const int pageSize = 20;
 
-            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status, search);
+            var (orders, totalCount, totalPages) = await _orderService.GetPagedAsync(page, pageSize, null, status, fromDate, toDate, search);
 
             var model = new AdminOrderListViewModel
             {

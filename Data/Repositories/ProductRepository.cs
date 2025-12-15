@@ -9,6 +9,7 @@ namespace Arcade.Data.Repositories
     public interface IProductRepository : IRepository<Product>
     {
         Task<Product?> GetWithCategoryAsync(int productId);
+        Task<IEnumerable<Product>> GetAllWithCategoriesAsync();
         Task<IEnumerable<Product>> GetByCategoryAsync(int categoryId);
         Task<IEnumerable<Product>> GetFeaturedAsync(int count = 8);
         Task<IEnumerable<Product>> GetLowStockAsync(int threshold = 10);
@@ -41,6 +42,16 @@ namespace Arcade.Data.Repositories
                 .AsNoTracking()
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(p => p.ProductId == productId && p.IsActive);
+        }
+
+        public async Task<IEnumerable<Product>> GetAllWithCategoriesAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Where(p => p.IsActive)
+                .OrderBy(p => p.ProductName)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> GetByCategoryAsync(int categoryId)

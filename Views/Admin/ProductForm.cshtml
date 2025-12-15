@@ -61,6 +61,12 @@
         border-color: rgba(99, 102, 241, 0.3);
     }
 
+    [data-theme="light"] .product-checkbox-wrapper:has(.product-checkbox:checked) {
+        background: rgba(99, 102, 241, 0.1);
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
     [data-theme="light"] .product-checkbox-label {
         color: #1e293b;
     }
@@ -263,10 +269,11 @@
         gap: 0.75rem;
         padding: 1rem;
         background: rgba(99, 102, 241, 0.08);
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        border: 2px solid rgba(99, 102, 241, 0.2);
         border-radius: 10px;
         transition: all 0.3s ease;
         cursor: pointer;
+        position: relative;
     }
 
     .product-checkbox-wrapper:hover {
@@ -274,11 +281,19 @@
         border-color: rgba(99, 102, 241, 0.4);
     }
 
+    .product-checkbox-wrapper:has(.product-checkbox:checked) {
+        background: rgba(99, 102, 241, 0.15);
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
     .product-checkbox {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         accent-color: #6366f1;
         cursor: pointer;
+        flex-shrink: 0;
+        border-radius: 4px;
     }
 
     .product-checkbox-label {
@@ -287,6 +302,7 @@
         cursor: pointer;
         user-select: none;
         margin: 0;
+        flex: 1;
     }
 
     .product-form-hint {
@@ -587,18 +603,17 @@
                     </div>
 
                     <div class="product-form-group">
-                        <div class="product-checkbox-wrapper">
+                        <label class="product-checkbox-wrapper">
                             <input asp-for="IsActive" class="product-checkbox" />
-                            <label asp-for="IsActive" class="product-checkbox-label">Active (visible to
-                                customers)</label>
-                        </div>
+                            <span class="product-checkbox-label">Active (visible to customers)</span>
+                        </label>
                     </div>
 
                     <div class="product-form-group">
-                        <div class="product-checkbox-wrapper">
+                        <label class="product-checkbox-wrapper">
                             <input asp-for="IsFeatured" class="product-checkbox" />
-                            <label asp-for="IsFeatured" class="product-checkbox-label">Featured Product</label>
-                        </div>
+                            <span class="product-checkbox-label">Featured Product</span>
+                        </label>
                     </div>
                 </div>
             </div>

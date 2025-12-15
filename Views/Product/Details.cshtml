@@ -519,6 +519,7 @@
             @if (Model.Product.StockQuantity > 0)
             {
                 <form asp-controller="Cart" asp-action="Add" method="post" class="product-actions">
+                    @Html.AntiForgeryToken()
                     <input type="hidden" name="productId" value="@Model.Product.ProductId" />
 
                     <div class="quantity-selector">
@@ -697,19 +698,17 @@
             });
         });
 
-        // Add to cart animation
-        document.querySelector('.add-to-cart-btn')?.addEventListener('click', function (e) {
-            const btn = this;
-            const originalText = btn.innerHTML;
-
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 1500);
-        });
+        // Add to cart form submission handler
+        const addToCartForm = document.querySelector('.product-actions');
+        if (addToCartForm) {
+            addToCartForm.addEventListener('submit', function (e) {
+                const btn = this.querySelector('.add-to-cart-btn');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+                    btn.disabled = true;
+                }
+            });
+        }
 
         // Image zoom on hover effect
         const mainImage = document.querySelector('.product-image-main img');

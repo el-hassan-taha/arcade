@@ -1189,7 +1189,7 @@ a:hover { color: var(--arcade-primary); }
 }
 
 .cyber-btn-sm { padding: 0.6rem 1.25rem; font-size: 0.85rem; }
-.cyber-btn-lg { padding: 1.1rem 2.5rem; font-size: 1.1rem; }
+.cyber-btn-lg { padding: 2.4rem 4.3rem; font-size: 1.7rem; margin-top:1.2rem}
 
 /* ==========================================================================
    CARDS & PANELS
@@ -3187,9 +3187,10 @@ a:hover { color: var(--arcade-primary); }
 
 /* Auth Button Styles */
 .cyber-btn-lg {
-    padding: 1rem 1.5rem !important;
-    font-size: 1rem !important;
+    padding: 2rem 4.2rem !important;
+    font-size: 1.7rem !important;
     font-weight: 600;
+    margin-top:1.2rem;
 }
 
 .cyber-auth-form .cyber-btn-primary {

@@ -53,7 +53,7 @@ namespace Arcade.Services
 
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            return await _productRepository.FindAsync(p => p.IsActive);
+            return await _productRepository.GetAllWithCategoriesAsync();
         }
 
         public async Task<IEnumerable<Product>> GetFeaturedAsync(int count = 8)

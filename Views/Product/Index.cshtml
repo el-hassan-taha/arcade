@@ -111,13 +111,18 @@
             <span class="cyber-text-dim">
                 Showing @((Model.CurrentPage - 1) * Model.PageSize + 1)-@Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalItems) of @Model.TotalItems
             </span>
+            @{
+                var currentSort = !string.IsNullOrEmpty(Model.SortBy) 
+                    ? $"{Model.SortBy}_{(Model.SortDescending ? "desc" : "asc")}" 
+                    : "";
+            }
             <div class="d-flex align-items-center gap-3">
                 <select class="cyber-select" id="sortSelect" onchange="applySort(this.value)" style="width: auto;">
                     <option value="">Sort by</option>
-                    @if (Model.SortBy == "name_asc") { <option value="name_asc" selected>Name (A-Z)</option> } else { <option value="name_asc">Name (A-Z)</option> }
-                    @if (Model.SortBy == "name_desc") { <option value="name_desc" selected>Name (Z-A)</option> } else { <option value="name_desc">Name (Z-A)</option> }
-                    @if (Model.SortBy == "price_asc") { <option value="price_asc" selected>Price (Low-High)</option> } else { <option value="price_asc">Price (Low-High)</option> }
-                    @if (Model.SortBy == "price_desc") { <option value="price_desc" selected>Price (High-Low)</option> } else { <option value="price_desc">Price (High-Low)</option> }
+                    @if (currentSort == "name_asc") { <option value="name_asc" selected>Name (A-Z)</option> } else { <option value="name_asc">Name (A-Z)</option> }
+                    @if (currentSort == "name_desc") { <option value="name_desc" selected>Name (Z-A)</option> } else { <option value="name_desc">Name (Z-A)</option> }
+                    @if (currentSort == "price_asc") { <option value="price_asc" selected>Price (Low-High)</option> } else { <option value="price_asc">Price (Low-High)</option> }
+                    @if (currentSort == "price_desc") { <option value="price_desc" selected>Price (High-Low)</option> } else { <option value="price_desc">Price (High-Low)</option> }
                 </select>
             </div>
         </div>
@@ -226,7 +231,7 @@
                     @if (Model.HasPreviousPage)
                     {
                         <a asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-route-categoryId="@Model.CategoryId" 
-                           asp-route-search="@Model.SearchTerm" asp-route-sortBy="@Model.SortBy" class="cyber-page-link">
+                           asp-route-search="@Model.SearchTerm" asp-route-sortBy="@Model.SortBy" asp-route-sortDesc="@Model.SortDescending" class="cyber-page-link">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                     }
@@ -235,7 +240,7 @@
                         if (i == 1 || i == Model.TotalPages || (i >= Model.CurrentPage - 2 && i <= Model.CurrentPage + 2))
                         {
                             <a asp-action="Index" asp-route-page="@i" asp-route-categoryId="@Model.CategoryId" 
-                               asp-route-search="@Model.SearchTerm" asp-route-sortBy="@Model.SortBy" 
+                               asp-route-search="@Model.SearchTerm" asp-route-sortBy="@Model.SortBy" asp-route-sortDesc="@Model.SortDescending"
                                class="cyber-page-link @(i == Model.CurrentPage ? "active" : "")">@i</a>
                         }
                         else if (i == Model.CurrentPage - 3 || i == Model.CurrentPage + 3)
@@ -246,7 +251,7 @@
                     @if (Model.HasNextPage)
                     {
                         <a asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-route-categoryId="@Model.CategoryId" 
-                           asp-route-search="@Model.SearchTerm" asp-route-sortBy="@Model.SortBy" class="cyber-page-link">
+                           asp-route-search="@Model.SearchTerm" asp-route-sortBy="@Model.SortBy" asp-route-sortDesc="@Model.SortDescending" class="cyber-page-link">
                             <i class="fas fa-chevron-right"></i>
                         </a>
                     }
@@ -269,7 +274,23 @@
     <script>
         function applySort(value) {
             const url = new URL(window.location);
-            value ? url.searchParams.set('sortBy', value) : url.searchParams.delete('sortBy');
+            
+            if (value) {
+                // Parse combined value like 'price_asc' or 'name_desc'
+                const parts = value.split('_');
+                const sortField = parts[0]; // 'price', 'name'
+                const sortDir = parts[1];   // 'asc', 'desc'
+                
+                url.searchParams.set('sortBy', sortField);
+                url.searchParams.set('sortDesc', sortDir === 'desc' ? 'true' : 'false');
+            } else {
+                url.searchParams.delete('sortBy');
+                url.searchParams.delete('sortDesc');
+            }
+            
+            // Reset to page 1 when changing sort
+            url.searchParams.set('page', '1');
+            
             window.location.href = url.toString();
         }
     </script>
