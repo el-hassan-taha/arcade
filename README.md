@@ -79,7 +79,7 @@ Default seeded data includes:
 This project was developed by:
 
 - [@el-hassan-taha](https://github.com/el-hassan-taha)
-- [@kareemkoko1234](https://github.com/kareemkoko1234)
+- [@KareemElsandarosy](https://github.com/KareemElsandarosy)
 - [@Mahmoud-Megahed1](https://github.com/Mahmoud-Megahed1)
 - [@osamahm1](https://github.com/osamahm1)
 - [@Ra-7-eem](https://github.com/Ra-7-eem)
